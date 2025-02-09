@@ -1,0 +1,91 @@
+<div>
+  <p-toast></p-toast>
+  <h2>Envoyer un Email</h2>
+  <p-card>
+    <form (ngSubmit)="sendEmail()" #emailForm="ngForm">
+      <div class="p-fluid">
+        
+        <div class="p-field">
+          <label for="user">Technicien:</label>
+          <p-dropdown 
+            id="user" 
+            [options]="users" 
+            [(ngModel)]="selectedUser" 
+            optionLabel="name"
+            placeholder="Sélectionnez un technicien" 
+            name="user" 
+            (onChange)="onUserChange($event)"
+            required>
+          </p-dropdown>
+        </div>
+        
+        <div class="p-field">
+          <label for="email">Email:</label>
+          <br/>
+          <input type="email" 
+                 id="email" 
+                 [value]="selectedUser?.email" 
+                 name="email" 
+                 required 
+                 readonly 
+                 class="form-input">
+        </div>
+        
+        <div class="p-field">
+          <label for="subject">Objet:</label>
+          <br/>
+          <input type="text" 
+                 id="subject" 
+                 [(ngModel)]="subject" 
+                 name="subject" 
+                 required 
+                 class="form-input">
+        </div>
+        
+        <div class="p-field">
+          <label for="message">Message:</label>
+          <br/>
+          <textarea 
+            id="message" 
+            [(ngModel)]="message" 
+            name="message" 
+            required
+            rows="6"
+            class="form-input">
+          </textarea>
+        </div>
+        
+        <p-button 
+          label="Envoyer" 
+          type="submit" 
+          class="p-mt-2">
+        </p-button>
+      </div>
+    </form>
+  </p-card>
+</div>
+
+<style>
+  .form-input {
+    width: 100%; 
+    box-sizing: border-box;
+    font: 14px ;
+    padding: 9px 10.5px;
+    border-radius: 5px;
+  }
+
+  .form-input[type="email"] {
+    width: 100%;
+    border: 1px solid #ced4da;
+  }
+  
+  .form-input[type="text"] {
+    width: 100%;
+    border: 1px solid #ced4da;
+  }
+
+  .form-input[rows] {
+    width: 100%;
+    border: 1px solid #ced4da;
+  }
+</style>
