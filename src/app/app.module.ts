@@ -148,10 +148,7 @@ import {AppCodeModule} from './blocks/app-code/app.code.component';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { UserComponent } from './demo/component/user/user.component';
-import { MissionComponent } from './demo/component/mission/mission.component';
 import { ClientComponent } from './demo/component/client/client.component';
-import { EmailComponent } from './demo/component/email/email.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -288,10 +285,7 @@ FullCalendarModule.registerPlugins([
         IconsComponent,
         BlocksComponent,
         BlockViewer,
-        UserComponent,
-        MissionComponent,
-        ClientComponent,
-        EmailComponent
+        ClientComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

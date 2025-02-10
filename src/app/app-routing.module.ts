@@ -30,10 +30,8 @@ import {AppCrudComponent} from './pages/app.crud.component';
 import {AppCalendarComponent} from './pages/app.calendar.component';
 import {AppTimelineDemoComponent} from './pages/app.timelinedemo.component';
 import {BlocksComponent} from './blocks/blocks/blocks.component';
-import { UserComponent } from './demo/component/user/user.component';
-import { MissionComponent } from './demo/component/mission/mission.component';
 import { ClientComponent } from './demo/component/client/client.component';
-import { EmailComponent } from './demo/component/email/email.component';
+
 
 
 @NgModule({
@@ -62,10 +60,7 @@ import { EmailComponent } from './demo/component/email/email.component';
                     {path: 'utilities/icons', component: IconsComponent},
                     {path: 'pages/empty', component: EmptyDemoComponent},
                     {path: 'pages/crud', component: AppCrudComponent},
-                    {path: 'pages/user', component: UserComponent},
-                    {path: 'pages/mission', component: MissionComponent},
                     {path: 'pages/client', component: ClientComponent},
-                    {path: 'pages/email', component: EmailComponent},
                     {path: 'pages/calendar', component: AppCalendarComponent},
                     {path: 'pages/timeline', component: AppTimelineDemoComponent},
                     {path: 'components/charts', component: ChartsDemoComponent},

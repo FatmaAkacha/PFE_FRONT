@@ -34,7 +34,7 @@
             </th>
             <th pSortableColumn="nom">Name <p-sortIcon field="nom"></p-sortIcon></th>
             <th pSortableColumn="adresse">Adresse <p-sortIcon field="adresse"></p-sortIcon></th>
-            <th pSortableColumn="numero_telephone">Numéro Téléphone <p-sortIcon field="numero_telephone"></p-sortIcon></th>
+            <th pSortableColumn="numero_telephone">Phone number <p-sortIcon field="numero_telephone"></p-sortIcon></th>
             <th pSortableColumn="logo">Logo <p-sortIcon field="logo"></p-sortIcon></th>
             <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
             <th>Action</th>
@@ -47,7 +47,7 @@
             </td>
             <td><span class="p-column-title">Name</span>{{client.nom}}</td>
             <td><span class="p-column-title">Adresse</span>{{client.adresse}}</td>
-            <td><span class="p-column-title">Numéro Téléphone</span>{{client.numero_telephone}}</td>
+            <td><span class="p-column-title">Phone number</span>{{client.numero_telephone}}</td>
             <td>
               <span class="p-column-title">Logo</span>
               <ng-container *ngIf="client.logo">
@@ -82,9 +82,9 @@
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.adresse">Adresse is required.</small>
         </div>
         <div class="field">
-          <label for="numero_telephone">Numéro Téléphone</label>
+          <label for="numero_telephone">Phone number</label>
           <input type="text" pInputText id="numero_telephone" [(ngModel)]="client.numero_telephone" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.numero_telephone}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.numero_telephone">Numéro Téléphone is required.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.numero_telephone">Phone number is required.</small>
         </div>
         <div class="field">
           <label for="logo">Logo</label>
