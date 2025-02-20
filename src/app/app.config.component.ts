@@ -20,7 +20,7 @@ import {Subscription} from 'rxjs';
                 <p-tabView id="config-form-tabs">
                     <p-tabPanel header="Light or Dark">
                         <h1>Light or Dark</h1>
-                        <p>Mirage offers all dark dashboard &amp; theme design for dark lovers.</p>
+                        <p>This application offers all dark dashboard &amp; theme design for dark lovers.</p>
                         <div class="grid justify-content-center align-items-center">
                             <div class="col col-fixed">
                                 <a href="#" class="layout-config-option layout-config-option-image" (click)="changeLayout($event, false)">

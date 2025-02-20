@@ -1,9 +1,13 @@
-import {NgModule} from '@angular/core';
+import {NgModule, APP_INITIALIZER} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
+import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
+import { initializeKeycloak } from './app-init';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './AuthInterceptor';
 
 // PrimeNG Components for demos
 import {AccordionModule} from 'primeng/accordion';
@@ -244,6 +248,7 @@ FullCalendarModule.registerPlugins([
         TreeModule,
         TreeTableModule,
         VirtualScrollerModule,
+        KeycloakAngularModule,
     ],
     declarations: [
         AppComponent,
@@ -289,6 +294,14 @@ FullCalendarModule.registerPlugins([
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
+        KeycloakService,
+        {
+          provide: APP_INITIALIZER,
+          useFactory: initializeKeycloak,
+          deps: [KeycloakService],
+          multi: true,
+        },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         CountryService, CustomerService, EventService, IconService, NodeService,
         PhotoService, ProductService, MenuService, BreadcrumbService, ConfigService
     ],

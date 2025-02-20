@@ -10,7 +10,7 @@ import {AppMainComponent} from './app.main.component';
 					<div class="layout-topbar-logo-wrapper">
 						<a href="#" class="layout-topbar-logo">
 							<img src="assets/layout/images/logo-mirage@2x.png" alt="mirage-layout" />
-							<span class="app-name">Mirage</span>
+							<span class="app-name">Application</span>
 						</a>
 					</div>
 

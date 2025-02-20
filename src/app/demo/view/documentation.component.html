@@ -13,7 +13,6 @@
                 the command below to set it up.</p>
 
 <app-code ngPreserveWhitespaces ngNonBindable lang="markup">
-npm install -g @angular/cli
 </app-code>
 
             <p>Once CLI is ready in your system, extract the contents of the Mirage zip file distribution, cd to the directory,
@@ -90,10 +89,7 @@ Run 'ng help' for more options.
 
 <div style="height:400px;overflow: auto;">
 <app-code  ngPreserveWhitespaces ngNonBindable lang="javascript">
-@Component(&#123;
-    selector: 'app-menu',
-    templateUrl: './app.menu.component.html'
-&#125;)
+
 export class AppMenuComponent implements OnInit &#123;
 
     model: any[];
@@ -214,8 +210,7 @@ export class AppMenuComponent implements OnInit &#123;
 
           <p>Install PrimeNG</p>
 <app-code ngPreserveWhitespaces ngNonBindable lang="markup">
-npm install primeng@latest --save
-npm install primeicons@latest --save
+
 </app-code>
 
           <p>Add PrimeNG CSS at styles section in angular.json.</p>
@@ -294,8 +289,7 @@ $primaryButtonActiveBgColor:#263951;
 $primaryButtonActiveBorderColor:#263951;
 $primaryButtonFocusBorderShadow:rgba(22,107,212,.5);
 
-@import '../../sass/variables/_theme_light';
-@import '../../sass/theme/_theme';
+
 </app-code>
 </div>
 
@@ -358,8 +352,7 @@ $primaryColor:#5e81ac;
 $primaryLightColor:#809bbd;
 $primaryTextColor:#ffffff;
 
-@import '../../../sass/variables/_layout_light';
-@import '../../../sass/layout/_layout';
+
 </app-code>
 
             <p><i>_layout_light.scss</i> contains the shared variables of the layout themes with a light color scheme.</p>
@@ -383,7 +376,7 @@ $contentAltBorderColor:#e5e9f0;
 $dividerColor:rgba(145,153,169,0.3);
 $menuShadow:3px 0 5px 0 rgba(33, 35, 39, 0.15);
 
-@import '../overrides/layout_variables';
+
 </app-code>
 
             <p><i>_layout_dark.scss</i> contains the shared variables of the layout themes with a light color scheme.</p>
@@ -407,7 +400,6 @@ $contentAltBorderColor:#434c5e;
 $dividerColor:rgba(90,101,124,0.3);
 $menuShadow:3px 0 5px 0 rgba(33, 35, 39, 0.3);
 
-@import '../overrides/layout_variables';
 </app-code>
             
             <p><i>theme/_variables_light.scss</i> contains the shared variables of the component themes with a light color scheme.</p>
@@ -1308,7 +1300,6 @@ $splitterGutterHandleBg:$shade300;
     $pinBgColor:#ffffff;
     $pinIconColor:#2e3440;
 
-    @import '../_menu_theme';
 &#125;
 </app-code>
 
@@ -1335,7 +1326,6 @@ $splitterGutterHandleBg:$shade300;
     $pinBgColor:#ffffff;
     $pinIconColor:#2e3440;
 
-    @import '../_menu_theme';
 &#125;
 </app-code>
 
@@ -1344,12 +1334,8 @@ $splitterGutterHandleBg:$shade300;
                 The items are dynamically generated using a BreadcrumbService where each main page that goes into the router-outlet should provide a collection of MenuItem instances.
                 Here is an example component that updates the breadcrumb.</p>
 <app-code  ngPreserveWhitespaces ngNonBindable lang="javascript">
-import &#123;Component&#125; from '@angular/core';
 import &#123;BreadcrumbService&#125; from '../../breadcrumb.service';
 
-@Component(&#123;
-    templateUrl: './controlpanel.component.html'
-&#125;)
 export class ControlPanelComponent &#123;
 
     constructor(private breadcrumbService: BreadcrumbService) &#123;
