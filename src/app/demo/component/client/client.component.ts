@@ -20,6 +20,7 @@ export class ClientComponent implements OnInit {
   submitted: boolean;
   cols: any[];
   rowsPerPageOptions = [5, 10, 20];
+  uploadedFiles: any[] = [];
 
   constructor(
     private clientService: DataService, 
@@ -129,4 +130,11 @@ export class ClientComponent implements OnInit {
     }
     return index;
   }
+  onUpload(event) {
+    for (const file of event.files) {
+        this.uploadedFiles.push(file);
+    }
+    this.messageService.add({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+}
+
 }

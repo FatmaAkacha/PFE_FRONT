@@ -35,7 +35,7 @@
             <th pSortableColumn="nom">Name <p-sortIcon field="nom"></p-sortIcon></th>
             <th pSortableColumn="adresse">Adresse <p-sortIcon field="adresse"></p-sortIcon></th>
             <th pSortableColumn="numero_telephone">Phone number <p-sortIcon field="numero_telephone"></p-sortIcon></th>
-            <th pSortableColumn="logo">Logo <p-sortIcon field="logo"></p-sortIcon></th>
+            <th pSortableColumn="logo">Tax number <p-sortIcon field="logo"></p-sortIcon></th>
             <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
             <th>Action</th>
           </tr>
@@ -49,12 +49,12 @@
             <td><span class="p-column-title">Adresse</span>{{client.adresse}}</td>
             <td><span class="p-column-title">Phone number</span>{{client.numero_telephone}}</td>
             <td>
-              <span class="p-column-title">Logo</span>
+              <span class="p-column-title">Tax number</span>
               <ng-container *ngIf="client.logo">
                 <img src="{{ client.logo }}" alt="Logo" style="max-height: 50px; max-width: 100px;">
               </ng-container>
               <ng-container *ngIf="!client.logo">
-                <span class="text-muted">Import JPG</span>
+                <span class="text-muted">No Logo</span>
               </ng-container>
             </td>
                         <td><span class="p-column-title">Email</span>{{client.email}}</td>
@@ -87,10 +87,22 @@
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.numero_telephone">Phone number is required.</small>
         </div>
         <div class="field">
-          <label for="logo">Logo</label>
-          <input type="file" pFileUpload mode="basic" name="demo[]" (uploadHandler)="onFileUpload($event)" accept="image/jpeg,image/png" [ngClass]="{'ng-invalid ng-dirty': submitted && !client.logo}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.logo">Logo is required.</small>
-        </div>
+          <label for="logo">Tax number</label>
+          <!-- Remplacer input type="file" par p-fileUpload -->
+          <p-fileUpload name="logo" url="./upload.php" 
+                        (onUpload)="onUpload($event)" 
+                        accept="image/jpeg, image/png" 
+                        [multiple]="false" 
+                        [maxFileSize]="1000000">
+              <ng-template pTemplate="content">
+                  <ul *ngIf="uploadedFiles.length">
+                      <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+                  </ul>
+              </ng-template>
+          </p-fileUpload>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.logo">Tax number is required.</small>
+      </div>
+      
         
         <div class="field">
           <label for="email">Email</label>
