@@ -153,6 +153,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { ClientComponent } from './demo/component/client/client.component';
+import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
+import { ProduitComponent } from './demo/component/produit/produit.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -290,7 +292,9 @@ FullCalendarModule.registerPlugins([
         IconsComponent,
         BlocksComponent,
         BlockViewer,
-        ClientComponent
+        ClientComponent,
+        FournisseurComponent,
+        ProduitComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

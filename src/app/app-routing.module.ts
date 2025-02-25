@@ -31,6 +31,8 @@ import {AppCalendarComponent} from './pages/app.calendar.component';
 import {AppTimelineDemoComponent} from './pages/app.timelinedemo.component';
 import {BlocksComponent} from './blocks/blocks/blocks.component';
 import { ClientComponent } from './demo/component/client/client.component';
+import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
+import { ProduitComponent } from './demo/component/produit/produit.component';
 
 
 
@@ -61,6 +63,9 @@ import { ClientComponent } from './demo/component/client/client.component';
                     {path: 'pages/empty', component: EmptyDemoComponent},
                     {path: 'pages/crud', component: AppCrudComponent},
                     {path: 'pages/client', component: ClientComponent},
+                    {path: 'pages/fournisseur', component: FournisseurComponent},
+                    {path: 'pages/produit', component: ProduitComponent},
+
                     {path: 'pages/calendar', component: AppCalendarComponent},
                     {path: 'pages/timeline', component: AppTimelineDemoComponent},
                     {path: 'components/charts', component: ChartsDemoComponent},

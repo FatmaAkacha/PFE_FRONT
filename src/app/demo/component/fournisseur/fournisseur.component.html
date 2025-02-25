@@ -1,0 +1,139 @@
+<div class="grid">
+    <div class="col-12">
+      <div class="card">
+        <p-toast></p-toast>
+        <p-toolbar styleClass="mb-4">
+          <ng-template pTemplate="left">
+            <div class="my-2">
+              <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+              <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedFournisseurs()" [disabled]="!selectedFournisseurs || !selectedFournisseurs.length"></button>
+            </div>
+          </ng-template>
+  
+          <ng-template pTemplate="right">
+            <button pButton pRipple label="Import" icon="pi pi-upload" class="p-button-help mr-2"></button>
+            <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
+                (click)="dt.exportCSV()"></button>
+          </ng-template>
+        </p-toolbar>
+  
+        <p-table #dt [value]="fournisseurs" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','address','phone','matricule_fiscal','email']" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedFournisseurs" selectionMode="multiple" [rowHover]="true" dataKey="id">
+          <ng-template pTemplate="caption">
+            <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+              <h5 class="m-0">Manage Fournisseurs</h5>
+              <span class="block mt-2 md:mt-0 p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+              </span>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 3rem">
+                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+              </th>
+              <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="address">address <p-sortIcon field="address"></p-sortIcon></th>
+              <th pSortableColumn="phone">Phone number <p-sortIcon field="phone"></p-sortIcon></th>
+              <th pSortableColumn="matricule_fiscal">matricule_fiscal <p-sortIcon field="matricule_fiscal"></p-sortIcon></th>
+              <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+              <th>Action</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-fournisseur>
+            <tr>
+              <td>
+                <p-tableCheckbox [value]="fournisseur"></p-tableCheckbox>
+              </td>
+              <td><span class="p-column-title">Name</span>{{fournisseur.name}}</td>
+              <td><span class="p-column-title">address</span>{{fournisseur.address}}</td>
+              <td><span class="p-column-title">Phone number</span>{{fournisseur.phone}}</td>
+              <td>
+                <span class="p-column-title">Fiscal ID</span>
+                <ng-container *ngIf="fournisseur.matricule_fiscal">
+                  <img src="{{ fournisseur.matricule_fiscal }}" alt="matricule_fiscal" style="max-height: 50px; max-width: 100px;">
+                </ng-container>
+                <ng-container *ngIf="!fournisseur.matricule_fiscal">
+                  <span class="text-muted">No Fiscal ID</span>
+                </ng-container>
+              </td>
+              <td><span class="p-column-title">Email</span>{{fournisseur.email}}</td>
+              <td>
+                <div class="flex">
+                  <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editFournisseur(fournisseur)"></button>
+                  <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteFournisseur(fournisseur)"></button>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+  
+      <p-dialog [(visible)]="fournisseurDialog" [style]="{width: '450px'}" header="Fournisseur Details" [modal]="true" class="p-fluid">
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label for="name">Name</label>
+            <input type="text" pInputText id="name" [(ngModel)]="fournisseur.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.name}" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.name">Name is required.</small>
+          </div>
+          <div class="field">
+            <label for="address">Address</label>
+            <input type="text" pInputText id="address" [(ngModel)]="fournisseur.address" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.address}" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.address">address is required.</small>
+          </div>
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input type="text" pInputText id="phone" [(ngModel)]="fournisseur.phone" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.phone}" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.phone">Phone number is required.</small>
+          </div>
+          <div class="field">
+            <label for="matricule_fiscal">Fiscal ID</label>
+            <p-fileUpload name="matricule_fiscal" url="./upload.php" 
+                          (onUpload)="onUpload($event)" 
+                          accept="image/jpeg, image/png" 
+                          [multiple]="false" 
+                          [maxFileSize]="1000000">
+              <ng-template pTemplate="content">
+                  <ul *ngIf="uploadedFiles.length">
+                      <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+                  </ul>
+              </ng-template>
+            </p-fileUpload>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.matricule_fiscal">matricule_fiscal is required.</small>
+          </div>
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" pInputText id="email" [(ngModel)]="fournisseur.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.email}" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.email">Email is required.</small>
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFournisseur()"></button>
+        </ng-template>
+      </p-dialog>
+  
+      <p-dialog [(visible)]="deleteFournisseurDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="fournisseur">Are you sure you want to delete <b>{{fournisseur.name}}</b>?</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteFournisseurDialog = false"></button>
+          <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
+        </ng-template>
+      </p-dialog>
+  
+      <p-dialog [(visible)]="deleteFournisseursDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span>Are you sure you want to delete the selected fournisseurs?</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteFournisseursDialog = false"></button>
+          <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDeleteSelected()"></button>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+  
