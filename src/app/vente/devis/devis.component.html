@@ -53,11 +53,6 @@
             <label>Adresse</label>
             <input pInputText [value]="selectedClient?.adresse || ''" [disabled]="true">
         </div>
-
-        <div class="col-12 md:col-4">
-          <label>Personne à contacter</label>
-          <input pInputText [value]="selectedClient?.contact || ''" [disabled]="true">
-        </div>
       </div>
 
       <div class="grid formgrid p-fluid">
@@ -114,6 +109,7 @@
       <th>PUHT/U</th>
       <th>TVA %</th>
       <th>TTC</th>
+      <th>Timbre Fiscal</th>
       <th>Action</th>
     </tr>
   </ng-template>
@@ -126,6 +122,7 @@
       <td>{{ item.produit.prix }}</td>
       <td>{{ tva }}</td>
       <td>{{ item.prixTotal }}</td>
+      <td>1 DT</td>
       <td>
         <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning p-mr-2"
           (click)="modifierProduit(item)">
@@ -141,4 +138,6 @@
 
     </div>
   </div>
+  <button pButton label="Valider" icon="pi pi-check" (click)="validerDevis()"></button>
+
 </div>

@@ -7,6 +7,7 @@ import { Produit } from 'src/app/demo/domain/produit';
 import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-devis',
@@ -44,7 +45,8 @@ export class DevisComponent implements OnInit {
     private fb: FormBuilder,
     private devisService: DevisService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private router: Router
   ) {
     this.devisForm = this.fb.group({
       client: [null]
@@ -71,9 +73,7 @@ export class DevisComponent implements OnInit {
     this.loadClients();
     this.loadProduits();
     this.loadDevis();
-    this.formatOrderNumber();
-    this.incrementOrderNumber();
-  }
+    this.formatOrderNumber();  }
   
 
   generatePDF() {
@@ -251,5 +251,8 @@ export class DevisComponent implements OnInit {
     }
   }
   
-  
+  validerDevis() {
+    // Optionnel: vous pouvez stocker les données du devis ou effectuer des traitements ici avant la redirection.
+    this.router.navigate(['/vente/facture', this.formattedOrderNumber]);
+  }
 }

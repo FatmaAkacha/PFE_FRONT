@@ -34,6 +34,7 @@ import { ClientComponent } from './demo/component/client/client.component';
 import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
 import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
+import { FactureComponent } from './vente/facture/facture.component';
 
 
 
@@ -67,7 +68,7 @@ import { DevisComponent } from './vente/devis/devis.component';
                     {path: 'pages/fournisseur', component: FournisseurComponent},
                     {path: 'pages/produit', component: ProduitComponent},
                     {path: 'vente/devis', component: DevisComponent},
-
+                    { path: 'vente/facture/:orderNumber', component: FactureComponent }, 
                     {path: 'pages/calendar', component: AppCalendarComponent},
                     {path: 'pages/timeline', component: AppTimelineDemoComponent},
                     {path: 'components/charts', component: ChartsDemoComponent},

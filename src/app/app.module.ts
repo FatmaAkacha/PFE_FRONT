@@ -157,6 +157,7 @@ import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.c
 import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FactureComponent } from './vente/facture/facture.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -298,7 +299,8 @@ FullCalendarModule.registerPlugins([
         ClientComponent,
         FournisseurComponent,
         ProduitComponent,
-        DevisComponent
+        DevisComponent,
+        FactureComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
