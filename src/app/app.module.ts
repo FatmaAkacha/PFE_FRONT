@@ -155,6 +155,8 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { ClientComponent } from './demo/component/client/client.component';
 import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
 import { ProduitComponent } from './demo/component/produit/produit.component';
+import { DevisComponent } from './vente/devis/devis.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -164,6 +166,7 @@ FullCalendarModule.registerPlugins([
 
 @NgModule({
     imports: [
+        ReactiveFormsModule,
         BrowserModule,
         FormsModule,
         AppRoutingModule,
@@ -294,7 +297,8 @@ FullCalendarModule.registerPlugins([
         BlockViewer,
         ClientComponent,
         FournisseurComponent,
-        ProduitComponent
+        ProduitComponent,
+        DevisComponent
     ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},

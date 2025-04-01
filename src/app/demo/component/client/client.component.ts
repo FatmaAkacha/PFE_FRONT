@@ -39,11 +39,15 @@ export class ClientComponent implements OnInit {
     });
 
     this.cols = [
-      { field: 'nom', header: 'Name' },
+      { field: 'id', header: 'ID' },
+      { field: 'nom', header: 'Nom' },
+      { field: 'raison_sociale', header: 'Raison Sociale' },
       { field: 'adresse', header: 'Adresse' },
-      { field: 'numero_telephone', header: 'Numéro Téléphone' },
+      { field: 'numero_telephone', header: 'Numéro de Téléphone' },
+      { field: 'contact', header: 'Contact' },
       { field: 'logo', header: 'Logo' },
-      { field: 'email', header: 'Email' }
+      { field: 'email', header: 'Email' },
+      { field: 'code', header: 'Code' }
     ];
   }
 

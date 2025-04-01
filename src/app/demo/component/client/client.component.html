@@ -32,7 +32,10 @@
             <th style="width: 3rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
+            <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
             <th pSortableColumn="nom">Name <p-sortIcon field="nom"></p-sortIcon></th>
+            <th pSortableColumn="raison_sociale">Raison Sociale <p-sortIcon field="raison_sociale"></p-sortIcon></th>
+            <th pSortableColumn="contact">Contact <p-sortIcon field="contact"></p-sortIcon></th>
             <th pSortableColumn="adresse">Adresse <p-sortIcon field="adresse"></p-sortIcon></th>
             <th pSortableColumn="numero_telephone">Phone number <p-sortIcon field="numero_telephone"></p-sortIcon></th>
             <th pSortableColumn="logo">Tax number <p-sortIcon field="logo"></p-sortIcon></th>
@@ -45,19 +48,23 @@
             <td>
               <p-tableCheckbox [value]="client"></p-tableCheckbox>
             </td>
+            <td><span class="p-column-title">Code</span>{{client.code}}</td>
             <td><span class="p-column-title">Name</span>{{client.nom}}</td>
+            <td><span class="p-column-title">Raison Sociale</span>{{client.raison_sociale}}</td>
+            <td><span class="p-column-title">Contact</span>{{client.contact}}</td>
             <td><span class="p-column-title">Adresse</span>{{client.adresse}}</td>
             <td><span class="p-column-title">Phone number</span>{{client.numero_telephone}}</td>
             <td>
               <span class="p-column-title">Tax number</span>
               <ng-container *ngIf="client.logo">
-                <img src="{{ client.logo }}" alt="Logo" style="max-height: 50px; max-width: 100px;">
+                <img *ngIf="client.logo" [src]="getImageUrl(client.logo)" alt="Matricule fiscale" width="100">
               </ng-container>
               <ng-container *ngIf="!client.logo">
                 <span class="text-muted">No Logo</span>
               </ng-container>
             </td>
-                        <td><span class="p-column-title">Email</span>{{client.email}}</td>
+            
+            <td><span class="p-column-title">Email</span>{{client.email}}</td>
             <td>
               <div class="flex">
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editClient(client)"></button>
@@ -72,9 +79,22 @@
     <p-dialog [(visible)]="clientDialog" [style]="{width: '450px'}" header="Client Details" [modal]="true" class="p-fluid">
       <ng-template pTemplate="content">
         <div class="field">
+          <label for="code">Code</label>
+          <input type="text" pInputText id="code" [(ngModel)]="client.code" />
+        </div>
+        <div class="field">
           <label for="nom">Name</label>
           <input type="text" pInputText id="nom" [(ngModel)]="client.nom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.nom}" />
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.nom">Name is required.</small>
+        </div>
+        <div class="field">
+          <label for="raison_sociale">Raison Sociale</label>
+          <input type="text" pInputText id="raison_sociale" [(ngModel)]="client.raison_sociale" />
+        </div>
+        
+        <div class="field">
+          <label for="contact">Contact</label>
+          <input type="text" pInputText id="contact" [(ngModel)]="client.contact" />
         </div>
         <div class="field">
           <label for="adresse">Adresse</label>
