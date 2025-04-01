@@ -73,7 +73,17 @@ export class DevisComponent implements OnInit {
     this.loadClients();
     this.loadProduits();
     this.loadDevis();
-    this.formatOrderNumber();  }
+  
+    const savedOrderNumber = localStorage.getItem('currentOrderNumber');
+    if (savedOrderNumber) {
+      this.currentOrderNumber = parseInt(savedOrderNumber, 10);
+    } else {
+      this.currentOrderNumber = 1;
+    }
+  
+    this.formatOrderNumber();
+  }
+  
   
 
   generatePDF() {
@@ -234,6 +244,7 @@ export class DevisComponent implements OnInit {
   incrementOrderNumber() {
     this.currentOrderNumber++;
     this.formatOrderNumber();
+    localStorage.setItem('currentOrderNumber', this.currentOrderNumber.toString());
   }
 
   formatOrderNumber() {
@@ -252,7 +263,14 @@ export class DevisComponent implements OnInit {
   }
   
   validerDevis() {
-    // Optionnel: vous pouvez stocker les données du devis ou effectuer des traitements ici avant la redirection.
+    localStorage.setItem('factureClient', JSON.stringify(this.selectedClient));
+    localStorage.setItem('factureProduits', JSON.stringify(this.devisProduits));
+    localStorage.setItem('factureOrderNumber', this.formattedOrderNumber);
+  
     this.router.navigate(['/vente/facture', this.formattedOrderNumber]);
+  
+    this.incrementOrderNumber();
   }
+  
+  
 }
