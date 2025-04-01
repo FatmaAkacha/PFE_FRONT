@@ -152,19 +152,74 @@ export class DevisComponent implements OnInit {
   }
 
   ajouterProduit(produit: Produit) {
+    // Vérification si la quantité sélectionnée ne dépasse pas le stock ou le seuil
     const produitExistant = this.devisProduits.find(p => p.produit.id === produit.id);
+  
+    // Si le produit existe déjà dans la liste, on vérifie s'il peut être ajouté sans dépasser le stock ou le seuil
     if (produitExistant) {
+      const newQuantite = produitExistant.quantite + 1;
+  
+      if (newQuantite > produit.quantitystock) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Quantité non valide',
+          detail: `La quantité demandée dépasse le stock disponible (${produit.quantitystock}).`
+        });
+        return; // Ne pas ajouter si la quantité dépasse le stock
+      }
+  
+      if (produitExistant.quantite + 1 > produit.seuil) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Attention!',
+          detail: `Vous dépassez le seuil recommandé (${produit.seuil}).`
+        });
+      }
+  
       produitExistant.quantite++;
       produitExistant.prixTotal = produitExistant.quantite * produit.prix;
     } else {
+      // Si le produit n'existe pas encore dans la liste, on l'ajoute avec la quantité 1
+      if (produit.quantitystock <= 0) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Stock insuffisant',
+          detail: 'Il n\'y a pas assez de stock disponible pour ce produit.'
+        });
+        return; // Ne pas ajouter si le stock est épuisé
+      }
+  
+      // Vérifier que la quantité ne dépasse pas le stock
+      if (produit.quantitystock < 1) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Stock insuffisant',
+          detail: `Le stock de ${produit.nom} est insuffisant.`
+        });
+        return;
+      }
+  
+      // Vérification du seuil
+      if (1 > produit.seuil) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Attention!',
+          detail: `Vous avez dépassé le seuil recommandé pour ce produit (${produit.seuil}).`
+        });
+      }
+  
+      // Ajouter le produit avec la quantité 1 et calculer le prix total
       this.devisProduits.push({
         produit,
         quantite: 1,
         prixTotal: produit.prix
       });
     }
+  
+    // Recalculer le total
     this.calculerTotal();
   }
+  
 
   supprimerProduit(produit: DevisProduit) {
     this.devisProduits = this.devisProduits.filter(p => p !== produit);
