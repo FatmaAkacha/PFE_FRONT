@@ -126,5 +126,19 @@
     </ng-template>
   </p-table>
 
-  <button pButton label="Valider" icon="pi pi-check" class="btn-valider" (click)="validerDevis()"></button>
+  <button 
+  pButton 
+  label="Gérer" 
+  icon="pi pi-check" 
+  class="btn-valider" 
+  (click)="confirmerEtValiderDevis()">
+</button>
 </div>
+<p-confirmDialog 
+  header="Confirmation" 
+  icon="pi pi-exclamation-triangle" 
+  acceptLabel="Oui" 
+  rejectLabel="Non">
+</p-confirmDialog>
+
+

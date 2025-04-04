@@ -35,6 +35,7 @@ import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.c
 import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
 import { FactureComponent } from './vente/facture/facture.component';
+import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
 
 
 
@@ -68,6 +69,7 @@ import { FactureComponent } from './vente/facture/facture.component';
                     {path: 'pages/fournisseur', component: FournisseurComponent},
                     {path: 'pages/produit', component: ProduitComponent},
                     {path: 'vente/devis', component: DevisComponent},
+                    { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
                     { path: 'vente/facture/:orderNumber', component: FactureComponent }, 
                     {path: 'pages/calendar', component: AppCalendarComponent},
                     {path: 'pages/timeline', component: AppTimelineDemoComponent},

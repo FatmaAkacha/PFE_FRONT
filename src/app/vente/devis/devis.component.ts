@@ -36,9 +36,9 @@ export class DevisComponent implements OnInit {
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
   deviseOptions = [
+    { label: 'Dinar Tunisien (DT)', value: 'TND' },
     { label: 'Euro (€)', value: 'EUR' },
-    { label: 'Dollar ($)', value: 'USD' },
-    { label: 'Dinar Tunisien (DT)', value: 'TND' }
+    { label: 'Dollar ($)', value: 'USD' }
   ];
 
   constructor(
@@ -63,7 +63,7 @@ export class DevisComponent implements OnInit {
       date: '',
       etat: '', 
       preparateur: '',
-      devise: 'EUR',          
+      devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
     };
@@ -71,8 +71,10 @@ export class DevisComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClients();
-    this.loadProduits();
+    this.loadProduits(); // Charge tous les produits disponibles
     this.loadDevis();
+  
+    this.produitsClient = this.produits; // Initialisez avec tous les produits
   
     const savedOrderNumber = localStorage.getItem('currentOrderNumber');
     if (savedOrderNumber) {
@@ -83,6 +85,7 @@ export class DevisComponent implements OnInit {
   
     this.formatOrderNumber();
   }
+  
   
   
 
@@ -154,18 +157,19 @@ export class DevisComponent implements OnInit {
   onClientSelect(client: Client) {
     this.selectedClient = client;
     this.devisForm.patchValue({ client: client.id });
-    this.devisService.getProduitsByClient(client.id).subscribe(data => {
-      this.produitsClient = data;
+  
+    // Charger tous les produits, indépendamment du client sélectionné
+    this.produitsClient = this.produits; // Afficher tous les produits
+    
+    // Calculer la somme du stock total si nécessaire
     this.totalStock = this.produitsClient.reduce((sum, produit) => sum + produit.quantitystock, 0);
-
-    });
   }
+  
 
   ajouterProduit(produit: Produit) {
     // Vérification si la quantité sélectionnée ne dépasse pas le stock ou le seuil
     const produitExistant = this.devisProduits.find(p => p.produit.id === produit.id);
   
-    // Si le produit existe déjà dans la liste, on vérifie s'il peut être ajouté sans dépasser le stock ou le seuil
     if (produitExistant) {
       const newQuantite = produitExistant.quantite + 1;
   
@@ -175,10 +179,10 @@ export class DevisComponent implements OnInit {
           summary: 'Quantité non valide',
           detail: `La quantité demandée dépasse le stock disponible (${produit.quantitystock}).`
         });
-        return; // Ne pas ajouter si la quantité dépasse le stock
+        return;
       }
   
-      if (produitExistant.quantite + 1 > produit.seuil) {
+      if (newQuantite > produit.seuil) {
         this.messageService.add({
           severity: 'warn',
           summary: 'Attention!',
@@ -189,17 +193,16 @@ export class DevisComponent implements OnInit {
       produitExistant.quantite++;
       produitExistant.prixTotal = produitExistant.quantite * produit.prix;
     } else {
-      // Si le produit n'existe pas encore dans la liste, on l'ajoute avec la quantité 1
       if (produit.quantitystock <= 0) {
         this.messageService.add({
           severity: 'error',
           summary: 'Stock insuffisant',
           detail: 'Il n\'y a pas assez de stock disponible pour ce produit.'
         });
-        return; // Ne pas ajouter si le stock est épuisé
+        return;
       }
   
-      // Vérifier que la quantité ne dépasse pas le stock
+      // Limiter la quantité d'ajout selon le stock
       if (produit.quantitystock < 1) {
         this.messageService.add({
           severity: 'error',
@@ -226,11 +229,9 @@ export class DevisComponent implements OnInit {
       });
     }
   
-    // Recalculer le total
     this.calculerTotal();
   }
   
-
   supprimerProduit(produit: DevisProduit) {
     this.devisProduits = this.devisProduits.filter(p => p !== produit);
     this.calculerTotal();
@@ -255,7 +256,28 @@ export class DevisComponent implements OnInit {
   modifierProduit(produit: DevisProduit) {
     const quantite = prompt('Modifier la quantité', produit.quantite.toString());
     if (quantite) {
-      produit.quantite = parseInt(quantite, 10);
+      const newQuantite = parseInt(quantite, 10);
+  
+      // Limiter la quantité à la quantité en stock
+      if (newQuantite > produit.produit.quantitystock) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Quantité non valide',
+          detail: `La quantité demandée dépasse le stock disponible (${produit.produit.quantitystock}).`
+        });
+        return;
+      }
+  
+      // Vérification du seuil
+      if (newQuantite > produit.produit.seuil) {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Attention!',
+          detail: `Vous avez dépassé le seuil recommandé pour ce produit (${produit.produit.seuil}).`
+        });
+      }
+  
+      produit.quantite = newQuantite;
       produit.prixTotal = produit.quantite * produit.produit.prix;
       this.calculerTotal();
       this.messageService.add({ severity: 'info', summary: 'Modification', detail: 'Produit modifié' });
@@ -267,9 +289,30 @@ export class DevisComponent implements OnInit {
     localStorage.setItem('factureProduits', JSON.stringify(this.devisProduits));
     localStorage.setItem('factureOrderNumber', this.formattedOrderNumber);
   
-    this.router.navigate(['/vente/facture', this.formattedOrderNumber]);
+    this.router.navigate(['/vente/bon-livraison', this.formattedOrderNumber]);
   
     this.incrementOrderNumber();
+  }
+  
+  
+  confirmerEtValiderDevis() {
+    this.confirmationService.confirm({
+      message: 'Voulez-vous transformer en bon de livraison ?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Oui',
+      rejectLabel: 'Non',
+      accept: () => {
+        this.validerDevis();  // Fonction existante qui gère la redirection
+      },
+      reject: () => {
+        this.messageService.add({ 
+          severity: 'info', 
+          summary: 'Annulé', 
+          detail: 'Le devis n’a pas été transformé.' 
+        });
+      }
+    });
   }
   
   

@@ -90,6 +90,8 @@ import {TooltipModule} from 'primeng/tooltip';
 import {TreeModule} from 'primeng/tree';
 import {TreeTableModule} from 'primeng/treetable';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
+import { MessageService } from 'primeng/api';
+
 
 // Application Components
 import {AppComponent} from './app.component';
@@ -158,6 +160,9 @@ import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FactureComponent } from './vente/facture/facture.component';
+import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
+import { BonCommandeFournisseurComponent } from './achat/bon-commande-fournisseur/bon-commande-fournisseur.component';
+import { BonReceptionComponent } from './achat/bon-reception/bon-reception.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -300,8 +305,10 @@ FullCalendarModule.registerPlugins([
         FournisseurComponent,
         ProduitComponent,
         DevisComponent,
-        FactureComponent
-    ],
+        FactureComponent,
+        BonLivraisonComponent,
+        BonCommandeFournisseurComponent,
+        BonReceptionComponent    ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,
@@ -313,7 +320,7 @@ FullCalendarModule.registerPlugins([
         },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, MenuService, BreadcrumbService, ConfigService
+        PhotoService, ProductService, MenuService, BreadcrumbService, ConfigService,MessageService
     ],
     bootstrap: [AppComponent]
 })
