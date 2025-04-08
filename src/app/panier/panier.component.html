@@ -1,0 +1,32 @@
+<div class="card">
+    <h2>Mon Panier</h2>
+  
+    <ng-container *ngIf="produitsCommandes.length > 0; else panierVide">
+      <div *ngFor="let item of produitsCommandes; let i = index" class="p-3 border-bottom-1">
+        <div class="flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ item.produit.nom }}</strong> <br>
+            <small>Quantité : {{ item.quantit }}</small> <br>
+            <small>Prix unitaire : {{ item.produit.prix | currency:'EUR' }}</small>
+          </div>
+          <div>
+            <strong>{{ item.prixTotal | currency:'EUR' }}</strong>
+            <button pButton icon="pi pi-trash" class="p-button-danger ml-2" (click)="retirerProduit(i)"></button>
+          </div>
+        </div>
+      </div>
+  
+      <div class="mt-3 flex justify-content-between align-items-center">
+        <h3>Total : {{ getTotal() | currency:'EUR' }}</h3>
+        <div class="flex gap-2">
+          <button pButton label="Vider le panier" icon="pi pi-times" class="p-button-secondary" (click)="viderPanier()"></button>
+          <button pButton label="Valider la commande" icon="pi pi-check" class="p-button-success" (click)="validerCommande()"></button>
+        </div>
+      </div>
+    </ng-container>
+  
+    <ng-template #panierVide>
+      <p>Votre panier est vide.</p>
+    </ng-template>
+  </div>
+  

@@ -1,4 +1,4 @@
-<div class="bon-commande-container">
+<div class="bon-commande-container"> 
   <div class="bon-commande-header">
     <h2>Bon de Commande Client N°{{ formattedOrderNumber }}</h2>
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
@@ -69,31 +69,8 @@
     </div>
   </div>
 
-  <h3>Produits du Client</h3>
-  <p-table [value]="produitsClient" responsiveLayout="scroll" class="produit-table">
-    <ng-template pTemplate="header">
-      <tr>
-        <th>Code</th>
-        <th>Nom</th>
-        <th>Stock</th>
-        <th>Prix</th>
-        <th>Action</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-produit>
-      <tr>
-        <td>{{ produit.id }}</td>
-        <td>{{ produit.nom }}</td>
-        <td>{{ produit.quantitystock }}</td>
-        <td>{{ produit.prix }}</td>
-        <td>
-          <button pButton type="button" icon="pi pi-plus" class="p-button-rounded p-button-success" (click)="ajouterProduit(produit)"></button>
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
-
   <h3>Produits Commandés</h3>
+
   <p-table [value]="devisProduits" responsiveLayout="scroll" class="commande-table">
     <ng-template pTemplate="header">
       <tr>
@@ -104,7 +81,6 @@
         <th>PUHT/U</th>
         <th>TVA %</th>
         <th>TTC</th>
-        <th>Timbre Fiscal</th>
         <th>Action</th>
       </tr>
     </ng-template>
@@ -117,7 +93,6 @@
         <td>{{ item.produit.prix }}</td>
         <td>{{ tva }}</td>
         <td>{{ item.prixTotal }}</td>
-        <td>1 DT</td>
         <td>
           <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="modifierProduit(item)"></button>
           <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
@@ -125,20 +100,21 @@
       </tr>
     </ng-template>
   </p-table>
+  <br>
 
   <button 
   pButton 
-  label="Gérer" 
-  icon="pi pi-check" 
-  class="btn-valider" 
-  (click)="confirmerEtValiderDevis()">
+  label="Voir Produits" 
+  icon="pi pi-eye" 
+  class="p-button-info" 
+  (click)="voirProduitsCommandes()">
 </button>
+
 </div>
+
 <p-confirmDialog 
   header="Confirmation" 
   icon="pi pi-exclamation-triangle" 
   acceptLabel="Oui" 
   rejectLabel="Non">
 </p-confirmDialog>
-
-

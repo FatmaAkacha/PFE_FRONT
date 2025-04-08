@@ -71,10 +71,20 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Vente', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
                 items: [
-                    { label: 'Devis', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/devis'] },
+                    { label: 'Bon de Commande', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bon-commande'] },
                     { label: 'Bon de Livraison', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bondeLivraison'] },
                     { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
-                    //{ label: 'Product', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/produit'] },
+                    { label: 'Document', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/document'] },
+                    { label: 'Produits Commandés', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/produits-commandes'] },
+
+                ]
+            },
+            {
+                label: 'Achat', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
+                items: [
+                    { label: 'Bon de Commande Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-commande-fournisseur'] },
+                    { label: 'Bon de Reception', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-reception'] },
+                    { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
                 ]
             },
 

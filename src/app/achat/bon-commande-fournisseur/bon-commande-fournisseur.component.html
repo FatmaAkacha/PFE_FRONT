@@ -1,1 +1,23 @@
-<p>bon-commande-fournisseur works!</p>
+<p-confirmDialog></p-confirmDialog>
+<h2>Bon de Commande Fournisseur N°{{ formattedOrderNumber }}</h2>
+<!-- Infos Fournisseur -->
+<p>{{ fournisseur.name }}</p>
+
+<!-- Liste des produits -->
+<p-table [value]="produitsCommandes">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Code</th><th>Nom</th><th>Quantité</th><th>Prix</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-prod>
+    <tr>
+      <td>{{ prod.produit.id }}</td>
+      <td>{{ prod.produit.nom }}</td>
+      <td>{{ prod.quantite }}</td>
+      <td>{{ prod.produit.prix }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<button pButton label="Confirmer Réception" icon="pi pi-check" (click)="confirmerReception()"></button>

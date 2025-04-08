@@ -36,8 +36,11 @@ import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
 import { FactureComponent } from './vente/facture/facture.component';
 import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
-
-
+import { BonCommandeFournisseurComponent } from './achat/bon-commande-fournisseur/bon-commande-fournisseur.component';
+import { BonReceptionComponent } from './achat/bon-reception/bon-reception.component';
+import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-commandes.component';
+import { DocumentComponent } from './document/document.component';
+import { PanierComponent } from './panier/panier.component';
 
 @NgModule({
     imports: [
@@ -68,9 +71,18 @@ import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.compo
                     {path: 'pages/client', component: ClientComponent},
                     {path: 'pages/fournisseur', component: FournisseurComponent},
                     {path: 'pages/produit', component: ProduitComponent},
-                    {path: 'vente/devis', component: DevisComponent},
+                    {path: 'vente/bon-commande', component: DevisComponent},
                     { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
                     { path: 'vente/facture/:orderNumber', component: FactureComponent }, 
+                    { path: 'vente/produits-commandes', component: ProduitsCommandesComponent },
+
+
+                    { path: 'vente/document', component: DocumentComponent },
+                    { path: 'vente/panier', component: PanierComponent },
+
+                    { path: 'achat/bon-commande-fournisseur', component: BonCommandeFournisseurComponent }, 
+                    { path: 'achat/bon-reception/:id', component: BonReceptionComponent }, 
+
                     {path: 'pages/calendar', component: AppCalendarComponent},
                     {path: 'pages/timeline', component: AppTimelineDemoComponent},
                     {path: 'components/charts', component: ChartsDemoComponent},

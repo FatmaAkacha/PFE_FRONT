@@ -1,0 +1,78 @@
+<div class="container">
+    <h2>Gestion des Documents</h2>
+  
+    <!-- Sélectionner une classe de document -->
+    <div class="mb-3">
+      <label for="documentClassSelect" class="form-label">Sélectionner une Classe de Document</label>
+      <select id="documentClassSelect" class="form-select" [(ngModel)]="selectedDocumentClassId" (change)="filterByDocumentClass()">
+        <option value="">Toutes les classes</option>
+        <option *ngFor="let documentClass of documentClasses" [value]="documentClass.id">
+          {{ documentClass.libelle }}
+        </option>
+      </select>
+    </div>
+  
+    <!-- Liste des documents -->
+    <div class="mb-3">
+      <h4>Liste des Documents</h4>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Libellé</th>
+            <th>Code</th>
+            <th>Classe</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let document of documents">
+            <td>{{ document.libelle }}</td>
+            <td>{{ document.code }}</td>
+            <td>{{ document.documentClass?.libelle }}</td>
+            <td>
+              <button class="btn btn-primary" (click)="selectDocument(document)">Modifier</button>
+              <button class="btn btn-danger" (click)="deleteDocument(document.id)">Supprimer</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Formulaire d'ajout / modification de document -->
+    <div *ngIf="selectedDocument || newDocument.id === 0" class="mb-3">
+      <h4>{{ selectedDocument ? 'Modifier le Document' : 'Ajouter un Nouveau Document' }}</h4>
+      <form (ngSubmit)="selectedDocument ? updateDocument() : addDocument()">
+        <div class="form-group">
+          <label for="libelle">Libellé</label>
+          <input type="text" id="libelle" class="form-control" [(ngModel)]="newDocument.libelle" name="libelle" required>
+        </div>
+  
+        <div class="form-group">
+          <label for="code">Code</label>
+          <input type="text" id="code" class="form-control" [(ngModel)]="newDocument.code" name="code" required>
+        </div>
+  
+        <!-- Sélectionner la classe de document -->
+        <div class="form-group">
+          <label for="documentClass">Classe de Document</label>
+          <select id="documentClass" class="form-select" [(ngModel)]="newDocument.document_class_id" name="document_class_id" required>
+            <option value="">Choisir une classe</option>
+            <option *ngFor="let documentClass of documentClasses" [value]="documentClass.id">
+              {{ documentClass.libelle }}
+            </option>
+          </select>
+        </div>
+  
+        <div class="form-group">
+          <button type="submit" class="btn btn-success">
+            {{ selectedDocument ? 'Mettre à jour' : 'Ajouter' }}
+          </button>
+          <button *ngIf="selectedDocument" class="btn btn-secondary" (click)="selectedDocument = null">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  
+  </div>
+  

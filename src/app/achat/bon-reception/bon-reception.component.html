@@ -1,1 +1,18 @@
-<p>bon-reception works!</p>
+<h2>Bon de Réception N°{{ formattedOrderNumber }}</h2>
+<p>{{ fournisseur.name }}</p>
+
+<p-table [value]="produits">
+  <ng-template pTemplate="header">
+    <tr><th>Code</th><th>Nom</th><th>Quantité</th><th>Prix</th></tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-p>
+    <tr>
+      <td>{{ p.produit.id }}</td>
+      <td>{{ p.produit.nom }}</td>
+      <td>{{ p.quantite }}</td>
+      <td>{{ p.produit.prix }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<button pButton label="Générer Facture" icon="pi pi-file" (click)="confirmerFacture()"></button>

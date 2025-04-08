@@ -19,6 +19,7 @@ export class ListDemoComponent implements OnInit {
     sortField: string;
 
     sourceCities: any[];
+    
 
     targetCities: any[];
 

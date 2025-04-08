@@ -163,6 +163,9 @@ import { FactureComponent } from './vente/facture/facture.component';
 import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
 import { BonCommandeFournisseurComponent } from './achat/bon-commande-fournisseur/bon-commande-fournisseur.component';
 import { BonReceptionComponent } from './achat/bon-reception/bon-reception.component';
+import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-commandes.component';
+import { DocumentComponent } from './document/document.component';
+import { PanierComponent } from './panier/panier.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -308,7 +311,10 @@ FullCalendarModule.registerPlugins([
         FactureComponent,
         BonLivraisonComponent,
         BonCommandeFournisseurComponent,
-        BonReceptionComponent    ],
+        BonReceptionComponent,
+        ProduitsCommandesComponent,
+        DocumentComponent,
+        PanierComponent    ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

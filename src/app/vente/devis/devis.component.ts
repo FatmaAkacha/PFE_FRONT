@@ -8,6 +8,11 @@ import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { Router } from '@angular/router';
+import { DocumentService } from 'src/app/demo/service/document.service';
+import { Document } from 'src/app/demo/domain/document';
+import { DocumentClass } from 'src/app/demo/domain/documentClass';
+import { PanierService } from 'src/app/demo/service/panier.service';
+
 
 @Component({
   selector: 'app-devis',
@@ -18,10 +23,9 @@ import { Router } from '@angular/router';
 export class DevisComponent implements OnInit {
   devisDialog: boolean = false;
   devisList: Devis[] = [];
-  devis: Devis;
   devisForm: FormGroup;
   clients: Client[] = [];
-  produits: Produit[] = [];
+  produitsDansCommande: Produit[] = [];
   produitsClient: Produit[] = [];
   devisProduits: DevisProduit[] = [];
   tva = 20;
@@ -32,6 +36,10 @@ export class DevisComponent implements OnInit {
   currentOrderNumber: number = 1;
   formattedOrderNumber: string = '';
   currentDate: Date = new Date(); 
+  afficherProduits: boolean = false;
+  documentClasses: DocumentClass[] = [];
+  bonDeCommandeClassId: number = 0;
+
   totalStock: number = 0;
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
@@ -40,12 +48,28 @@ export class DevisComponent implements OnInit {
     { label: 'Euro (€)', value: 'EUR' },
     { label: 'Dollar ($)', value: 'USD' }
   ];
+  devis: Devis = {
+    client_id: 1, // à adapter dynamiquement
+    totalHT: 100,
+    tva: 20,
+    totalTTC: 120,
+    date: new Date().toISOString().slice(0, 10),
+    produits: [
+      {
+        produit: { id: 1, nom: 'Produit A', prix: 50 }, // exemple
+        quantite: 2,
+        prixTotal: 100
+      }
+    ]
+  };
 
   constructor(
     private fb: FormBuilder,
     private devisService: DevisService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private documentService: DocumentService,
+    private panierService: PanierService,
     private router: Router
   ) {
     this.devisForm = this.fb.group({
@@ -70,23 +94,60 @@ export class DevisComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getDocumentClasses();
     this.loadClients();
-    this.loadProduits(); // Charge tous les produits disponibles
+    this.loadProduits(); 
     this.loadDevis();
   
-    this.produitsClient = this.produits; // Initialisez avec tous les produits
+    // 🔽 Récupération des produits du panier
+    const produitsDuPanier = this.panierService.getProduitsCommandes();
+    this.produitsDansCommande = produitsDuPanier;
+    this.produitsClient = produitsDuPanier;
+  
+    // 🔥 Intégrer automatiquement dans le bon de commande (devisProduits)
+    produitsDuPanier.forEach(produit => {
+      this.devisProduits.push({
+        produit,
+        quantite: 1,
+        prixTotal: produit.prix
+      });
+    });
+  
+    // Recalculer les totaux
+    this.calculerTotal();
   
     const savedOrderNumber = localStorage.getItem('currentOrderNumber');
-    if (savedOrderNumber) {
-      this.currentOrderNumber = parseInt(savedOrderNumber, 10);
-    } else {
-      this.currentOrderNumber = 1;
-    }
-  
+    this.currentOrderNumber = savedOrderNumber ? parseInt(savedOrderNumber, 10) : 1;
     this.formatOrderNumber();
+
+    console.log(this.devisProduits);
+
   }
   
   
+  
+  getDocumentClasses() {
+    this.documentService.getDocumentClasses().subscribe({
+      next: (classes: DocumentClass[]) => {
+        console.log('Classes de document récupérées:', classes);
+        this.documentClasses = classes;
+  
+        // Trouver dynamiquement la classe "Bon de commande"
+        const bonDeCommande = this.documentClasses.find(dc =>
+          dc.libelle?.toLowerCase().trim() === 'bon de commande' 
+               );
+  
+        if (bonDeCommande) {
+          this.bonDeCommandeClassId = bonDeCommande.id;
+        } else {
+          console.error("Classe de document 'Bon de commande' non trouvée.");
+        }
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des classes de document :", err);
+      }
+    });
+  }
   
 
   generatePDF() {
@@ -140,7 +201,7 @@ export class DevisComponent implements OnInit {
   }
 
   loadProduits() {
-    this.devisService.getProduits().subscribe(data => this.produits = data);
+    this.devisService.getProduits().subscribe(data => this.produitsDansCommande = data);
   }
 
   loadDevis() {
@@ -159,7 +220,7 @@ export class DevisComponent implements OnInit {
     this.devisForm.patchValue({ client: client.id });
   
     // Charger tous les produits, indépendamment du client sélectionné
-    this.produitsClient = this.produits; // Afficher tous les produits
+    this.produitsClient = this.produitsDansCommande; // Afficher tous les produits
     
     // Calculer la somme du stock total si nécessaire
     this.totalStock = this.produitsClient.reduce((sum, produit) => sum + produit.quantitystock, 0);
@@ -167,6 +228,7 @@ export class DevisComponent implements OnInit {
   
 
   ajouterProduit(produit: Produit) {
+    console.log('Produit ajouté:', produit);
     // Vérification si la quantité sélectionnée ne dépasse pas le stock ou le seuil
     const produitExistant = this.devisProduits.find(p => p.produit.id === produit.id);
   
@@ -285,14 +347,18 @@ export class DevisComponent implements OnInit {
   }
   
   validerDevis() {
-    localStorage.setItem('factureClient', JSON.stringify(this.selectedClient));
-    localStorage.setItem('factureProduits', JSON.stringify(this.devisProduits));
-    localStorage.setItem('factureOrderNumber', this.formattedOrderNumber);
-  
-    this.router.navigate(['/vente/bon-livraison', this.formattedOrderNumber]);
-  
-    this.incrementOrderNumber();
+    this.devisService.saveDevis(this.devis).subscribe({
+      next: (response) => {
+        console.log('Devis sauvegardé :', response);
+        alert('Devis enregistré avec succès !');
+      },
+      error: (err) => {
+        console.error('Erreur lors de l\'enregistrement du devis :', err);
+        alert('Erreur lors de l\'enregistrement du devis.');
+      }
+    });
   }
+  
   
   
   confirmerEtValiderDevis() {
@@ -315,5 +381,43 @@ export class DevisComponent implements OnInit {
     });
   }
   
+  voirProduitsCommandes() {
+    this.router.navigate(['/vente/produits-commandes'], {
+      state: { produits: this.devisProduits.map(d => d.produit) }
+    });
+  }
+  
+  saveBonDeCommandeAsDocument() {
+    if (!this.bonDeCommandeClassId) {
+      console.error("Impossible de sauvegarder : ID 'Bon de commande' non chargé.");
+      return;
+    }
+  
+    const document: Document = {
+      id: 0,
+      document_class_id: this.bonDeCommandeClassId,
+      codeclassedocument: 'BC',
+      libelle: `Bon de commande Client N°${this.formattedOrderNumber}`,
+      code: this.formattedOrderNumber,
+      documentClass: {} as any
+    };
+  
+    this.documentService.saveDocument(document).subscribe({
+      next: (res) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Le bon de commande a été enregistré dans les documents.'
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Échec lors de l\'enregistrement du document.'
+        });
+      }
+    });
+  }  
   
 }
