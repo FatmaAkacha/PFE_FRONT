@@ -103,6 +103,23 @@ export class DataService {
   deleteProduit(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrlProduits}/${id}`, { headers: this.getHeaders() });
   }
+  
+  insertProduitForm(formData: FormData): Observable<Produit> {
+    return this.httpClient.post<Produit>(this.apiUrlProduits, formData, {
+      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) // PAS de 'Content-Type'
+    });
+  }
+  
+  updateProduitForm(id: string, formData: FormData): Observable<Produit> {
+    return this.httpClient.post<Produit>(`${this.apiUrlProduits}/${id}?_method=PUT`, formData, {
+      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) // PAS de 'Content-Type'
+    });
+  }
+  getImageSrc(produit: Produit): string | undefined {
+    return typeof produit.image_data === 'string' ? produit.image_data : undefined;
+  }
+  
+  
 
   // =======================
   // ✅ Gestion de l'Authentification
