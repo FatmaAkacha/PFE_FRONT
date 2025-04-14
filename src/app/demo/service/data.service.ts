@@ -51,7 +51,26 @@ export class DataService {
   deleteClient(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrlClients}/${id}`, { headers: this.getHeaders() });
   }
-
+  insertClientForm(formData: FormData): Observable<Client> {
+    return this.httpClient.post<Client>(this.apiUrlClients, formData, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.token}` // ne pas ajouter 'Content-Type'
+      })
+    });
+  }
+  
+  updateClientForm(id: string, formData: FormData): Observable<Client> {
+    return this.httpClient.post<Client>(`${this.apiUrlClients}/${id}?_method=PUT`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.token}` // ne pas ajouter 'Content-Type'
+      })
+    });
+  }
+  getClientLogoSrc(client: Client): string | undefined {
+    return typeof client.logo === 'string'
+      ? `${this.apiUrlClients}/${client.id}/serve-logo`
+      : undefined;
+  }
   // =======================
   // ✅ Gestion des Fournisseurs
   // =======================

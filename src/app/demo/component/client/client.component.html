@@ -5,66 +5,96 @@
       <p-toolbar styleClass="mb-4">
         <ng-template pTemplate="left">
           <div class="my-2">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-            <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedClients()" [disabled]="!selectedClients || !selectedClients.length"></button>
+            <button pButton pRipple label="New" icon="pi pi-plus" 
+                    class="p-button-success mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Delete" icon="pi pi-trash" 
+                    class="p-button-danger" (click)="deleteSelectedClients()" 
+                    [disabled]="!selectedClients || !selectedClients.length"></button>
           </div>
         </ng-template>
-
         <ng-template pTemplate="right">
           <button pButton pRipple label="Import" icon="pi pi-upload" class="p-button-help mr-2"></button>
-          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help"
-              (click)="dt.exportCSV()"></button>
-      </ng-template>
-  </p-toolbar>
-
-      <p-table #dt [value]="clients" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['nom','adresse','numero_telephone','logo','email']" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedClients" selectionMode="multiple" [rowHover]="true" dataKey="id">
-        <ng-template pTemplate="caption">
-          <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 class="m-0">Manage Clients</h5>
-            <span class="block mt-2 md:mt-0 p-input-icon-left">
-              <i class="pi pi-search"></i>
-              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
-            </span>
-          </div>
+          <button pButton pRipple label="Export" icon="pi pi-upload" 
+                  class="p-button-help" (click)="dt.exportCSV()"></button>
         </ng-template>
+      </p-toolbar>
+
+      <p-table #dt 
+         [value]="clients"
+         [columns]="cols"
+         responsiveLayout="scroll"
+         [rows]="10"
+         [paginator]="true"
+         [rowsPerPageOptions]="rowsPerPageOptions"
+         [showCurrentPageReport]="true"
+         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+         [globalFilterFields]="['nom','adresse','numero_telephone','logo','email']"
+         [(selection)]="selectedClients"
+         selectionMode="multiple"
+         [rowHover]="true"
+         dataKey="id">
+
+  <ng-template pTemplate="caption">
+    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+      <h5 class="m-0">Gestion des clients</h5>
+      <span class="block mt-2 md:mt-0 p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input pInputText type="text" placeholder="Rechercher..." (input)="dt.filterGlobal($event.target.value, 'contains')" />
+      </span>
+    </div>
+  </ng-template>
+
         <ng-template pTemplate="header">
           <tr>
             <th style="width: 3rem">
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
-            <th pSortableColumn="code">Code <p-sortIcon field="code"></p-sortIcon></th>
-            <th pSortableColumn="nom">Name <p-sortIcon field="nom"></p-sortIcon></th>
-            <th pSortableColumn="raison_sociale">Raison Sociale <p-sortIcon field="raison_sociale"></p-sortIcon></th>
-            <th pSortableColumn="contact">Contact <p-sortIcon field="contact"></p-sortIcon></th>
-            <th pSortableColumn="adresse">Adresse <p-sortIcon field="adresse"></p-sortIcon></th>
-            <th pSortableColumn="numero_telephone">Phone number <p-sortIcon field="numero_telephone"></p-sortIcon></th>
-            <th pSortableColumn="logo">Tax number <p-sortIcon field="logo"></p-sortIcon></th>
-            <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-            <th>Action</th>
+            <th pSortableColumn="code">
+              Code <p-sortIcon field="code"></p-sortIcon>
+            </th>
+            <th pSortableColumn="nom">
+              Name <p-sortIcon field="nom"></p-sortIcon>
+            </th>
+            <th pSortableColumn="raison_sociale">
+              Raison Sociale <p-sortIcon field="raison_sociale"></p-sortIcon>
+            </th>
+            <th pSortableColumn="contact">
+              Contact <p-sortIcon field="contact"></p-sortIcon>
+            </th>
+            <th pSortableColumn="adresse">
+              Adresse <p-sortIcon field="adresse"></p-sortIcon>
+            </th>
+            <th pSortableColumn="numero_telephone">
+              Phone number <p-sortIcon field="numero_telephone"></p-sortIcon>
+            </th>
+            <th >Logo </th>
+            <th pSortableColumn="email">
+              Email <p-sortIcon field="email"></p-sortIcon>
+            </th>
+            <th>
+              Action
+            </th>
           </tr>
         </ng-template>
+
         <ng-template pTemplate="body" let-client>
           <tr>
+            <td><p-tableCheckbox [value]="client"></p-tableCheckbox></td>
+            <td><span class="p-column-title">Code</span>{{ client.code }}</td>
+            <td><span class="p-column-title">Nom</span>{{ client.nom }}</td>
+            <td><span class="p-column-title">Raison Sociale</span>{{ client.raison_sociale }}</td>
+            <td><span class="p-column-title">Contact</span>{{ client.contact }}</td>
+            <td><span class="p-column-title">Adresse</span>{{ client.adresse }}</td>
+            <td><span class="p-column-title">Téléphone</span>{{ client.numero_telephone }}</td>
             <td>
-              <p-tableCheckbox [value]="client"></p-tableCheckbox>
+              <img *ngIf="client.logo"
+                   [src]="getLogoSrc(client)"
+                   alt="Logo de {{ client.nom }}"
+                   class="logo-img"
+                   style="width: 50px; height: 50px; object-fit: cover;" />
             </td>
-            <td><span class="p-column-title">Code</span>{{client.code}}</td>
-            <td><span class="p-column-title">Name</span>{{client.nom}}</td>
-            <td><span class="p-column-title">Raison Sociale</span>{{client.raison_sociale}}</td>
-            <td><span class="p-column-title">Contact</span>{{client.contact}}</td>
-            <td><span class="p-column-title">Adresse</span>{{client.adresse}}</td>
-            <td><span class="p-column-title">Phone number</span>{{client.numero_telephone}}</td>
-            <td>
-              <span class="p-column-title">Tax number</span>
-              <ng-container *ngIf="client.logo">
-                <img *ngIf="client.logo" [src]="getImageUrl(client.logo)" alt="Matricule fiscale" width="100">
-              </ng-container>
-              <ng-container *ngIf="!client.logo">
-                <span class="text-muted">No Logo</span>
-              </ng-container>
-            </td>
-            
-            <td><span class="p-column-title">Email</span>{{client.email}}</td>
+                       
+            <td><span class="p-column-title">Email</span>{{ client.email }}</td>
             <td>
               <div class="flex">
                 <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editClient(client)"></button>
@@ -74,89 +104,58 @@
           </tr>
         </ng-template>
       </p-table>
-    </div>
-
-    <p-dialog [(visible)]="clientDialog" [style]="{width: '450px'}" header="Client Details" [modal]="true" class="p-fluid">
-      <ng-template pTemplate="content">
-        <div class="field">
-          <label for="code">Code</label>
-          <input type="text" pInputText id="code" [(ngModel)]="client.code" />
-        </div>
-        <div class="field">
-          <label for="nom">Name</label>
-          <input type="text" pInputText id="nom" [(ngModel)]="client.nom" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.nom}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.nom">Name is required.</small>
-        </div>
-        <div class="field">
-          <label for="raison_sociale">Raison Sociale</label>
-          <input type="text" pInputText id="raison_sociale" [(ngModel)]="client.raison_sociale" />
-        </div>
-        
-        <div class="field">
-          <label for="contact">Contact</label>
-          <input type="text" pInputText id="contact" [(ngModel)]="client.contact" />
-        </div>
-        <div class="field">
-          <label for="adresse">Adresse</label>
-          <input type="text" pInputText id="adresse" [(ngModel)]="client.adresse" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.adresse}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.adresse">Adresse is required.</small>
-        </div>
-        <div class="field">
-          <label for="numero_telephone">Phone number</label>
-          <input type="text" pInputText id="numero_telephone" [(ngModel)]="client.numero_telephone" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.numero_telephone}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.numero_telephone">Phone number is required.</small>
-        </div>
-        <div class="field">
-          <label for="logo">Tax number</label>
-          <!-- Remplacer input type="file" par p-fileUpload -->
-          <p-fileUpload name="logo" url="./upload.php" 
-                        (onUpload)="onUpload($event)" 
-                        accept="image/jpeg, image/png" 
-                        [multiple]="false" 
-                        [maxFileSize]="1000000">
-              <ng-template pTemplate="content">
-                  <ul *ngIf="uploadedFiles.length">
-                      <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
-                  </ul>
-              </ng-template>
-          </p-fileUpload>
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.logo">Tax number is required.</small>
-      </div>
       
-        
+
+    <!-- Dialog pour la création/édition d'un client -->
+    <p-dialog [(visible)]="clientDialog" header="Détails du client" [modal]="true" [style]="{ width: '450px' }" class="p-fluid">
+      <ng-template pTemplate="content">
+        <div class="field" *ngFor="let field of ['code', 'nom', 'raison_sociale', 'contact', 'adresse', 'numero_telephone', 'email']">
+          <label [for]="field">{{ field | titlecase }}</label>
+          <input *ngIf="field !== 'email'" type="text" pInputText [id]="field" [(ngModel)]="client[field]" [required]="field === 'nom'" [ngClass]="{'ng-invalid ng-dirty' : submitted && !client[field]}" />
+          <input *ngIf="field === 'email'" type="email" pInputText id="email" [(ngModel)]="client.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.email}" />
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client[field]">Ce champ est requis.</small>
+        </div>
+    
         <div class="field">
-          <label for="email">Email</label>
-          <input type="email" pInputText id="email" [(ngModel)]="client.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.email}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client.email">Email is required.</small>
+          <label for="imageUpload">Logo</label>
+          <input type="file" id="imageUpload" accept="image/*" (change)="onLogoSelect($event)" class="p-inputtext p-component" />
+        </div>
+            
+        <!-- Prévisualisation avant enregistrement -->
+        <div class="field" *ngIf="previewLogoUrl">
+          <label>Prévisualisation</label>
+          <img [src]="previewLogoUrl" alt="Prévisualisation logo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;" />
         </div>
       </ng-template>
       <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text"(click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text"(click)="saveClient()"></button>
-    </ng-template>
-</p-dialog>  
+        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveClient()"></button>
+      </ng-template>
+    </p-dialog>
 
-<p-dialog [(visible)]="deleteClientDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
-  <div class="flex align-items-center justify-content-center">
-      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-      <span *ngIf="client">Are you sure you want to delete <b>{{client.nom}}</b>?</span>
-  </div>
-  <ng-template pTemplate="footer">
-      <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteClientDialog = false"></button>
-      <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes" (click)="confirmDelete()"></button>
-  </ng-template>
-</p-dialog>
+    <!-- Dialog pour la suppression d'un client -->
+    <p-dialog [(visible)]="deleteClientDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+      <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span *ngIf="client">Are you sure you want to delete <b>{{ client.nom }}</b>?</span>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteClientDialog = false" label="No"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDelete()" label="Yes"></button>
+      </ng-template>
+    </p-dialog>
 
-
-<p-dialog [(visible)]="deleteClientsDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
-    <div class="flex align-items-center justify-content-center">
+    <!-- Dialog pour la suppression des clients sélectionnés -->
+    <p-dialog [(visible)]="deleteClientsDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+      <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
         <span>Are you sure you want to delete the selected clients?</span>
-    </div>
-    <ng-template pTemplate="footer">
-        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No"(click)="deleteClientsDialog = false"></button>
-        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Yes"(click)="confirmDeleteSelected()"></button>
-    </ng-template>
-</p-dialog>
-</div>
+      </div>
+      <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteClientsDialog = false" label="No"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDeleteSelected()" label="Yes"></button>
+      </ng-template>
+    </p-dialog>
+    
+  </div>
 </div>

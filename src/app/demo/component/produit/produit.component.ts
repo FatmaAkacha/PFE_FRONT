@@ -91,7 +91,6 @@ export class ProduitComponent implements OnInit {
     if (file) {
       this.produit.image_data = file;
       const objectUrl = URL.createObjectURL(file);
-      // Créer une URL sécurisée pour la prévisualisation
       this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
       this.cdRef.detectChanges();
     }

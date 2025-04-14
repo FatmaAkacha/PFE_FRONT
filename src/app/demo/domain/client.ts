@@ -8,7 +8,7 @@ export interface Client {
   raison_sociale?: any;
   code?:any;
   contact?: any;
-  logo?: any;
+  logo?: string |File;
   email: any;
   produits?: Produit[];
 

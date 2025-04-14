@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Client } from '../../domain/client';
 import { DataService } from '../../service/data.service';
@@ -11,32 +12,36 @@ import { BreadcrumbService } from 'src/app/breadcrumb.service';
   providers: [MessageService, ConfirmationService],
 })
 export class ClientComponent implements OnInit {
-  clientDialog: boolean;
+  clientDialog: boolean = false;
   deleteClientDialog: boolean = false;
   deleteClientsDialog: boolean = false;
-  clients: Client[];
-  client: Client;
-  selectedClients: Client[];
-  submitted: boolean;
-  cols: any[];
+
+  clients: Client[] = [];
+  client: Client = {} as Client;
+  selectedClients: Client[] = [];
+
+  submitted: boolean = false;
+  cols: any[] = [];
   rowsPerPageOptions = [5, 10, 20];
+
   uploadedFiles: any[] = [];
+  previewLogoUrl: SafeUrl | null = null;
 
   constructor(
-    private clientService: DataService, 
+    private clientService: DataService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService, 
-    private breadcrumbService: BreadcrumbService
+    private confirmationService: ConfirmationService,
+    private breadcrumbService: BreadcrumbService,
+    private sanitizer: DomSanitizer,
+    private cdRef: ChangeDetectorRef
   ) {
     this.breadcrumbService.setItems([
       { label: 'Client', routerLink: ['/client'] }
     ]);
   }
 
-  ngOnInit() {
-    this.clientService.getClients().subscribe(clients => {
-      this.clients = clients as Client[];
-    });
+  ngOnInit(): void {
+    this.loadClients();
 
     this.cols = [
       { field: 'id', header: 'ID' },
@@ -51,94 +56,127 @@ export class ClientComponent implements OnInit {
     ];
   }
 
-  openNew() {
+  loadClients(): void {
+    this.clientService.getClients().subscribe(clients => {
+      this.clients = clients;
+    });
+  }
+
+  openNew(): void {
     this.client = {} as Client;
     this.submitted = false;
     this.clientDialog = true;
+    this.previewLogoUrl = null;
   }
 
-  deleteSelectedClients() {
+  getLogoSrc(client: Client): SafeUrl | string {
+    if (client.logo && typeof client.logo === 'string' && client.logo.trim() !== '') {
+      const src = `http://localhost:8000/storage/${client.logo}`;
+      return this.sanitizer.bypassSecurityTrustUrl(src);
+    }
+    return ''; // Si aucune image, ne pas afficher
+  }
+  
+  
+  
+
+  onLogoSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.client.logo = file;
+      const objectUrl = URL.createObjectURL(file);
+      this.previewLogoUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      this.cdRef.detectChanges();
+    }
+  }
+
+  deleteSelectedClients(): void {
     this.deleteClientsDialog = true;
   }
 
-  editClient(client: Client) {
+  editClient(client: Client): void {
     this.client = { ...client };
     this.clientDialog = true;
+    this.previewLogoUrl = this.getLogoSrc(client);
   }
 
-  deleteClient(client: Client) {
-    this.deleteClientDialog = true;
+  deleteClient(client: Client): void {
     this.client = { ...client };
+    this.deleteClientDialog = true;
   }
 
-
-  confirmDeleteSelected() {
+  confirmDeleteSelected(): void {
     this.deleteClientsDialog = false;
-    this.selectedClients.forEach(selectedClient => {
-      this.clientService.deleteClient(selectedClient.id).subscribe(() => {
-        this.clients = this.clients.filter(val => val.id !== selectedClient.id);
+    const toDelete = [...this.selectedClients];
+    toDelete.forEach(c => {
+      this.clientService.deleteClient(c.id).subscribe(() => {
+        this.clients = this.clients.filter(val => val.id !== c.id);
       });
     });
-    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Clients Deleted', life: 3000 });
-    this.selectedClients = null;
-}
+    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Clients supprimés', life: 3000 });
+    this.selectedClients = [];
+  }
 
-  confirmDelete() {
+  confirmDelete(): void {
     this.deleteClientDialog = false;
     this.clientService.deleteClient(this.client.id).subscribe(() => {
       this.clients = this.clients.filter(val => val.id !== this.client.id);
-      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Client Deleted', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Client supprimé', life: 3000 });
       this.client = {} as Client;
     });
   }
 
-  hideDialog() {
+  hideDialog(): void {
     this.clientDialog = false;
     this.submitted = false;
+    this.previewLogoUrl = null;
   }
 
-  saveClient() {
+  saveClient(): void {
     this.submitted = true;
 
-    if (this.client.nom.trim()) {
+    if (this.client.nom?.trim()) {
+      const formData = new FormData();
+      formData.append('nom', this.client.nom);
+      formData.append('raison_sociale', this.client.raison_sociale ?? '');
+      formData.append('adresse', this.client.adresse ?? '');
+      formData.append('numero_telephone', this.client.numero_telephone ?? '');
+      formData.append('contact', this.client.contact ?? '');
+      formData.append('email', this.client.email ?? '');
+      formData.append('code', this.client.code ?? '');
+
+      if (this.client.logo instanceof File) {
+        formData.append('logo', this.client.logo, this.client.logo.name);
+      }
+
       if (this.client.id) {
-        this.clientService.updateClient(this.client.id, this.client).subscribe(() => {
-          this.clients[this.findIndexById(this.client.id)] = this.client;
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Client Updated', life: 3000 });
-          this.refreshClientList();
+        this.clientService.updateClientForm(this.client.id, formData).subscribe(() => {
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Client modifié', life: 3000 });
+          this.loadClients();
         });
       } else {
-        this.clientService.insertClient(this.client).subscribe((newClient: Client) => {
+        this.clientService.insertClientForm(formData).subscribe((newClient: Client) => {
           this.clients.push(newClient);
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Client Created', life: 3000 });
-          this.refreshClientList();
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Client créé', life: 3000 });
+          this.loadClients();
         });
       }
 
       this.clientDialog = false;
       this.client = {} as Client;
+      this.previewLogoUrl = null;
     }
   }
 
-  refreshClientList() {
-    this.clientService.getClients().subscribe(clients => this.clients = clients as Client[]);
+  onUpload(event: any): void {
+    for (const file of event.files) {
+      this.uploadedFiles.push(file);
+    }
+    this.messageService.add({ severity: 'info', summary: 'Succès', detail: 'Fichier envoyé' });
   }
 
   findIndexById(id: string): number {
-    let index = -1;
-    for (let i = 0; i < this.clients.length; i++) {
-      if (this.clients[i].id === id) {
-        index = i;
-        break;
-      }
-    }
-    return index;
+    return this.clients.findIndex(c => c.id === id);
   }
-  onUpload(event) {
-    for (const file of event.files) {
-        this.uploadedFiles.push(file);
-    }
-    this.messageService.add({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
-}
-
 }
