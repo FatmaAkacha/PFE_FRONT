@@ -90,7 +90,7 @@ import {TooltipModule} from 'primeng/tooltip';
 import {TreeModule} from 'primeng/tree';
 import {TreeTableModule} from 'primeng/treetable';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 
 // Application Components
@@ -166,6 +166,7 @@ import { BonReceptionComponent } from './achat/bon-reception/bon-reception.compo
 import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-commandes.component';
 import { DocumentComponent } from './document/document.component';
 import { PanierComponent } from './panier/panier.component';
+import { CategorieComponent } from './demo/component/categorie/categorie.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -314,7 +315,8 @@ FullCalendarModule.registerPlugins([
         BonReceptionComponent,
         ProduitsCommandesComponent,
         DocumentComponent,
-        PanierComponent    ],
+        PanierComponent,
+        CategorieComponent    ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,
@@ -326,7 +328,7 @@ FullCalendarModule.registerPlugins([
         },
         { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
         CountryService, CustomerService, EventService, IconService, NodeService,
-        PhotoService, ProductService, MenuService, BreadcrumbService, ConfigService,MessageService
+        PhotoService, ProductService, MenuService, BreadcrumbService, ConfigService,MessageService,ConfirmationService
     ],
     bootstrap: [AppComponent]
 })

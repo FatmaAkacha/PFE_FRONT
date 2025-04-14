@@ -1,0 +1,67 @@
+<div class="grid">
+    <div class="col-12">
+      <div class="card">
+        <p-toast></p-toast>
+
+<div class="card">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <button pButton label="Nouvelle Catégorie" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+    </div>
+  </p-toolbar>
+
+  <p-table [value]="categories" [paginator]="true" [rows]="5" responsiveLayout="scroll" [showCurrentPageReport]="true"
+           currentPageReportTemplate="Affichage de {first} à {last} sur {totalRecords} catégories">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Nom</th>
+        <th>Description</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-cat>
+      <tr>
+        <td>{{ cat.nom }}</td>
+        <td>{{ cat.description }}</td>
+        <td>
+          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" (click)="editCategorie(cat)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteCategorieDialogOpen(cat)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Dialog pour ajouter/modifier une catégorie -->
+<p-dialog header="{{ categorie.id ? 'Modifier' : 'Nouvelle' }} Catégorie" [(visible)]="categorieDialog" [modal]="true" [closable]="false" [style]="{ width: '30vw' }" [responsive]="true">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="nom">Nom</label>
+      <input id="nom" type="text" pInputText [(ngModel)]="categorie.nom" required autofocus />
+      <small *ngIf="submitted && !categorie.nom" class="p-error">Le nom est requis.</small>
+    </div>
+    <div class="field">
+      <label for="description">Description</label>
+      <input id="description" type="text" pInputText [(ngModel)]="categorie.description" required autofocus />
+      <small *ngIf="submitted && !categorie.description" class="p-error">La description est requis.</small>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveCategorie()"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Dialog de confirmation de suppression -->
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<p-dialog [(visible)]="deleteCategorieDialog" [style]="{ width: '350px' }" header="Confirmer la suppression" [modal]="true">
+  <div class="confirmation-content">
+    <i class="pi pi-exclamation-triangle mr-2" style="font-size: 2rem;"></i>
+    <span>Êtes-vous sûr de vouloir supprimer <b>{{ categorie.nom }}</b> ?</span>
+  </div>
+  <ng-template pTemplate="footer">
+    <button pButton label="Non" icon="pi pi-times" class="p-button-text" (click)="deleteCategorieDialog = false"></button>
+    <button pButton label="Oui" icon="pi pi-check" class="p-button-text" (click)="confirmDelete()"></button>
+  </ng-template>
+</p-dialog>

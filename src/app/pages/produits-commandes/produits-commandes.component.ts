@@ -4,6 +4,7 @@ import { Produit } from 'src/app/demo/domain/produit';
 import { DataService } from 'src/app/demo/service/data.service';
 import { PanierService } from 'src/app/demo/service/panier.service';
 import { MessageService } from 'primeng/api';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 
 @Component({
@@ -28,34 +29,44 @@ export class ProduitsCommandesComponent implements OnInit {
     private router: Router,
     private dataService: DataService,
     private panierService: PanierService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private sanitizer: DomSanitizer
   ) {
     const nav = this.router.getCurrentNavigation();
     this.produits = nav?.extras?.state?.['produits'] || [];
   }
 
   ngOnInit() {
-    this.produits.forEach(p => p.quantitystock = 1); // ou une quantité par défaut
     this.dataService.getProduits().subscribe(data => {
       this.produits = data.map((p: any) => ({
         ...p,
-        image: p.image || 'https://via.placeholder.com/150',
+        quantitystock: 1, // quantité par défaut
+        image: this.getImageUrl(p.image_data),
         rating: p.rating ?? (Math.floor(Math.random() * 5) + 1),
-        category: p.category || 'Général',
+        categorie: p.categorie ?? { id: 0, nom: 'Général' },
+        categorieNom: p.categorie?.nom ?? 'Général',
         inventoryStatus: p.inventoryStatus || (p.quantitystock && p.quantitystock > 0 ? 'INSTOCK' : 'OUTOFSTOCK')
       }));
     });
+  }  
+  getImageUrl(imageData: string): SafeUrl {
+    if (imageData) {
+      const fullUrl = `http://localhost:8000/storage/${imageData}`;
+      return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
+    }
+    return 'https://via.placeholder.com/150';
   }
+  
 
-  onAddToCart(product: any) {
+  onAddToCart(product: Produit) {
     const quantite = product.quantitystock || 1;
-    const produitCommande = {
-      produit: product,
-      quantite,
-      prixTotal: product.prix * quantite
+  
+    const produitCopie: Produit = {
+      ...product,
+      quantitystock: quantite // utiliser uniquement ce champ
     };
   
-    this.panierService.ajouterProduit(produitCommande); // 💡 ici
+    this.panierService.ajouterProduit(produitCopie);
   
     this.messageService.add({
       severity: 'success',
@@ -63,6 +74,7 @@ export class ProduitsCommandesComponent implements OnInit {
       detail: `${quantite} x ${product.nom} ajouté(s) au bon de commande`
     });
   }
+  
   
   
   

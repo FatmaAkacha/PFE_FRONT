@@ -41,6 +41,7 @@ import { BonReceptionComponent } from './achat/bon-reception/bon-reception.compo
 import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-commandes.component';
 import { DocumentComponent } from './document/document.component';
 import { PanierComponent } from './panier/panier.component';
+import { CategorieComponent } from './demo/component/categorie/categorie.component';
 
 @NgModule({
     imports: [
@@ -69,6 +70,7 @@ import { PanierComponent } from './panier/panier.component';
                     {path: 'pages/empty', component: EmptyDemoComponent},
                     {path: 'pages/crud', component: AppCrudComponent},
                     {path: 'pages/client', component: ClientComponent},
+                    {path: 'pages/categorie', component: CategorieComponent},
                     {path: 'pages/fournisseur', component: FournisseurComponent},
                     {path: 'pages/produit', component: ProduitComponent},
                     {path: 'vente/bon-commande', component: DevisComponent},

@@ -4,7 +4,7 @@
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
 
-  <button pButton label="Générer PDF" icon="pi pi-file-pdf" class="btn-pdf" (click)="generatePDF()"></button>
+  <button (click)="downloadBonDeCommande(devis.id)">Télécharger PDF</button>
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
@@ -88,11 +88,26 @@
       <tr>
         <td>{{ item.produit.id }}</td>
         <td>{{ item.produit.nom }}</td>
-        <td>{{ item.produit.quantitystock }}</td>
-        <td>{{ item.quantite }}</td>
-        <td>{{ item.produit.prix }}</td>
+        <td>{{ getStockRestant(item) }}</td>
+        <td>
+          <input type="number" 
+                 [(ngModel)]="item.quantite" 
+                 (ngModelChange)="mettreAJourProduit(item)" 
+                 [max]="item.produit.quantitystock"
+                 [min]="1"
+                 class="p-inputtext p-component" />
+        </td>
+
+        <td>
+          <input type="number" 
+                 [(ngModel)]="item.produit.prix" 
+                 (ngModelChange)="mettreAJourProduit(item)" 
+                 min="0"
+                 class="p-inputtext p-component" />
+        </td>
+
         <td>{{ tva }}</td>
-        <td>{{ item.prixTotal }}</td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
         <td>
           <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="modifierProduit(item)"></button>
           <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
@@ -109,7 +124,17 @@
   class="p-button-info" 
   (click)="voirProduitsCommandes()">
 </button>
+<br>
+<br>
 
+
+<button 
+  pButton 
+  label="Valider et Passer au Bon de Livraison" 
+  icon="pi pi-check" 
+  class="p-button-success" 
+  (click)="validerEtPasserALivraison()">
+</button>
 </div>
 
 <p-confirmDialog 
@@ -117,4 +142,6 @@
   icon="pi pi-exclamation-triangle" 
   acceptLabel="Oui" 
   rejectLabel="Non">
+  
 </p-confirmDialog>
+

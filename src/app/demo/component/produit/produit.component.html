@@ -20,7 +20,7 @@
 
       <!-- Tableau affichant les produits -->
       <p-table #dt [value]="produits" [columns]="cols" responsiveLayout="scroll" [rows]="10"
-               [globalFilterFields]="['nom','description','prix','quantitystock','seuil']"
+               [globalFilterFields]="['nom','description','prix','quantitystock','seuil','categorie']"
                [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
                [showCurrentPageReport]="true" 
                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
@@ -42,6 +42,9 @@
             </th>
             <th pSortableColumn="nom">
               Name <p-sortIcon field="nom"></p-sortIcon>
+            </th>
+            <th pSortableColumn="categorie">
+              Categories <p-sortIcon field="categorie"></p-sortIcon>
             </th>
             <th pSortableColumn="description">
               Description <p-sortIcon field="description"></p-sortIcon>
@@ -66,6 +69,7 @@
               <p-tableCheckbox [value]="produit"></p-tableCheckbox>
             </td>
             <td><span class="p-column-title">Name</span>{{ produit.nom }}</td>
+            <td><span class="p-column-title">Catégorie</span>{{ produit.categorie?.nom }}</td>
             <td><span class="p-column-title">Description</span>{{ produit.description }}</td>
             <td><span class="p-column-title">Price</span>{{ produit.prix }}</td>
             <td><span class="p-column-title">Stock Quantity</span>{{ produit.quantitystock }}</td>
@@ -96,6 +100,19 @@
                  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !produit.nom }" />
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !produit.nom">Name is required.</small>
         </div>
+        <div class="field">
+          <label for="categorie">Catégorie</label>
+          <p-dropdown
+            inputId="categorie"
+            [options]="categories"
+            optionLabel="nom"
+            placeholder="Sélectionner une catégorie"
+            [(ngModel)]="produit.categorie"
+            [ngClass]="{ 'ng-invalid ng-dirty': submitted && !produit.categorie }"
+          ></p-dropdown>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !produit.categorie">Catégorie requise.</small>
+        </div>
+        
         <div class="field">
           <label for="description">Description</label>
           <input type="text" pInputText id="description" [(ngModel)]="produit.description" required

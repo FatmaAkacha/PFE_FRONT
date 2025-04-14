@@ -1,3 +1,5 @@
+import { Categorie } from "./Categorie";
+
 export interface Produit {
   id?: any;
   nom: string;
@@ -7,6 +9,6 @@ export interface Produit {
   seuil?: number;
   image_data?: string |File ; 
   rating?: number;
-  category?: string;
   inventoryStatus?: string;
+  categorie: Categorie;
 }

@@ -24,6 +24,7 @@ export class DevisComponent implements OnInit {
   devisDialog: boolean = false;
   devisList: Devis[] = [];
   devisForm: FormGroup;
+  client: Client;
   clients: Client[] = [];
   produitsDansCommande: Produit[] = [];
   produitsClient: Produit[] = [];
@@ -39,8 +40,10 @@ export class DevisComponent implements OnInit {
   afficherProduits: boolean = false;
   documentClasses: DocumentClass[] = [];
   bonDeCommandeClassId: number = 0;
-
+  tauxEchange: number = 1;
   totalStock: number = 0;
+  dateLivraison: Date = new Date();
+
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
   deviseOptions = [
@@ -56,7 +59,14 @@ export class DevisComponent implements OnInit {
     date: new Date().toISOString().slice(0, 10),
     produits: [
       {
-        produit: { id: 1, nom: 'Produit A', prix: 50 }, // exemple
+        produit: { 
+          id: 1, 
+          nom: 'Produit A', 
+          prix: 50,
+          quantitystock: 100,
+          seuil: 20,
+          categorie: { id: 1, nom: 'Catégorie A' } // ← ici
+        },
         quantite: 2,
         prixTotal: 100
       }
@@ -94,7 +104,6 @@ export class DevisComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getDocumentClasses();
     this.loadClients();
     this.loadProduits(); 
     this.loadDevis();
@@ -108,8 +117,8 @@ export class DevisComponent implements OnInit {
     produitsDuPanier.forEach(produit => {
       this.devisProduits.push({
         produit,
-        quantite: 1,
-        prixTotal: produit.prix
+        quantite: produit.quantitystock,
+        prixTotal: produit.quantitystock * produit.prix 
       });
     });
   
@@ -124,76 +133,52 @@ export class DevisComponent implements OnInit {
 
   }
   
-  
-  
-  getDocumentClasses() {
-    this.documentService.getDocumentClasses().subscribe({
-      next: (classes: DocumentClass[]) => {
-        console.log('Classes de document récupérées:', classes);
-        this.documentClasses = classes;
-  
-        // Trouver dynamiquement la classe "Bon de commande"
-        const bonDeCommande = this.documentClasses.find(dc =>
-          dc.libelle?.toLowerCase().trim() === 'bon de commande' 
-               );
-  
-        if (bonDeCommande) {
-          this.bonDeCommandeClassId = bonDeCommande.id;
-        } else {
-          console.error("Classe de document 'Bon de commande' non trouvée.");
-        }
+  downloadBonDeCommande(devisId: number) {
+    console.log("Téléchargement du devis avec ID :", devisId); // Vérifie que ce n'est pas 0
+    this.devisService.downloadPDF(devisId).subscribe({
+      next: (response) => {
+        const blob = new Blob([response], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bon_de_commande_${devisId}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
       },
       error: (err) => {
-        console.error("Erreur lors du chargement des classes de document :", err);
+        console.error("Erreur lors du téléchargement :", err);
       }
     });
   }
+   
+  //getDocumentClasses() {
+   // this.documentService.getDocumentClasses().subscribe({
+    //  next: (classes: DocumentClass[]) => {
+       // console.log('Classes de document récupérées:', classes);
+     //   this.documentClasses = classes;
   
+        // Trouver dynamiquement la classe "Bon de commande"
+       // const bonDeCommande = this.documentClasses.find(dc =>
+         // dc.libelle?.toLowerCase().trim() === 'bon de commande' 
+           //    );
+  
+       //// if (bonDeCommande) {
+         // this.bonDeCommandeClassId = bonDeCommande.id;
+       // } else {
+         // console.error("Classe de document 'Bon de commande' non trouvée.");
+       // }
+     // },
+      //error: (err) => {
+      //  console.error("Erreur lors du chargement des classes de document :", err);
+     // }
+   // });
+ // }
 
-  generatePDF() {
-    const doc = new jsPDF();
-  
-    // Titre
-    doc.setFontSize(16);
-    doc.text(`Bon de Commande Client N°${this.formattedOrderNumber}`, 14, 20);
-    doc.text(`Date: ${this.currentDate.toLocaleDateString()}`, 14, 30);
-  
-    // Détails du client
-    doc.setFontSize(12);
-    doc.text(`Client: ${this.selectedClient.nom}`, 14, 40);
-    doc.text(`Code client: ${this.selectedClient.code}`, 14, 50);
-    doc.text(`Raison sociale: ${this.selectedClient.raison_sociale}`, 14, 60);
-    doc.text(`Téléphone: ${this.selectedClient.numero_telephone}`, 14, 70);
-    doc.text(`Adresse: ${this.selectedClient.adresse}`, 14, 80);
-  
-    // Ajouter un tableau pour les produits
-    const produitData = this.devisProduits.map(p => [
-      p.produit.id,
-      p.produit.nom,
-      p.produit.quantitystock,  // Assurez-vous que 'stock' est bien défini dans votre modèle Produit
-      p.quantite,
-      p.produit.prix,
-      this.tva,
-      p.prixTotal
-    ]);
-  
-    // Utilisation d'autoTable
-    autoTable(doc, {
-      startY: 90,  // Position initiale du tableau
-      head: [['Code', 'Désignation', 'Stock', 'Quantité', 'PUHT/U', 'TVA %', 'TTC']],
-      body: produitData,
-      didDrawPage: (data) => {
-        // Calculer la position après le tableau
-        const finalY = data.cursor.y;  // Position finale du tableau
-        doc.text(`Total HT: ${this.totalHT.toFixed(2)} ${this.devis.devise}`, 14, finalY + 10);
-        doc.text(`Total TTC: ${this.totalTTC.toFixed(2)} ${this.devis.devise}`, 14, finalY + 20);
-      }
-    });
-  
-    // Générer le PDF et l'afficher dans le navigateur
-    doc.save(`Bon_de_Commande_Client_${this.formattedOrderNumber}.pdf`);
+  getDocumentClassIdByLabel(label: string): number | null {
+    const docClass = this.documentClasses.find(dc =>
+      dc.libelle?.toLowerCase().trim() === label.toLowerCase().trim());
+    return docClass ? docClass.id : null;
   }
-  
   loadClients() {
     this.devisService.getClients().subscribe(data => {
       this.clients = data;
@@ -226,14 +211,14 @@ export class DevisComponent implements OnInit {
     this.totalStock = this.produitsClient.reduce((sum, produit) => sum + produit.quantitystock, 0);
   }
   
-
-  ajouterProduit(produit: Produit) {
+  ajouterProduit(produit: Produit, quantite: number) {
     console.log('Produit ajouté:', produit);
-    // Vérification si la quantité sélectionnée ne dépasse pas le stock ou le seuil
+  
+    // Vérifier si la quantité demandée ne dépasse pas le stock disponible
     const produitExistant = this.devisProduits.find(p => p.produit.id === produit.id);
   
     if (produitExistant) {
-      const newQuantite = produitExistant.quantite + 1;
+      const newQuantite = produitExistant.quantite + quantite;
   
       if (newQuantite > produit.quantitystock) {
         this.messageService.add({
@@ -244,54 +229,30 @@ export class DevisComponent implements OnInit {
         return;
       }
   
-      if (newQuantite > produit.seuil) {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Attention!',
-          detail: `Vous dépassez le seuil recommandé (${produit.seuil}).`
-        });
-      }
-  
-      produitExistant.quantite++;
+      produitExistant.quantite += quantite;
       produitExistant.prixTotal = produitExistant.quantite * produit.prix;
     } else {
-      if (produit.quantitystock <= 0) {
+      if (quantite > produit.quantitystock) {
         this.messageService.add({
           severity: 'error',
           summary: 'Stock insuffisant',
-          detail: 'Il n\'y a pas assez de stock disponible pour ce produit.'
+          detail: `La quantité demandée dépasse le stock disponible pour ce produit.`
         });
         return;
       }
   
-      // Limiter la quantité d'ajout selon le stock
-      if (produit.quantitystock < 1) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Stock insuffisant',
-          detail: `Le stock de ${produit.nom} est insuffisant.`
-        });
-        return;
-      }
-  
-      // Vérification du seuil
-      if (1 > produit.seuil) {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Attention!',
-          detail: `Vous avez dépassé le seuil recommandé pour ce produit (${produit.seuil}).`
-        });
-      }
-  
-      // Ajouter le produit avec la quantité 1 et calculer le prix total
       this.devisProduits.push({
         produit,
-        quantite: 1,
-        prixTotal: produit.prix
+        quantite,  // Quantité demandée par l'utilisateur
+        prixTotal: quantite * produit.prix
       });
     }
   
     this.calculerTotal();
+  }
+  
+  getStockRestant(item: DevisProduit): number {
+    return item.produit.quantitystock - item.quantite;
   }
   
   supprimerProduit(produit: DevisProduit) {
@@ -346,40 +307,6 @@ export class DevisComponent implements OnInit {
     }
   }
   
-  validerDevis() {
-    this.devisService.saveDevis(this.devis).subscribe({
-      next: (response) => {
-        console.log('Devis sauvegardé :', response);
-        alert('Devis enregistré avec succès !');
-      },
-      error: (err) => {
-        console.error('Erreur lors de l\'enregistrement du devis :', err);
-        alert('Erreur lors de l\'enregistrement du devis.');
-      }
-    });
-  }
-  
-  
-  
-  confirmerEtValiderDevis() {
-    this.confirmationService.confirm({
-      message: 'Voulez-vous transformer en bon de livraison ?',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Oui',
-      rejectLabel: 'Non',
-      accept: () => {
-        this.validerDevis();  // Fonction existante qui gère la redirection
-      },
-      reject: () => {
-        this.messageService.add({ 
-          severity: 'info', 
-          summary: 'Annulé', 
-          detail: 'Le devis n’a pas été transformé.' 
-        });
-      }
-    });
-  }
   
   voirProduitsCommandes() {
     this.router.navigate(['/vente/produits-commandes'], {
@@ -388,36 +315,71 @@ export class DevisComponent implements OnInit {
   }
   
   saveBonDeCommandeAsDocument() {
-    if (!this.bonDeCommandeClassId) {
-      console.error("Impossible de sauvegarder : ID 'Bon de commande' non chargé.");
+    const label = 'Bon de commande'; // ou 'Devis', etc.
+    const classId = this.getDocumentClassIdByLabel(label);
+  
+    if (!classId) {
+      console.error(`Classe de document '${label}' non trouvée.`);
       return;
     }
   
     const document: Document = {
       id: 0,
-      document_class_id: this.bonDeCommandeClassId,
-      codeclassedocument: 'BC',
-      libelle: `Bon de commande Client N°${this.formattedOrderNumber}`,
+      document_class_id: classId,
+      codeclassedocument: 'BC', // ou 'DV', etc.
+      libelle: `${label} Client N°${this.formattedOrderNumber}`,
       code: this.formattedOrderNumber,
-      documentClass: {} as any
+      documentClass: {} as DocumentClass
     };
   
     this.documentService.saveDocument(document).subscribe({
-      next: (res) => {
+      next: () => {
         this.messageService.add({
           severity: 'success',
           summary: 'Succès',
-          detail: 'Le bon de commande a été enregistré dans les documents.'
+          detail: `${label} enregistré comme document.`
         });
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur',
-          detail: 'Échec lors de l\'enregistrement du document.'
+          detail: `Échec de l'enregistrement du document '${label}'.`
         });
       }
     });
-  }  
+  } 
+  validerEtPasserALivraison() {
+    this.sauvegarderBonCommande();
+    this.router.navigate(['vente/bon-livraison/:id']); 
+  }
+
+  sauvegarderBonCommande() {
+    console.log('Bon de commande validé et sauvegardé');
+  } 
+  mettreAJourProduit(produit: DevisProduit) {
+    if (produit.quantite > produit.produit.quantitystock) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Quantité non valide',
+        detail: `Quantité maximale disponible : ${produit.produit.quantitystock}`
+      });
+      produit.quantite = produit.produit.quantitystock;
+    }
   
+    if (produit.quantite > produit.produit.seuil) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Seuil dépassé',
+        detail: `La quantité dépasse le seuil recommandé de ${produit.produit.seuil}.`
+      });
+    }
+  
+    // Mise à jour du prix total
+    produit.prixTotal = produit.quantite * produit.produit.prix;
+  
+    this.calculerTotal();
+  }
+  
+
 }

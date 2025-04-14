@@ -5,18 +5,26 @@ import { Produit } from 'src/app/demo/domain/produit';
   providedIn: 'root'
 })
 export class PanierService {
-  private produitsCommandes: any[] = [];
+  private produitsCommandes: Produit[] = [];
 
-  // Modifier la méthode pour accepter un objet produitCommande
-  ajouterProduit(produitCommande: { produit: Produit, quantite: number, prixTotal: number }): void {
-    this.produitsCommandes.push(produitCommande);
+  ajouterProduit(produit: Produit): void {
+    const index = this.produitsCommandes.findIndex(p => p.id === produit.id);
+    if (index !== -1) {
+      this.produitsCommandes[index].quantitystock! += produit.quantitystock!;
+    } else {
+      this.produitsCommandes.push({ ...produit });
+    }
   }
 
-  getProduitsCommandes() {
+  getProduitsCommandes(): Produit[] {
     return this.produitsCommandes;
   }
 
-  viderPanier() {
+  retirerProduit(index: number): void {
+    this.produitsCommandes.splice(index, 1);
+  }
+
+  viderPanier(): void {
     this.produitsCommandes = [];
   }
 }

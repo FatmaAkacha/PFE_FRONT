@@ -3,6 +3,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Produit } from '../../domain/produit';
 import { DataService } from '../../service/data.service';
+import { CategorieService } from '../../service/categorie.service';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
 
 @Component({
@@ -21,11 +22,12 @@ export class ProduitComponent implements OnInit {
   submitted: boolean = false;
   cols: any[] = [];
   rowsPerPageOptions = [5, 10, 20];
-  // Pour la prévisualisation lors de la création/modification
+  categories: any[] = [];
   previewUrl: SafeUrl | null = null;
 
   constructor(
     private produitService: DataService,
+    private categorieService: CategorieService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
     private breadcrumbService: BreadcrumbService,
@@ -37,6 +39,7 @@ export class ProduitComponent implements OnInit {
 
   ngOnInit() {
     this.refreshProduitList();
+    this.getCategories();
     this.cols = [
       { field: 'nom', header: 'Name' },
       { field: 'description', header: 'Description' },
@@ -45,6 +48,11 @@ export class ProduitComponent implements OnInit {
       { field: 'seuil', header: 'Threshold' },
       { field: 'image_data', header: 'Image' },
     ];
+  }
+  getCategories() {
+    this.categorieService.getCategories().subscribe((data) => {
+      this.categories = data;
+    });
   }
 
   openNew() {
@@ -177,6 +185,8 @@ export class ProduitComponent implements OnInit {
     formData.append('prix', String(this.produit.prix ?? 0));
     formData.append('quantitystock', String(this.produit.quantitystock ?? 0));
     formData.append('seuil', String(this.produit.seuil ?? 0));
+    formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
+
 
     if (this.produit.image_data instanceof File) {
       formData.append('image_data', this.produit.image_data, this.produit.image_data.name);
