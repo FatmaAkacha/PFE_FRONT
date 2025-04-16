@@ -14,10 +14,13 @@ export class DocumentService {
   constructor(private httpClient: HttpClient) {}
 
   getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token'); // ou 'access_token' selon ton app
     return new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
     });
   }
+  
 
   // ✅ Récupérer tous les documents
   getDocuments(): Observable<Document[]> {

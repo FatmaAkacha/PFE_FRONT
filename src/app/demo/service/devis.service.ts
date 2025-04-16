@@ -64,8 +64,4 @@ getClients(): Observable<any[]> {
       responseType: 'blob' // Important pour recevoir un PDF
     });
   }
-  
-  
-  
-  
 }

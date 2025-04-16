@@ -107,6 +107,7 @@ export class DevisComponent implements OnInit {
     this.loadClients();
     this.loadProduits(); 
     this.loadDevis();
+    this.getDocumentClasses();
   
     // 🔽 Récupération des produits du panier
     const produitsDuPanier = this.panierService.getProduitsCommandes();
@@ -131,6 +132,28 @@ export class DevisComponent implements OnInit {
 
     console.log(this.devisProduits);
 
+  }
+  getDocumentClasses() {
+    this.documentService.getDocumentClasses().subscribe({
+      next: (classes: DocumentClass[]) => {
+        console.log('Classes de document récupérées:', classes);
+        this.documentClasses = classes;
+  
+        // Rechercher dynamiquement la classe "Bon de commande"
+        const bonDeCommande = this.documentClasses.find(dc =>
+          dc.prefixe == 'Bon de commande'
+        );
+  
+        if (bonDeCommande) {
+          this.bonDeCommandeClassId = bonDeCommande.id;
+        } else {
+          console.error("Classe de document 'Bon de commande' non trouvée.");
+        }
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des classes de document :", err);
+      }
+    });
   }
   
   downloadBonDeCommande(devisId: number) {
@@ -174,11 +197,15 @@ export class DevisComponent implements OnInit {
    // });
  // }
 
-  getDocumentClassIdByLabel(label: string): number | null {
-    const docClass = this.documentClasses.find(dc =>
-      dc.libelle?.toLowerCase().trim() === label.toLowerCase().trim());
-    return docClass ? docClass.id : null;
-  }
+ getDocumentClassIdByLabel(label: string): number | null {
+  const lowerLabel = label.toLowerCase().trim();
+  const docClass = this.documentClasses.find(dc =>
+    (dc.libelle && dc.libelle.toLowerCase().trim() === lowerLabel) ||
+    (dc.prefixe && dc.prefixe.toLowerCase().trim() === lowerLabel)
+  );
+  return docClass ? docClass.id : null;
+}
+
   loadClients() {
     this.devisService.getClients().subscribe(data => {
       this.clients = data;
@@ -313,44 +340,46 @@ export class DevisComponent implements OnInit {
       state: { produits: this.devisProduits.map(d => d.produit) }
     });
   }
-  
   saveBonDeCommandeAsDocument() {
-    const label = 'Bon de commande'; // ou 'Devis', etc.
+    const label = 'Bon de commande';
     const classId = this.getDocumentClassIdByLabel(label);
-  
+    
     if (!classId) {
       console.error(`Classe de document '${label}' non trouvée.`);
       return;
     }
-  
+    
     const document: Document = {
       id: 0,
       document_class_id: classId,
-      codeclassedocument: 'BC', // ou 'DV', etc.
-      libelle: `${label} Client N°${this.formattedOrderNumber}`,
-      code: this.formattedOrderNumber,
+      codeclassedocument: 'BC',
+      libelle: `Bon de commande`, // Par exemple
+      code: '',    // Le backend générera le code
       documentClass: {} as DocumentClass
     };
   
     this.documentService.saveDocument(document).subscribe({
-      next: () => {
+      next: (savedDoc) => {
         this.messageService.add({
           severity: 'success',
           summary: 'Succès',
-          detail: `${label} enregistré comme document.`
+          detail: `Bon de commande enregistré sous le code ${savedDoc.code}`
         });
+        this.formattedOrderNumber = savedDoc.code; // Met à jour l'affichage du numéro
       },
       error: () => {
         this.messageService.add({
           severity: 'error',
           summary: 'Erreur',
-          detail: `Échec de l'enregistrement du document '${label}'.`
+          detail: `Échec de l'enregistrement du document 'Bon de commande'.`
         });
       }
     });
-  } 
+  }
+  
+  
   validerEtPasserALivraison() {
-    this.sauvegarderBonCommande();
+    this.saveBonDeCommandeAsDocument();
     this.router.navigate(['vente/bon-livraison/:id']); 
   }
 
