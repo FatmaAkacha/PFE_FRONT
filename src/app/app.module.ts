@@ -167,6 +167,7 @@ import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-
 import { DocumentComponent } from './document/document.component';
 import { PanierComponent } from './panier/panier.component';
 import { CategorieComponent } from './demo/component/categorie/categorie.component';
+import { ModalPanierComponent } from './pages/modal-panier/modal-panier.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -316,7 +317,8 @@ FullCalendarModule.registerPlugins([
         ProduitsCommandesComponent,
         DocumentComponent,
         PanierComponent,
-        CategorieComponent    ],
+        CategorieComponent,
+        ModalPanierComponent    ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

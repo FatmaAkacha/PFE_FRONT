@@ -1,3 +1,7 @@
+<app-modal-panier 
+[(visible)]="afficherModalCommande" 
+(valider)="validerCommande()">
+</app-modal-panier>
 <p-dataView #dv  
     [value]="produits" 
     [paginator]="true" 
@@ -6,6 +10,7 @@
     [sortField]="sortField" 
     [sortOrder]="sortOrder" 
     layout="grid">
+
   
   <!-- HEADER -->
   <ng-template pTemplate="header">
@@ -84,8 +89,9 @@
 
       <!-- Alignement horizontal des éléments -->
       <div class="flex align-items-center justify-content-around mt-3 flex-wrap gap-3">
-        <span class="text-xl font-semibold">{{product.prix | currency:'EUR'}}</span>
+        <span class="text-xl font-semibold">{{ product.prix | number:'1.2-2' }} DT</span>
 
+        
         <div class="flex flex-column align-items-center">
           <label for="quantite-{{product.id}}" class="mb-1">Qté</label>
           <input type="number"
@@ -111,7 +117,6 @@
   <!-- FOOTER GLOBAL AVEC BOUTONS -->
   <ng-template pTemplate="footer">
     <div class="flex flex-column align-items-center mt-4 gap-2">
-      <!--<div class="font-bold">Articles commandés : {{ commandeProduits.length }}</div>-->
       <button 
         pButton 
         icon="pi pi-shopping-cart" 
@@ -125,6 +130,13 @@
         class="p-button-info" 
         (click)="ouvrirBonDeCommande()">
       </p-button>
+      <p-button 
+      label="Voir produits commandés" 
+      icon="pi pi-eye" 
+      class="p-button-warning" 
+      (click)="afficherModalCommande = true">
+    </p-button>
+
     </div>
   </ng-template>
 

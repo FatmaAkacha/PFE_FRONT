@@ -95,12 +95,13 @@ export class DevisComponent implements OnInit {
       tva: 0,
       totalTTC: 0,
       date: '',
+      dateDocument: new Date(), // ← ici
       etat: '', 
       preparateur: '',
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
-    };
+    };    
   }
 
   ngOnInit(): void {
@@ -279,8 +280,10 @@ export class DevisComponent implements OnInit {
   }
   
   getStockRestant(item: DevisProduit): number {
-    return item.produit.quantitystock - item.quantite;
+    const produit = this.devisProduits.find(p => p.produit.id === item.produit.id);
+    return item.produit.quantitystock - (produit?.quantite ?? 0);
   }
+  
   
   supprimerProduit(produit: DevisProduit) {
     this.devisProduits = this.devisProduits.filter(p => p !== produit);
@@ -343,18 +346,26 @@ export class DevisComponent implements OnInit {
   saveBonDeCommandeAsDocument() {
     const label = 'Bon de commande';
     const classId = this.getDocumentClassIdByLabel(label);
-    
+  
     if (!classId) {
       console.error(`Classe de document '${label}' non trouvée.`);
       return;
     }
-    
+  
     const document: Document = {
       id: 0,
       document_class_id: classId,
       codeclassedocument: 'BC',
-      libelle: `Bon de commande`, // Par exemple
-      code: '',    // Le backend générera le code
+      libelle: 'Bon de commande',
+      code: '', // le backend le génèrera
+      dateDocument: this.devis.dateDocument,
+      etat: this.devis.etat,
+      preparateur: this.devis.preparateur,
+      client_id: this.selectedClient?.id,
+      devise: this.devis.devise,
+      tauxEchange: this.devis.tauxEchange,
+      dateLivraison: this.devis.dateLivraison?.toISOString(),
+      produitsCommandes: this.devisProduits,
       documentClass: {} as DocumentClass
     };
   
@@ -365,7 +376,7 @@ export class DevisComponent implements OnInit {
           summary: 'Succès',
           detail: `Bon de commande enregistré sous le code ${savedDoc.code}`
         });
-        this.formattedOrderNumber = savedDoc.code; // Met à jour l'affichage du numéro
+        this.formattedOrderNumber = savedDoc.code;
       },
       error: () => {
         this.messageService.add({
@@ -375,7 +386,7 @@ export class DevisComponent implements OnInit {
         });
       }
     });
-  }
+  }  
   
   
   validerEtPasserALivraison() {

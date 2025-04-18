@@ -1,0 +1,63 @@
+<p-dialog [(visible)]="visible" modal="modal" (onHide)="visibleChange.emit(false)"header="Produits commandés"[style]="{width: '50vw'}">
+    <ng-container *ngIf="commandeProduits.length > 0; else aucunProduit">
+      <p-table [value]="commandeProduits" responsiveLayout="scroll">
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Article</th>
+            <th>Qté</th>
+            <th>PUHT</th>
+            <th>Total</th>
+            <th>Action</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-produit let-index="rowIndex">
+          <tr>
+            <td>{{ produit.nom }}</td>
+            <td>
+              <input 
+                type="number" 
+                [(ngModel)]="produit.quantitystock" 
+                min="1" 
+                class="p-inputtext p-component" 
+                style="width: 4rem;" />
+            </td>
+            <td>{{ produit.prix | number:'1.2-2' }} DT</td>
+            <td>{{ (produit.prix || 0) * (produit.quantitystock || 1) | number:'1.2-2' }} DT</td>
+            <td>
+              <button 
+                pButton 
+                icon="pi pi-trash" 
+                class="p-button-danger p-button-sm" 
+                (click)="supprimerProduit(index)">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+  
+      <hr />
+      <div class="text-right font-bold">
+        Total général : {{ prixTotal | number:'1.2-2' }} DT
+      </div>
+    </ng-container>
+  
+    <ng-template #aucunProduit>
+      <p>Aucun article n'a été ajouté à la commande.</p>
+    </ng-template>
+  
+    <p-footer class="flex justify-content-end gap-2">
+      <button pButton label="Annuler" class="p-button-secondary" (click)="visible = false"></button>
+  
+    <button 
+        *ngIf="commandeProduits.length > 0" 
+        pButton 
+        label="Valider la Commande" 
+        icon="pi pi-check" 
+        class="p-button-success" 
+        (click)="validerCommande()"
+        [disabled]="!peutValiderCommande">
+    </button>
+
+    </p-footer>
+  </p-dialog>
+  

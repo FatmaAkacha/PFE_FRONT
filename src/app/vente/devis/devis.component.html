@@ -4,7 +4,7 @@
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
 
-  <button (click)="downloadBonDeCommande(devis.id)">Télécharger PDF</button>
+  <button *ngIf="devis.id" (click)="downloadBonDeCommande(devis.id)">Télécharger PDF</button>
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
@@ -124,6 +124,7 @@
   class="p-button-info" 
   (click)="voirProduitsCommandes()">
 </button>
+
 <br>
 <br>
 
