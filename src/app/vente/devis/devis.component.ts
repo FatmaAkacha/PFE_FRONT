@@ -95,13 +95,12 @@ export class DevisComponent implements OnInit {
       tva: 0,
       totalTTC: 0,
       date: '',
-      dateDocument: new Date(), // ← ici
       etat: '', 
       preparateur: '',
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
-    };    
+    };
   }
 
   ngOnInit(): void {
@@ -280,10 +279,8 @@ export class DevisComponent implements OnInit {
   }
   
   getStockRestant(item: DevisProduit): number {
-    const produit = this.devisProduits.find(p => p.produit.id === item.produit.id);
-    return item.produit.quantitystock - (produit?.quantite ?? 0);
+    return item.produit.quantitystock - item.quantite;
   }
-  
   
   supprimerProduit(produit: DevisProduit) {
     this.devisProduits = this.devisProduits.filter(p => p !== produit);

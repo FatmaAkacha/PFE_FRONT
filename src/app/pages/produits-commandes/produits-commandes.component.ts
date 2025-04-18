@@ -40,7 +40,7 @@ export class ProduitsCommandesComponent implements OnInit {
     this.dataService.getProduits().subscribe(data => {
       this.produits = data.map((p: any) => ({
         ...p,
-        quantitystock: 1,
+        quantitystock: p.quantitystock ?? 0,
         image: this.getImageUrl(p.image_data),
         rating: p.rating ?? (Math.floor(Math.random() * 5) + 1),
         categorie: p.categorie ?? { id: 0, nom: 'Général' },
@@ -93,14 +93,12 @@ export class ProduitsCommandesComponent implements OnInit {
     }
   }
   validerCommande() {
-    // Tu peux faire une redirection ou afficher un message ici.
     this.messageService.add({
       severity: 'success',
       summary: 'Commande validée',
       detail: 'La commande a été enregistrée avec succès.'
     });
   
-    // Par exemple rediriger :
     this.router.navigate(['/vente/bon-commande']);
   }
   

@@ -37,5 +37,4 @@ export class ModalPanierComponent {
   get peutValiderCommande(): boolean {
     return this.commandeProduits.some(p => (p.quantitystock || 0) > 0);
   }
-  
 }
