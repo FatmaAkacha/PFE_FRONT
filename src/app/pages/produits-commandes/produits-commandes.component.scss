@@ -4,4 +4,104 @@
     object-fit: cover;
     border-radius: 8px;
   }
-  
+@media (max-width: 768px) {
+  .p-button {
+    font-size: 0.9rem; 
+    padding: 0.6rem 1.2rem; 
+    width: 100%; 
+  }
+
+  .product-image {
+    width: 120px; 
+    height: 120px;
+  }
+
+  .flex-column.md\\:flex-row {
+    flex-direction: column; 
+  }
+
+  .text-2xl {
+    font-size: 1.4rem; 
+  }
+
+  .text-xl {
+    font-size: 1.2rem;
+  }
+
+  .p-inputtext {
+    width: 6rem; 
+  }
+
+  .grid .col-12 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .p-button-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .flex-row {
+    flex-direction: column; 
+  }
+}
+
+@media (max-width: 1024px) {
+  .p-button {
+    font-size: 1rem; 
+    padding: 0.7rem 1.5rem; 
+  }
+
+  .product-image {
+    width: 150px; 
+    height: 150px;
+  }
+
+  .flex-column.md\\:flex-row {
+    flex-direction: row; 
+  }
+
+  .text-2xl {
+    font-size: 1.5rem; 
+  }
+
+  .text-xl {
+    font-size: 1.3rem; 
+  }
+
+  .p-inputtext {
+    width: 7rem; 
+  }
+}
+
+@media (max-width: 480px) {
+  .p-button {
+    font-size: 0.8rem; 
+    padding: 0.5rem 1rem; 
+  }
+
+  .product-image {
+    width: 80px; 
+    height: 80px;
+  }
+
+  .flex-column.md\\:flex-row {
+    flex-direction: column; 
+  }
+
+  .text-2xl {
+    font-size: 1rem;
+  }
+
+  .text-xl {
+    font-size: 0.9rem;
+  }
+
+  .p-inputtext {
+    width: 4rem; 
+  }
+}

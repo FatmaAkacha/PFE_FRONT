@@ -1,16 +1,16 @@
-<app-modal-panier 
-[(visible)]="afficherModalCommande" 
-(valider)="validerCommande()">
+<app-modal-panier  
+  [(visible)]="afficherModalCommande" 
+  (valider)="validerCommande()">
 </app-modal-panier>
-<p-dataView #dv  
-    [value]="produits" 
-    [paginator]="true" 
-    [rows]="9" 
-    filterBy="nom,categorieNom"
-    [sortField]="sortField" 
-    [sortOrder]="sortOrder" 
-    layout="grid">
 
+<p-dataView #dv  
+  [value]="produits" 
+  [paginator]="true" 
+  [rows]="9" 
+  filterBy="nom,categorieNom"
+  [sortField]="sortField" 
+  [sortOrder]="sortOrder" 
+  layout="grid">
   
   <!-- HEADER -->
   <ng-template pTemplate="header">
@@ -33,18 +33,26 @@
   <ng-template let-product pTemplate="listItem">
     <div class="col-12">
       <div class="flex flex-column md:flex-row align-items-center p-3 w-full">
+        <!-- Image du produit -->
         <img [src]="product.image" [alt]="product.nom" class="product-image shadow-2 mr-5"/>
+        
         <div class="flex-1 text-center md:text-left">
+          <!-- Nom et description -->
           <div class="font-bold text-2xl">{{product.nom}}</div>
           <div class="mb-3">{{product.description}}</div>
           <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
+          
           <div class="flex align-items-center mt-2">
             <i class="pi pi-tag mr-2"></i>
             <span class="font-semibold">{{product.categorie.nom}}</span>
           </div>
         </div>
-        <div class="flex flex-row md:flex-column justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
+
+        <!-- Alignement horizontal des éléments : Prix, Quantité, et Bouton -->
+        <div class="flex flex-column md:flex-row justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
           <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{product.prix | currency:'EUR'}}</span>
+
+          <!-- Quantité -->
           <div class="flex flex-column gap-2 mt-2 md:mt-0">
             <label for="quantite-{{product.id}}">Qté :</label>
             <input type="number" 
@@ -55,6 +63,7 @@
                    style="width: 5rem;" />
           </div>
           
+          <!-- Bouton Valider -->
           <p-button 
             icon="pi pi-check" 
             label="Valider" 
@@ -62,81 +71,71 @@
             [disabled]="product.inventoryStatus === 'OUTOFSTOCK'" 
             class="p-button-success mt-2">
           </p-button>
-          
-          <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
         </div>
       </div>
     </div>
   </ng-template>
 
   <!-- GRILLE -->
-<ng-template let-product pTemplate="gridItem">
-  <div class="col-12 md:col-4">
-    <div class="card m-3 border-1 surface-border">
-      <div class="flex align-items-center justify-content-between">
-        <div class="flex align-items-center">
-          <i class="pi pi-tag mr-2"></i>
-          <span class="font-semibold">{{product.categorie.nom}}</span>
-        </div>
-        <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
-      </div>
-      <div class="text-center">
-        <img [src]="product.image" [alt]="product.nom" class="product-image shadow-2 my-3 mx-0"/>
-        <div class="text-2xl font-bold">{{product.nom}}</div>
-        <div class="mb-3">{{product.description}}</div>
-        <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
-      </div>
-
-      <!-- Alignement horizontal des éléments -->
-      <div class="flex align-items-center justify-content-around mt-3 flex-wrap gap-3">
-        <span class="text-xl font-semibold">{{ product.prix | number:'1.2-2' }} DT</span>
-
+  <ng-template let-product pTemplate="gridItem">
+    <div class="col-12 md:col-4">
+      <div class="card m-3 border-1 surface-border">
         
-        <div class="flex flex-column align-items-center">
-          <label for="quantite-{{product.id}}" class="mb-1">Qté</label>
-          <input type="number"
-                 [(ngModel)]="product.quantitystock"
-                 id="quantite-{{product.id}}"
-                 min="1"
-                 class="p-inputtext p-component"
-                 style="width: 5rem;" />
+        <!-- En-tête du produit -->
+        <div class="flex align-items-center justify-content-between">
+          <div class="flex align-items-center">
+            <i class="pi pi-tag mr-2"></i>
+            <span class="font-semibold">{{product.categorie.nom}}</span>
+          </div>
+          <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
         </div>
 
-        <p-button 
-          icon="pi pi-check" 
-          label="Valider" 
-          (click)="onAddToCart(product)" 
-          [disabled]="product.inventoryStatus === 'OUTOFSTOCK'" 
-          class="p-button-success">
-        </p-button>
+        <!-- Image et description -->
+        <div class="text-center">
+          <img [src]="product.image" [alt]="product.nom" class="product-image shadow-2 my-3 mx-0"/>
+          <div class="text-2xl font-bold">{{product.nom}}</div>
+          <div class="mb-3">{{product.description}}</div>
+          <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
+        </div>
+
+        <!-- Alignement horizontal des éléments : Prix, Quantité, et Bouton -->
+        <div class="flex justify-content-between align-items-center gap-3 mt-3">
+          <!-- Affichage du prix -->
+          <span class="text-xl font-semibold">{{ product.prix | number:'1.2-2' }} DT</span>
+
+          <!-- Quantité -->
+          <div class="flex align-items-center">
+            <label for="quantite-{{product.id}}" class="mb-1">Qté</label>
+            <input type="number"
+                   [(ngModel)]="product.quantitystock"
+                   id="quantite-{{product.id}}"
+                   min="1"
+                   class="p-inputtext p-component"
+                   style="width: 5rem;" />
+          </div>
+
+          <!-- Bouton Valider -->
+          <p-button 
+            icon="pi pi-check" 
+            label="Valider" 
+            (click)="onAddToCart(product)" 
+            [disabled]="product.inventoryStatus === 'OUTOFSTOCK'" 
+            class="p-button-success">
+          </p-button>
+        </div>
       </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
 
   <!-- FOOTER GLOBAL AVEC BOUTONS -->
   <ng-template pTemplate="footer">
     <div class="flex flex-column align-items-center mt-4 gap-2">
-      <button 
-        pButton 
-        icon="pi pi-shopping-cart" 
-        label="Mon Panier" 
-        routerLink="/vente/panier" 
-        class="p-button-outlined">
-      </button>
       <p-button 
-        label="Voir Bon de Commande" 
-        icon="pi pi-file" 
-        class="p-button-info" 
-        (click)="ouvrirBonDeCommande()">
+        label="Voir produits commandés" 
+        icon="pi pi-eye" 
+        class="p-button-warning" 
+        (click)="afficherModalCommande = true">
       </p-button>
-      <p-button 
-      label="Voir produits commandés" 
-      icon="pi pi-eye" 
-      class="p-button-warning" 
-      (click)="afficherModalCommande = true">
-    </p-button>
-
     </div>
   </ng-template>
 
