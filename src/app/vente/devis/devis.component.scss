@@ -53,4 +53,26 @@
   .btn-valider:hover {
     background-color: #218838;
   }
+  .bon-commande-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; 
+  }
+  
+  .bon-commande-actions button {
+    margin-left: 10px; 
+  }
+  .icon-spacing {
+    margin-right: 8px; 
+    font-size: 1.2em; 
+    display: flex;
+    justify-content: space-evenly;
+  }
+  th:last-child,
+  td.icon-spacing {
+    width: 95px;
+    gap: 8px;
+}
+
+  
   

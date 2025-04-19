@@ -3,7 +3,6 @@
     <h2>Bon de Commande Client N°{{ formattedOrderNumber }}</h2>
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
-
   <button *ngIf="devis.id" (click)="downloadBonDeCommande(devis.id)">Télécharger PDF</button>
 
   <div class="grid formgrid p-fluid">
@@ -108,7 +107,7 @@
 
         <td>{{ tva }}</td>
         <td>{{ item.prixTotal | number:'1.2-2' }}</td>
-        <td>
+        <td class="icon-spacing">
           <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="modifierProduit(item)"></button>
           <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
         </td>
@@ -116,7 +115,7 @@
     </ng-template>
   </p-table>
   <br>
-
+  <div class="bon-commande-actions">
   <button 
   pButton 
   label="Voir Produits" 
@@ -128,7 +127,6 @@
 <br>
 <br>
 
-
 <button 
   pButton 
   label="Valider et Passer au Bon de Livraison" 
@@ -137,12 +135,10 @@
   (click)="validerEtPasserALivraison()">
 </button>
 </div>
-
 <p-confirmDialog 
   header="Confirmation" 
   icon="pi pi-exclamation-triangle" 
   acceptLabel="Oui" 
   rejectLabel="Non">
-  
 </p-confirmDialog>
 

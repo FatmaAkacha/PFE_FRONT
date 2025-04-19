@@ -13,7 +13,6 @@ import { Document } from 'src/app/demo/domain/document';
 import { DocumentClass } from 'src/app/demo/domain/documentClass';
 import { PanierService } from 'src/app/demo/service/panier.service';
 
-
 @Component({
   selector: 'app-devis',
   templateUrl: './devis.component.html',
@@ -109,12 +108,10 @@ export class DevisComponent implements OnInit {
     this.loadDevis();
     this.getDocumentClasses();
   
-    // 🔽 Récupération des produits du panier
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
     this.produitsClient = produitsDuPanier;
   
-    // 🔥 Intégrer automatiquement dans le bon de commande (devisProduits)
     produitsDuPanier.forEach(produit => {
       this.devisProduits.push({
         produit,
@@ -123,7 +120,6 @@ export class DevisComponent implements OnInit {
       });
     });
   
-    // Recalculer les totaux
     this.calculerTotal();
   
     const savedOrderNumber = localStorage.getItem('currentOrderNumber');
@@ -139,7 +135,6 @@ export class DevisComponent implements OnInit {
         console.log('Classes de document récupérées:', classes);
         this.documentClasses = classes;
   
-        // Rechercher dynamiquement la classe "Bon de commande"
         const bonDeCommande = this.documentClasses.find(dc =>
           dc.prefixe == 'Bon de commande'
         );
@@ -155,7 +150,6 @@ export class DevisComponent implements OnInit {
       }
     });
   }
-  
   downloadBonDeCommande(devisId: number) {
     console.log("Téléchargement du devis avec ID :", devisId); // Vérifie que ce n'est pas 0
     this.devisService.downloadPDF(devisId).subscribe({
@@ -173,30 +167,6 @@ export class DevisComponent implements OnInit {
       }
     });
   }
-   
-  //getDocumentClasses() {
-   // this.documentService.getDocumentClasses().subscribe({
-    //  next: (classes: DocumentClass[]) => {
-       // console.log('Classes de document récupérées:', classes);
-     //   this.documentClasses = classes;
-  
-        // Trouver dynamiquement la classe "Bon de commande"
-       // const bonDeCommande = this.documentClasses.find(dc =>
-         // dc.libelle?.toLowerCase().trim() === 'bon de commande' 
-           //    );
-  
-       //// if (bonDeCommande) {
-         // this.bonDeCommandeClassId = bonDeCommande.id;
-       // } else {
-         // console.error("Classe de document 'Bon de commande' non trouvée.");
-       // }
-     // },
-      //error: (err) => {
-      //  console.error("Erreur lors du chargement des classes de document :", err);
-     // }
-   // });
- // }
-
  getDocumentClassIdByLabel(label: string): number | null {
   const lowerLabel = label.toLowerCase().trim();
   const docClass = this.documentClasses.find(dc =>
@@ -231,10 +201,8 @@ export class DevisComponent implements OnInit {
     this.selectedClient = client;
     this.devisForm.patchValue({ client: client.id });
   
-    // Charger tous les produits, indépendamment du client sélectionné
     this.produitsClient = this.produitsDansCommande; // Afficher tous les produits
     
-    // Calculer la somme du stock total si nécessaire
     this.totalStock = this.produitsClient.reduce((sum, produit) => sum + produit.quantitystock, 0);
   }
   
@@ -270,7 +238,7 @@ export class DevisComponent implements OnInit {
   
       this.devisProduits.push({
         produit,
-        quantite,  // Quantité demandée par l'utilisateur
+        quantite, 
         prixTotal: quantite * produit.prix
       });
     }
@@ -301,15 +269,14 @@ export class DevisComponent implements OnInit {
   formatOrderNumber() {
     this.formattedOrderNumber = ('000000' + this.currentOrderNumber).slice(-6);
   }
-  
+
   
   modifierProduit(produit: DevisProduit) {
     const quantite = prompt('Modifier la quantité', produit.quantite.toString());
     if (quantite) {
       const newQuantite = parseInt(quantite, 10);
   
-      // Limiter la quantité à la quantité en stock
-      if (newQuantite > produit.produit.quantitystock) {
+    if (newQuantite > produit.produit.quantitystock) {
         this.messageService.add({
           severity: 'error',
           summary: 'Quantité non valide',
@@ -318,7 +285,6 @@ export class DevisComponent implements OnInit {
         return;
       }
   
-      // Vérification du seuil
       if (newQuantite > produit.produit.seuil) {
         this.messageService.add({
           severity: 'warn',
@@ -333,8 +299,7 @@ export class DevisComponent implements OnInit {
       this.messageService.add({ severity: 'info', summary: 'Modification', detail: 'Produit modifié' });
     }
   }
-  
-  
+
   voirProduitsCommandes() {
     this.router.navigate(['/vente/produits-commandes'], {
       state: { produits: this.devisProduits.map(d => d.produit) }
@@ -384,8 +349,6 @@ export class DevisComponent implements OnInit {
       }
     });
   }  
-  
-  
   validerEtPasserALivraison() {
     this.saveBonDeCommandeAsDocument();
     this.router.navigate(['vente/bon-livraison/:id']); 
@@ -411,12 +374,8 @@ export class DevisComponent implements OnInit {
         detail: `La quantité dépasse le seuil recommandé de ${produit.produit.seuil}.`
       });
     }
-  
-    // Mise à jour du prix total
     produit.prixTotal = produit.quantite * produit.produit.prix;
   
     this.calculerTotal();
   }
-  
-
 }
