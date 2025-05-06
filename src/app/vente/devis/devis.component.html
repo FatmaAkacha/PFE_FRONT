@@ -3,7 +3,6 @@
     <h2>Bon de Commande Client N°{{ formattedOrderNumber }}</h2>
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
-  <button *ngIf="devis.id" (click)="downloadBonDeCommande(devis.id)">Télécharger PDF</button>
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
@@ -16,7 +15,7 @@
     </div>
     <div class="col-12 md:col-4">
       <label>Préparé par</label>
-      <p-dropdown [options]="preparateurs" optionLabel="nom" [(ngModel)]="devis.preparateur"></p-dropdown>
+      <p-dropdown [options]="preparateurs" optionLabel="nom" [(ngModel)]="devis.preparateur" optionValue="nom"></p-dropdown>
     </div>
   </div>
 
@@ -25,7 +24,7 @@
     <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
         <label>Client</label>
-        <p-dropdown [options]="clients" optionLabel="nom" [(ngModel)]="selectedClient" (onChange)="onClientSelect($event.value)"></p-dropdown>
+        <p-dropdown [options]="clients" optionLabel="nom" [(ngModel)]="selectedClient" (onChange)="onClientSelect($event.value)" class="mb-2 mt-2"></p-dropdown>
       </div>
       <div class="col-12 md:col-4">
         <label>Code client</label>
@@ -56,7 +55,7 @@
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Devise</label>
-      <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise"></p-dropdown>
+      <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true" filterBy="label"></p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Taux d'échange</label>
@@ -134,6 +133,13 @@
   class="p-button-success" 
   (click)="validerEtPasserALivraison()">
 </button>
+<button 
+  pButton 
+  label="Imprimer" 
+  icon="pi pi-print" 
+  class="p-button-secondary" 
+  (click)="imprimerDevis(devis.id)">
+</button>
 </div>
 <p-confirmDialog 
   header="Confirmation" 
@@ -141,4 +147,3 @@
   acceptLabel="Oui" 
   rejectLabel="Non">
 </p-confirmDialog>
-

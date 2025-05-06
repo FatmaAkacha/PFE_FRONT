@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ChangeDetectorRef  } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Fournisseur } from '../../domain/fournisseur';
 import { DataService } from '../../service/data.service';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-fournisseur',
@@ -21,12 +22,15 @@ export class FournisseurComponent implements OnInit {
   cols: any[];
   rowsPerPageOptions = [5, 10, 20];
   uploadedFiles: any[] = [];
+  previewUrl: SafeUrl | null = null;
 
   constructor(
     private fournisseurService: DataService, 
     private messageService: MessageService,
     private confirmationService: ConfirmationService, 
-    private breadcrumbService: BreadcrumbService
+    private breadcrumbService: BreadcrumbService,    
+    private cdRef: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {
     this.breadcrumbService.setItems([
       { label: 'Fournisseur', routerLink: ['/fournisseur'] }
@@ -43,7 +47,8 @@ export class FournisseurComponent implements OnInit {
       { field: 'address', header: 'Address' },  
       { field: 'phone', header: 'Phone' },      
       { field: 'matricule_fiscal', header: 'Fiscal ID' }, 
-      { field: 'email', header: 'Email' }
+      { field: 'email', header: 'Email' },
+      { field: 'logo', header: 'Logo' }
     ];
   }
 
@@ -52,6 +57,35 @@ export class FournisseurComponent implements OnInit {
     this.submitted = false;
     this.fournisseurDialog = true;
   }
+  getImageSrc(fournisseur: Fournisseur): SafeUrl | string | null {
+    if (!fournisseur || !fournisseur.logo) return null;
+  
+    // Cas où logo est déjà une URL complète
+    if (typeof fournisseur.logo === 'string') {
+      if (fournisseur.logo.startsWith('http')) {
+        return fournisseur.logo;
+      }
+      return this.sanitizer.bypassSecurityTrustUrl(`http://localhost:8000/storage/${fournisseur.logo}`);
+    }
+  
+    // Cas où logo est un File (upload local non encore enregistré)
+    if (fournisseur.logo instanceof File) {
+      return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(fournisseur.logo));
+    }
+  
+    return null;
+  }
+  
+    
+    onImageSelect(event: any): void {
+      const file = event.target.files[0];
+      if (file) {
+        this.fournisseur.logo = file;
+        const objectUrl = URL.createObjectURL(file);
+        this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+        this.cdRef.detectChanges();
+      }
+    }
 
   deleteSelectedFournisseurs() {
     this.deleteFournisseursDialog = true;
@@ -94,26 +128,37 @@ export class FournisseurComponent implements OnInit {
 
   saveFournisseur() {
     this.submitted = true;
-
+  
     if (this.fournisseur.name.trim()) {
+      const formData = new FormData();
+      formData.append('name', this.fournisseur.name);
+      formData.append('email', this.fournisseur.email ?? '');
+      formData.append('phone', this.fournisseur.phone ?? '');
+      formData.append('address', this.fournisseur.address ?? '');
+      formData.append('matricule_fiscal', this.fournisseur.matricule_fiscal ?? '');
+  
+      if (this.fournisseur.logo instanceof File) {
+        formData.append('logo', this.fournisseur.logo, this.fournisseur.logo.name);
+      }
+  
       if (this.fournisseur.id) {
-        this.fournisseurService.updateFournisseur(this.fournisseur.id, this.fournisseur).subscribe(() => {
-          this.fournisseurs[this.findIndexById(this.fournisseur.id)] = this.fournisseur;
+        this.fournisseurService.updateFournisseurForm(this.fournisseur.id, formData).subscribe(() => {
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur Updated', life: 3000 });
           this.refreshFournisseurList();
         });
       } else {
-        this.fournisseurService.insertFournisseur(this.fournisseur).subscribe((newFournisseur: Fournisseur) => {
+        this.fournisseurService.insertFournisseurForm(formData).subscribe((newFournisseur: Fournisseur) => {
           this.fournisseurs.push(newFournisseur);
           this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur Created', life: 3000 });
           this.refreshFournisseurList();
         });
       }
-
+  
       this.fournisseurDialog = false;
       this.fournisseur = {} as Fournisseur;
     }
   }
+  
 
   refreshFournisseurList() {
     this.fournisseurService.getFournisseurs().subscribe(fournisseurs => this.fournisseurs = fournisseurs as Fournisseur[]);

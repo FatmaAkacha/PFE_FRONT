@@ -6,7 +6,7 @@ export function initializeKeycloak(keycloak: KeycloakService) {
       .init({
         config: {
           url: 'http://localhost:8080/auth', // URL du serveur Keycloak
-          realm: 'DUX', 
+          realm: 'DuxWeb', 
           clientId: 'asm',
         },
         initOptions: {

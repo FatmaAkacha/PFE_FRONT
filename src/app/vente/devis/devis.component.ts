@@ -150,23 +150,6 @@ export class DevisComponent implements OnInit {
       }
     });
   }
-  downloadBonDeCommande(devisId: number) {
-    console.log("Téléchargement du devis avec ID :", devisId); // Vérifie que ce n'est pas 0
-    this.devisService.downloadPDF(devisId).subscribe({
-      next: (response) => {
-        const blob = new Blob([response], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `bon_de_commande_${devisId}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: (err) => {
-        console.error("Erreur lors du téléchargement :", err);
-      }
-    });
-  }
  getDocumentClassIdByLabel(label: string): number | null {
   const lowerLabel = label.toLowerCase().trim();
   const docClass = this.documentClasses.find(dc =>
@@ -247,6 +230,7 @@ export class DevisComponent implements OnInit {
   }
   
   getStockRestant(item: DevisProduit): number {
+    console.log('item', item)
     return item.produit.quantitystock - item.quantite;
   }
   
@@ -306,31 +290,37 @@ export class DevisComponent implements OnInit {
     });
   }
   saveBonDeCommandeAsDocument() {
-    const label = 'Bon de commande';
-    const classId = this.getDocumentClassIdByLabel(label);
-  
+    // Vérifier l'existence de la classe de document
+    const libelle = 'Bon de commande';
+    const classId = this.getDocumentClassIdByLabel(libelle);
+    
     if (!classId) {
-      console.error(`Classe de document '${label}' non trouvée.`);
+      console.error(`Classe de document '${libelle}' non trouvée.`);
       return;
     }
   
     const document: Document = {
-      id: 0,
-      document_class_id: classId,
-      codeclassedocument: 'BC',
-      libelle: 'Bon de commande',
-      code: '', // le backend le génèrera
-      dateDocument: this.devis.dateDocument,
-      etat: this.devis.etat,
-      preparateur: this.devis.preparateur,
-      client_id: this.selectedClient?.id,
-      devise: this.devis.devise,
-      tauxEchange: this.devis.tauxEchange,
-      dateLivraison: this.devis.dateLivraison?.toISOString(),
-      produitsCommandes: this.devisProduits,
-      documentClass: {} as DocumentClass
+      id: 0,  // Nouveau document, ID à 0
+      document_class_id: classId,  // ID de la classe de document
+      codeclassedocument: sessionStorage.getItem('codeClasseDoc'),  // Code de la classe du document, ici 'Bon de commande'
+      libelle: 'Bon de commande',  // Libelle du document
+      code: '',  // Le code pourra être généré par le backend
+      dateDocument: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date du document (livraison ou actuelle)
+      etat: this.devis.etat,  // État du document (par exemple: En cours, Validé)
+      preparateur: this.devis.preparateur,  // Préparateur du document
+      client_id: this.selectedClient?.id,  // ID du client sélectionné
+      devise: this.devis.devise,  // Devise
+      tauxEchange: this.devis.tauxEchange,  // Taux de change
+      dateLivraison: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date de livraison
+      produitsCommandes: this.devisProduits.map(p => ({
+        produit_id: p.produit.id,
+        quantite: p.quantite,
+        prixTotal: p.prixTotal
+      })),  // Détails des produits dans la commande
+      documentClass: { id: classId } as DocumentClass,  // Classe du document
     };
   
+    // Appel au service pour enregistrer le document
     this.documentService.saveDocument(document).subscribe({
       next: (savedDoc) => {
         this.messageService.add({
@@ -338,7 +328,7 @@ export class DevisComponent implements OnInit {
           summary: 'Succès',
           detail: `Bon de commande enregistré sous le code ${savedDoc.code}`
         });
-        this.formattedOrderNumber = savedDoc.code;
+        this.formattedOrderNumber = savedDoc.code;  // Mettre à jour le numéro de commande
       },
       error: () => {
         this.messageService.add({
@@ -348,7 +338,8 @@ export class DevisComponent implements OnInit {
         });
       }
     });
-  }  
+  }
+   
   validerEtPasserALivraison() {
     this.saveBonDeCommandeAsDocument();
     this.router.navigate(['vente/bon-livraison/:id']); 
@@ -357,6 +348,7 @@ export class DevisComponent implements OnInit {
   sauvegarderBonCommande() {
     console.log('Bon de commande validé et sauvegardé');
   } 
+  
   mettreAJourProduit(produit: DevisProduit) {
     if (produit.quantite > produit.produit.quantitystock) {
       this.messageService.add({
@@ -378,4 +370,16 @@ export class DevisComponent implements OnInit {
   
     this.calculerTotal();
   }
+  
+  
+  imprimerDevis(id: number) {
+    if (id === 0) {
+      this.saveBonDeCommandeAsDocument();
+      return;
+    }
+    console.log("ID à imprimer :", id);
+    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  }
+  
+  
 }

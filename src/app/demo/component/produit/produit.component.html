@@ -95,7 +95,7 @@
     <p-dialog [(visible)]="produitDialog" [style]="{ width: '450px' }" header="Produit Details" [modal]="true" class="p-fluid">
       <ng-template pTemplate="content">
         <div class="field">
-          <label for="nom">Name</label>
+          <label for="nom">Name <span style="color: red;"> * </span></label>
           <input type="text" pInputText id="nom" [(ngModel)]="produit.nom" required autofocus
                  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !produit.nom }" />
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !produit.nom">Name is required.</small>

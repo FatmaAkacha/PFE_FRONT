@@ -5,5 +5,6 @@ export interface Fournisseur {
     phone?: any;
     address?: any;
     matricule_fiscal?: any;
+    logo?:any;
   }
   

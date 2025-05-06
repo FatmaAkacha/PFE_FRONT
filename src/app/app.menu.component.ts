@@ -72,7 +72,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Vente', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
                 items: [
-                    { label: 'Bon de Commande', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bon-commande'] },
+                    { label: 'Bon de Commande', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bon-commande'], command: () => this.navigateToBonCommande() },
                     { label: 'Bon de Livraison', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bondeLivraison'] },
                     { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
                     { label: 'Document', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/document'] },
@@ -143,4 +143,9 @@ export class AppMenuComponent implements OnInit {
     onMenuClick() {
         this.appMain.menuClick = true;
     }
+
+    navigateToBonCommande() {
+        sessionStorage.setItem('codeClasseDoc', 'BC');
+      }
+      
 }

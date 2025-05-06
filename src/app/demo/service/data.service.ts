@@ -93,6 +93,26 @@ export class DataService {
   deleteFournisseur(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrlFournisseurs}/${id}`, { headers: this.getHeaders() });
   }
+  insertFournisseurForm(formData: FormData): Observable<Fournisseur> {
+    return this.httpClient.post<Fournisseur>(this.apiUrlFournisseurs, formData, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.token}` // ne pas ajouter 'Content-Type'
+      })
+    });
+  }
+  
+  updateFournisseurForm(id: string, formData: FormData): Observable<Fournisseur> {
+    return this.httpClient.post<Fournisseur>(`${this.apiUrlFournisseurs}/${id}?_method=PUT`, formData, {
+      headers: new HttpHeaders({
+        'Authorization': `Bearer ${this.token}` // ne pas ajouter 'Content-Type'
+      })
+    });
+  }
+  getFournisseurLogoSrc(fournisseur: Fournisseur): string | undefined {
+    return typeof fournisseur.logo === 'string'
+      ? `${this.apiUrlFournisseurs}/${fournisseur.id}/serve-logo`
+      : undefined;
+  }
 
   // =======================
   // ✅ Gestion des Produits

@@ -58,8 +58,8 @@ export class ProduitsCommandesComponent implements OnInit {
     return 'https://via.placeholder.com/150';
   }
 
-  onAddToCart(product: Produit) {
-    const quantite = product.quantitystock || 1;
+  onAddToCart(product: any) {
+    const quantite = product.quantity || 1;
     const produitCopie: Produit = { ...product, quantitystock: quantite };
     this.panierService.ajouterProduit(produitCopie);
 
@@ -101,5 +101,18 @@ export class ProduitsCommandesComponent implements OnInit {
   
     this.router.navigate(['/vente/bon-commande']);
   }
+  
+
+  onQuantityChange(product: any): void {
+    if (product.quantity >= product.quantitystock) {
+      
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Quantité maximale atteinte',
+          detail: ' Vous avez atteint la quantité en stock.'
+        });
+       
+    }
+    }
   
 }

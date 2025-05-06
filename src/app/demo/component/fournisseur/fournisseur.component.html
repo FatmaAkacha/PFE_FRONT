@@ -33,6 +33,7 @@
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
               <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="logo">Logo <p-sortIcon field="logo"></p-sortIcon></th>
               <th pSortableColumn="address">address <p-sortIcon field="address"></p-sortIcon></th>
               <th pSortableColumn="phone">Phone number <p-sortIcon field="phone"></p-sortIcon></th>
               <th pSortableColumn="matricule_fiscal">matricule_fiscal <p-sortIcon field="matricule_fiscal"></p-sortIcon></th>
@@ -46,7 +47,15 @@
                 <p-tableCheckbox [value]="fournisseur"></p-tableCheckbox>
               </td>
               <td><span class="p-column-title">Name</span>{{fournisseur.name}}</td>
-              <td><span class="p-column-title">address</span>{{fournisseur.address}}</td>
+              <td>
+                <span class="p-column-title">Logo</span>
+                <img *ngIf="getImageSrc(fournisseur)"
+                  [src]="getImageSrc(fournisseur)"
+                  alt="Logo"
+                  style="width: 50px; height: 50px; object-fit: contain; border-radius: 4px" />
+
+              </td>
+                <td><span class="p-column-title">Address</span>{{fournisseur.address}}</td>
               <td><span class="p-column-title">Phone number</span>{{fournisseur.phone}}</td>
               <td>
                 <span class="p-column-title">Fiscal ID</span>
@@ -76,6 +85,19 @@
             <input type="text" pInputText id="name" [(ngModel)]="fournisseur.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.name}" />
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.name">Name is required.</small>
           </div>
+        <!-- Input de type image -->
+        <div class="field">
+          <label for="imageUpload">Logo</label>
+          <input type="file" id="imageUpload" accept="image/*" (change)="onImageSelect($event)" class="p-inputtext p-component" />
+        </div>
+
+        <!-- Prévisualisation avant enregistrement -->
+        <div class="field" *ngIf="fournisseur.logo">
+          <label>Preview</label>
+          <img [src]="getImageSrc(fournisseur)" alt="Logo"
+               style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px" />
+        </div>
+        
           <div class="field">
             <label for="address">Address</label>
             <input type="text" pInputText id="address" [(ngModel)]="fournisseur.address" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.address}" />

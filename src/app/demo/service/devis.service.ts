@@ -59,9 +59,6 @@ getClients(): Observable<any[]> {
   getProduitsByClient(clientId: number): Observable<Produit[]> {
     return this.httpClient.get<Produit[]>(`${this.apiUrlProduits}?client_id=${clientId}`, { headers: this.getHeaders() });
   }
-  downloadPDF(id: number) {
-    return this.httpClient.get(`http://127.0.0.1:8000/api/devis/${id}/download-pdf`, {
-      responseType: 'blob' // Important pour recevoir un PDF
-    });
-  }
+  
+  
 }

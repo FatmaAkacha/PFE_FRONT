@@ -1,3 +1,4 @@
+<p-toast></p-toast>
 <app-modal-panier  
   [(visible)]="afficherModalCommande" 
   (valider)="validerCommande()">
@@ -105,13 +106,19 @@
 
           <!-- Quantité -->
           <div class="flex align-items-center">
-            <label for="quantite-{{product.id}}" class="mb-1">Qté</label>
-            <input type="number"
-                   [(ngModel)]="product.quantitystock"
-                   id="quantite-{{product.id}}"
-                   min="1"
-                   class="p-inputtext p-component"
-                   style="width: 5rem;" />
+            <label for="quantite-{{ product.id }}" class="mb-1">Qté</label>
+            <p-inputNumber
+              [(ngModel)]="product.quantity"
+              inputId="quantite-{{ product.id }}"
+              [min]="1"
+              [max]="product.quantitystock"
+              [showButtons]="true"
+              mode="decimal"
+              [useGrouping]="false"
+              styleClass="p-inputtext p-component"
+              (ngModelChange)="onQuantityChange(product)"
+             >
+            </p-inputNumber>
           </div>
 
           <!-- Bouton Valider -->
