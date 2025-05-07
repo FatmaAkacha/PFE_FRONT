@@ -36,12 +36,12 @@
 <p-dialog header="{{ categorie.id ? 'Modifier' : 'Nouvelle' }} Catégorie" [(visible)]="categorieDialog" [modal]="true" [closable]="false" [style]="{ width: '30vw' }" [responsive]="true">
   <div class="p-fluid">
     <div class="field">
-      <label for="nom">Nom</label>
+      <label for="nom">Nom<span class="required-star">*</span></label>
       <input id="nom" type="text" pInputText [(ngModel)]="categorie.nom" required autofocus />
       <small *ngIf="submitted && !categorie.nom" class="p-error">Le nom est requis.</small>
     </div>
     <div class="field">
-      <label for="description">Description</label>
+      <label for="description">Description<span class="required-star">*</span></label>
       <input id="description" type="text" pInputText [(ngModel)]="categorie.description" required autofocus />
       <small *ngIf="submitted && !categorie.description" class="p-error">La description est requis.</small>
     </div>
