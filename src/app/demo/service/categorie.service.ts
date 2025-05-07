@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Categorie } from '../domain/Categorie';
+
 
 @Injectable({
   providedIn: 'root'
@@ -22,25 +24,24 @@ export class CategorieService {
   // =======================
   
   // Récupérer toutes les catégories
-  getCategories(): Observable<any[]> {
-    return this.httpClient.get<any[]>(this.apiUrlCategories, { headers: this.getHeaders() });
+  getCategories(): Observable<Categorie[]> {
+    return this.httpClient.get<Categorie[]>(this.apiUrlCategories, { headers: this.getHeaders() });
   }
 
   // Récupérer une catégorie spécifique par son ID
-  getCategorieById(id: string): Observable<any> {
-    return this.httpClient.get<any>(`${this.apiUrlCategories}/${id}`, { headers: this.getHeaders() });
+  getCategorieById(id: string): Observable<Categorie> {
+    return this.httpClient.get<Categorie>(`${this.apiUrlCategories}/${id}`, { headers: this.getHeaders() });
   }
 
   // Ajouter une nouvelle catégorie
-  insertCategorie(categorie: any): Observable<any> {
-    return this.httpClient.post<any>(this.apiUrlCategories, categorie, {
+  insertCategorie(categorie: Categorie): Observable<Categorie> {
+    return this.httpClient.post<Categorie>(this.apiUrlCategories, categorie, {
       headers: this.getHeaders()
     });
   }
-  
 
   // Mettre à jour une catégorie
-  updateCategorie(id: string, categorie: any): Observable<any> {
+  updateCategorie(id: string, categorie: Categorie): Observable<Categorie> {
     return this.httpClient.put<any>(`${this.apiUrlCategories}/${id}`, categorie, { headers: this.getHeaders() });
   }
 

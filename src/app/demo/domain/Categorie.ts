@@ -1,6 +1,6 @@
 export interface Categorie {
-    id: number;
-    nom: string;
-    description?: string;
+    id?: any;
+    nom?: any;
+    description?: any;
   }
   
