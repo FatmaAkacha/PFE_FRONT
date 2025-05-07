@@ -1,0 +1,123 @@
+<div class="grid">
+    <div class="col-12">
+      <div class="card">
+        <p-toast></p-toast>
+  
+        <p-toolbar styleClass="mb-4">
+          <ng-template pTemplate="left">
+            <div class="my-2">
+              <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+              <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedUsers()" [disabled]="!selectedUsers || !selectedUsers.length"></button>
+            </div>
+          </ng-template>
+        </p-toolbar>
+  
+        <p-table #dt [value]="users" [(selection)]="selectedUsers" dataKey="id" [paginator]="true" [rows]="10"
+                 [rowsPerPageOptions]="rowsPerPageOptions" responsiveLayout="scroll"
+                 [globalFilterFields]="['username','email','role_id']" selectionMode="multiple">
+          <ng-template pTemplate="caption">
+            <div class="flex justify-content-between align-items-center">
+              <h5 class="m-0">Manage Users</h5>
+              <span class="p-input-icon-left">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
+              </span>
+            </div>
+          </ng-template>
+  
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 3rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+              <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+              <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
+              <th pSortableColumn="role.name">Role <p-sortIcon field="role.name"></p-sortIcon></th>
+              <th>Actions</th>
+            </tr>
+          </ng-template>
+  
+          <ng-template pTemplate="body" let-user>
+            <tr>
+              <td><p-tableCheckbox [value]="user"></p-tableCheckbox></td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ getRoleName(user.role_id) }}</td>
+              <td>
+                <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editUser(user)"></button>
+                <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteUser(user)"></button>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+  
+      <!-- Add/Edit Dialog -->
+      <p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="User Details" [modal]="true" class="p-fluid">
+        <ng-template pTemplate="content">
+          <div class="field">
+            <label for="username">Username <span class="required-star">*</span></label>
+            <input pInputText id="username" [(ngModel)]="user.username" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.username }" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.username">Username is required.</small>
+          </div>
+  
+          <div class="field">
+            <label for="email">Email <span class="required-star">*</span></label>
+            <input type="email" pInputText id="email" [(ngModel)]="user.email" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.email }" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.email">Email is required.</small>
+          </div>
+  
+          <div class="field">
+            <label for="password">Password <span class="required-star">*</span></label>
+            <input type="password" pInputText id="password" [(ngModel)]="user.password" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.password }" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.password">Password is required.</small>
+          </div>
+  
+          <div class="field" style="margin-bottom: 15px;">
+            <label for="role_id">Role <span class="required-star">*</span></label>
+            <p-dropdown
+                inputId="role_id"
+                [options]="roles"
+                [(ngModel)]="user.role_id"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Select a role"
+                [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.role_id }"
+                style="margin-bottom: 15px; " >
+            </p-dropdown>
+
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.role_id">Role is required.</small>
+          </div>          
+          
+        </ng-template>
+  
+        <ng-template pTemplate="footer">
+          <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
+        </ng-template>
+      </p-dialog>
+  
+      <!-- Confirm Delete Single -->
+      <p-dialog [(visible)]="deleteUserDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span *ngIf="user">Are you sure you want to delete <b>{{ user.username }}</b>?</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton label="No" icon="pi pi-times" class="p-button-text" (click)="deleteUserDialog = false"></button>
+          <button pButton label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmDelete()"></button>
+        </ng-template>
+      </p-dialog>
+  
+      <!-- Confirm Delete Multiple -->
+      <p-dialog [(visible)]="deleteUsersDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+        <div class="flex align-items-center justify-content-center">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+          <span>Are you sure you want to delete the selected users?</span>
+        </div>
+        <ng-template pTemplate="footer">
+          <button pButton label="No" icon="pi pi-times" class="p-button-text" (click)="deleteUsersDialog = false"></button>
+          <button pButton label="Yes" icon="pi pi-check" class="p-button-text" (click)="confirmDeleteSelected()"></button>
+        </ng-template>
+      </p-dialog>
+    </div>
+  </div>
+  

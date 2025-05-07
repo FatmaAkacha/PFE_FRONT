@@ -158,6 +158,8 @@ import { ClientComponent } from './demo/component/client/client.component';
 import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
 import { ProduitComponent } from './demo/component/produit/produit.component';
 import { DevisComponent } from './vente/devis/devis.component';
+import { UserComponent } from './demo/component/user/user.component';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { FactureComponent } from './vente/facture/facture.component';
 import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
@@ -168,6 +170,8 @@ import { DocumentComponent } from './document/document.component';
 import { PanierComponent } from './panier/panier.component';
 import { CategorieComponent } from './demo/component/categorie/categorie.component';
 import { ModalPanierComponent } from './pages/modal-panier/modal-panier.component';
+import { EmailComponent } from './demo/component/email/email.component';
+import { RoleComponent } from './demo/component/role/role.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -318,7 +322,10 @@ FullCalendarModule.registerPlugins([
         DocumentComponent,
         PanierComponent,
         CategorieComponent,
-        ModalPanierComponent    ],
+        ModalPanierComponent ,
+        UserComponent,
+        EmailComponent,
+        RoleComponent  ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

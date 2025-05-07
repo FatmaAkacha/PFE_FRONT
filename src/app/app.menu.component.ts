@@ -56,6 +56,10 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Category', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/categorie'] },
                     { label: 'Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/fournisseur'] },
                     { label: 'Product', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/produit'] },
+                    { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/user'] },
+                    { label: 'Role', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/role'] },
+                    { label: 'Email', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/email'] },
+
 
 
                     { label: 'Calendar', icon: 'pi pi-fw pi-calendar-plus', routerLink: ['/pages/calendar'] },

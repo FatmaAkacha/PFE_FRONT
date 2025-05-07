@@ -42,6 +42,9 @@ import { ProduitsCommandesComponent } from './pages/produits-commandes/produits-
 import { DocumentComponent } from './document/document.component';
 import { PanierComponent } from './panier/panier.component';
 import { CategorieComponent } from './demo/component/categorie/categorie.component';
+import { UserComponent } from './demo/component/user/user.component';
+import { EmailComponent } from './demo/component/email/email.component';
+import { RoleComponent } from './demo/component/role/role.component';
 
 @NgModule({
     imports: [
@@ -73,6 +76,10 @@ import { CategorieComponent } from './demo/component/categorie/categorie.compone
                     {path: 'pages/categorie', component: CategorieComponent},
                     {path: 'pages/fournisseur', component: FournisseurComponent},
                     {path: 'pages/produit', component: ProduitComponent},
+                    {path: 'pages/user', component: UserComponent},
+                    {path: 'pages/email', component: EmailComponent},
+                    {path: 'pages/role', component: RoleComponent},
+
                     {path: 'vente/bon-commande', component: DevisComponent},
                     { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
                     { path: 'vente/facture/:orderNumber', component: FactureComponent }, 
