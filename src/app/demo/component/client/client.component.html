@@ -36,7 +36,7 @@
 
   <ng-template pTemplate="caption">
     <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h5 class="m-0">Gestion des clients</h5>
+      <h5 class="m-0">Gestion des Clients</h5>
       <span class="block mt-2 md:mt-0 p-input-icon-left">
         <i class="pi pi-search"></i>
         <input pInputText type="text" placeholder="Rechercher..." (input)="dt.filterGlobal($event.target.value, 'contains')" />
@@ -110,15 +110,29 @@
     <p-dialog [(visible)]="clientDialog" header="Détails du client" [modal]="true" [style]="{ width: '450px' }" class="p-fluid">
       <ng-template pTemplate="content">
         <div class="field" *ngFor="let field of ['code', 'nom', 'raison_sociale', 'contact', 'adresse', 'numero_telephone', 'email']">
-          <label [for]="field">{{ field | titlecase }}</label>
+          <label [for]="field">{{ field | titlecase }}<span class="required-star">*</span></label>
           <input *ngIf="field !== 'email'" type="text" pInputText [id]="field" [(ngModel)]="client[field]" [required]="field === 'nom'" [ngClass]="{'ng-invalid ng-dirty' : submitted && !client[field]}" />
           <input *ngIf="field === 'email'" type="email" pInputText id="email" [(ngModel)]="client.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.email}" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client[field]">Ce champ est requis.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !client[field]"class="p-error">Ce champ est requis.</small>
         </div>
     
+        <!-- Input de type image -->
         <div class="field">
-          <label for="imageUpload">Logo</label>
-          <input type="file" id="imageUpload" accept="image/*" (change)="onLogoSelect($event)" class="p-inputtext p-component" />
+          <label for="logo">Logo <span class="required-star">*</span></label>
+          <p-fileUpload
+            mode="basic"
+            name="logo"
+            chooseLabel="Choisir un logo"
+            [auto]="false"
+            [customUpload]="true"
+            accept="image/*"
+            (onSelect)="onFileUploadSelect($event)">
+          </p-fileUpload>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && client.logo">Logo is required.</small>
+        </div>
+        
+        <div *ngIf="previewUrl" class="preview mt-2">
+          <img [src]="previewUrl" alt="Logo preview" style="max-height: 100px;" />
         </div>
             
         <!-- Prévisualisation avant enregistrement -->

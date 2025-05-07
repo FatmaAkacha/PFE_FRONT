@@ -25,7 +25,7 @@ export class ClientComponent implements OnInit {
   rowsPerPageOptions = [5, 10, 20];
 
   uploadedFiles: any[] = [];
-  previewLogoUrl: SafeUrl | null = null;
+  previewUrl: SafeUrl | null = null;
 
   constructor(
     private clientService: DataService,
@@ -66,7 +66,6 @@ export class ClientComponent implements OnInit {
     this.client = {} as Client;
     this.submitted = false;
     this.clientDialog = true;
-    this.previewLogoUrl = null;
   }
 
   getLogoSrc(client: Client): SafeUrl | string {
@@ -76,17 +75,14 @@ export class ClientComponent implements OnInit {
     }
     return ''; // Si aucune image, ne pas afficher
   }
-  
-  
-  
 
-  onLogoSelect(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+
+  onFileUploadSelect(event: any): void {
+    const file = event.files[0];
     if (file) {
       this.client.logo = file;
       const objectUrl = URL.createObjectURL(file);
-      this.previewLogoUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
       this.cdRef.detectChanges();
     }
   }
@@ -98,7 +94,6 @@ export class ClientComponent implements OnInit {
   editClient(client: Client): void {
     this.client = { ...client };
     this.clientDialog = true;
-    this.previewLogoUrl = this.getLogoSrc(client);
   }
 
   deleteClient(client: Client): void {
@@ -130,7 +125,6 @@ export class ClientComponent implements OnInit {
   hideDialog(): void {
     this.clientDialog = false;
     this.submitted = false;
-    this.previewLogoUrl = null;
   }
 
   saveClient(): void {
@@ -165,7 +159,6 @@ export class ClientComponent implements OnInit {
 
       this.clientDialog = false;
       this.client = {} as Client;
-      this.previewLogoUrl = null;
     }
   }
 
