@@ -75,7 +75,17 @@ export class FournisseurComponent implements OnInit {
   
     return null;
   }
-  
+
+  onFileUploadSelect(event: any): void {
+  const file = event.files[0];
+  if (file) {
+    this.fournisseur.logo = file;
+    const objectUrl = URL.createObjectURL(file);
+    this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    this.cdRef.detectChanges();
+  }
+}
+
     
     onImageSelect(event: any): void {
       const file = event.target.files[0];

@@ -34,9 +34,9 @@
               </th>
               <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
               <th pSortableColumn="logo">Logo <p-sortIcon field="logo"></p-sortIcon></th>
-              <th pSortableColumn="address">address <p-sortIcon field="address"></p-sortIcon></th>
+              <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
               <th pSortableColumn="phone">Phone number <p-sortIcon field="phone"></p-sortIcon></th>
-              <th pSortableColumn="matricule_fiscal">matricule_fiscal <p-sortIcon field="matricule_fiscal"></p-sortIcon></th>
+              <th pSortableColumn="matricule_fiscal">Matricule Fiscal <p-sortIcon field="matricule_fiscal"></p-sortIcon></th>
               <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
               <th>Action</th>
             </tr>
@@ -57,15 +57,7 @@
               </td>
                 <td><span class="p-column-title">Address</span>{{fournisseur.address}}</td>
               <td><span class="p-column-title">Phone number</span>{{fournisseur.phone}}</td>
-              <td>
-                <span class="p-column-title">Fiscal ID</span>
-                <ng-container *ngIf="fournisseur.matricule_fiscal">
-                  <img src="{{ fournisseur.matricule_fiscal }}" alt="matricule_fiscal" style="max-height: 50px; max-width: 100px;">
-                </ng-container>
-                <ng-container *ngIf="!fournisseur.matricule_fiscal">
-                  <span class="text-muted">No Fiscal ID</span>
-                </ng-container>
-              </td>
+              <td><span class="p-column-title">Fiscal ID</span>{{fournisseur.matricule_fiscal}}</td>
               <td><span class="p-column-title">Email</span>{{fournisseur.email}}</td>
               <td>
                 <div class="flex">
@@ -81,50 +73,46 @@
       <p-dialog [(visible)]="fournisseurDialog" [style]="{width: '450px'}" header="Fournisseur Details" [modal]="true" class="p-fluid">
         <ng-template pTemplate="content">
           <div class="field">
-            <label for="name">Name</label>
+            <label for="name">Name <span class="required-star">*</span></label>
             <input type="text" pInputText id="name" [(ngModel)]="fournisseur.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.name}" />
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.name">Name is required.</small>
           </div>
         <!-- Input de type image -->
         <div class="field">
-          <label for="imageUpload">Logo</label>
-          <input type="file" id="imageUpload" accept="image/*" (change)="onImageSelect($event)" class="p-inputtext p-component" />
+          <label for="logo">Logo <span class="required-star">*</span></label>
+          <p-fileUpload
+            mode="basic"
+            name="logo"
+            chooseLabel="Choisir un logo"
+            [auto]="false"
+            [customUpload]="true"
+            accept="image/*"
+            (onSelect)="onFileUploadSelect($event)">
+          </p-fileUpload>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.logo">Logo is required.</small>
         </div>
-
-        <!-- Prévisualisation avant enregistrement -->
-        <div class="field" *ngIf="fournisseur.logo">
-          <label>Preview</label>
-          <img [src]="getImageSrc(fournisseur)" alt="Logo"
-               style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px" />
+        
+        <div *ngIf="previewUrl" class="preview mt-2">
+          <img [src]="previewUrl" alt="Logo preview" style="max-height: 100px;" />
         </div>
         
           <div class="field">
-            <label for="address">Address</label>
+            <label for="address">Address <span class="required-star">*</span></label>
             <input type="text" pInputText id="address" [(ngModel)]="fournisseur.address" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.address}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.address">address is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.address">Address is required.</small>
           </div>
           <div class="field">
-            <label for="phone">Phone number</label>
+            <label for="phone">Phone number <span class="required-star">*</span></label>
             <input type="text" pInputText id="phone" [(ngModel)]="fournisseur.phone" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.phone}" />
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.phone">Phone number is required.</small>
           </div>
           <div class="field">
-            <label for="matricule_fiscal">Fiscal ID</label>
-            <p-fileUpload name="matricule_fiscal" url="./upload.php" 
-                          (onUpload)="onUpload($event)" 
-                          accept="image/jpeg, image/png" 
-                          [multiple]="false" 
-                          [maxFileSize]="1000000">
-              <ng-template pTemplate="content">
-                  <ul *ngIf="uploadedFiles.length">
-                      <li *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
-                  </ul>
-              </ng-template>
-            </p-fileUpload>
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.matricule_fiscal">matricule_fiscal is required.</small>
+            <label for="matricule_fiscal">Fiscal ID <span class="required-star">*</span></label>
+            <input type="text" pInputText id="matricule_fiscal" [(ngModel)]="fournisseur.matricule_fiscal" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.matricule_fiscal}" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.matricule_fiscal">Fiscal ID is required.</small>
           </div>
           <div class="field">
-            <label for="email">Email</label>
+            <label for="email">Email <span class="required-star">*</span></label>
             <input type="email" pInputText id="email" [(ngModel)]="fournisseur.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.email}" />
             <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.email">Email is required.</small>
           </div>
