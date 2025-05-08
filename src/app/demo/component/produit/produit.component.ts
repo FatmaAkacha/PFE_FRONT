@@ -26,6 +26,7 @@ export class ProduitComponent implements OnInit {
   categories: any[] = [];
   fournisseurs: any[] = [];
   previewUrl: SafeUrl | null = null;
+  activeStep = 0;
 
   constructor(
     private produitService: DataService,
@@ -61,6 +62,24 @@ export class ProduitComponent implements OnInit {
       { field: 'fournisseur', header: 'Fournisseur ' },
       { field: 'image_data', header: 'Image' },
     ];    
+  }
+  steps = [
+    { label: 'Informations' },
+    { label: 'Prix' },
+    { label: 'Stock' },
+    { label: 'Image' }
+  ];
+  
+  nextStep() {
+    if (this.activeStep < this.steps.length - 1) this.activeStep++;
+  }
+  
+  previousStep() {
+    if (this.activeStep > 0) this.activeStep--;
+  }
+  
+  onStepChange(event: number) {
+    this.activeStep = event;
   }
   getCategories() {
     this.categorieService.getCategories().subscribe((data) => {
