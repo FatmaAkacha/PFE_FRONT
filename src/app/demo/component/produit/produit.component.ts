@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Produit } from '../../domain/produit';
+import { Fournisseur } from '../../domain/fournisseur';
 import { DataService } from '../../service/data.service';
 import { CategorieService } from '../../service/categorie.service';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
@@ -23,6 +24,7 @@ export class ProduitComponent implements OnInit {
   cols: any[] = [];
   rowsPerPageOptions = [5, 10, 20];
   categories: any[] = [];
+  fournisseurs: any[] = [];
   previewUrl: SafeUrl | null = null;
 
   constructor(
@@ -40,20 +42,37 @@ export class ProduitComponent implements OnInit {
   ngOnInit() {
     this.refreshProduitList();
     this.getCategories();
+    this.getFournisseurs();
+
     this.cols = [
-      { field: 'nom', header: 'Name' },
+      { field: 'nom', header: 'Nom' },
+      { field: 'categorie.nom', header: 'Catégorie' },
       { field: 'description', header: 'Description' },
-      { field: 'prix', header: 'Price' },
-      { field: 'quantitystock', header: 'Stock Quantity' },
-      { field: 'seuil', header: 'Threshold' },
+      { field: 'prix', header: 'Prix' },
+      { field: 'prix_achat', header: 'Prix Achat' },
+      { field: 'prix_vente_ht', header: 'Prix Vente HT' },
+      { field: 'prix_vente_ttc', header: 'Prix Vente TTC' },
+      { field: 'remise_maximale', header: 'Remise (%)' },
+      { field: 'quantitystock', header: 'Stock' },
+      { field: 'quantite', header: 'Quantité' },
+      { field: 'seuil', header: 'Seuil' },
+      { field: 'rating', header: 'Note' },
+      { field: 'inventoryStatus', header: 'Statut Stock' },
+      { field: 'fournisseur', header: 'Fournisseur ' },
       { field: 'image_data', header: 'Image' },
-    ];
+    ];    
   }
   getCategories() {
     this.categorieService.getCategories().subscribe((data) => {
       this.categories = data;
     });
   }
+  getFournisseurs() {
+    this.produitService.getFournisseurs().subscribe((data) => {
+      this.fournisseurs = data;
+    });
+  }
+  
 
   openNew() {
     this.produit = {} as Produit;
@@ -61,6 +80,28 @@ export class ProduitComponent implements OnInit {
     this.submitted = false;
     this.produitDialog = true;
   }
+  getRowClass(produit: Produit): string {
+    switch (produit.inventoryStatus) {
+      case 'INSTOCK':
+        return 'row-instock';
+      case 'LOWSTOCK':
+        return 'row-lowstock';
+      case 'OUTOFSTOCK':
+        return 'row-outofstock';
+      default:
+        return '';
+    }
+  }
+  onFileUploadSelect(event: any): void {
+    const file = event.files[0];
+    if (file) {
+      this.produit.image_data = file;
+      const objectUrl = URL.createObjectURL(file);
+      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      this.cdRef.detectChanges();
+    }
+  }
+  
 
   /**
    * Retourne l'URL d'affichage de l'image.
@@ -185,6 +226,16 @@ export class ProduitComponent implements OnInit {
     formData.append('quantitystock', String(this.produit.quantitystock ?? 0));
     formData.append('seuil', String(this.produit.seuil ?? 0));
     formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
+    formData.append('prix_achat', String(this.produit.prix_achat ?? 0));
+    formData.append('prix_vente_ht', String(this.produit.prix_vente_ht ?? 0));
+    formData.append('prix_vente_ttc', String(this.produit.prix_vente_ttc ?? 0));
+    formData.append('remise_maximale', String(this.produit.remise_maximale ?? 0));
+    formData.append('quantite', String(this.produit.quantite ?? 0));
+    formData.append('rating', String(this.produit.rating ?? 0));
+    formData.append('inventoryStatus', this.produit.inventoryStatus ?? '');
+    formData.append('fournisseur_id', String(this.produit.fournisseur?.id ?? this.produit.fournisseur ?? ''));
+
+
 
 
     if (this.produit.image_data instanceof File) {

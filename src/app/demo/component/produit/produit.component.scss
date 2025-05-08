@@ -1,0 +1,22 @@
+::ng-deep .row-instock {
+    background-color: #e9fbe9 !important;
+  }
+  
+  ::ng-deep .row-lowstock {
+    background-color: #fff9e6 !important;
+  }
+  
+  ::ng-deep .row-outofstock {
+    background-color: #fde4e4 !important;
+  }
+
+  .required-star {
+    color: red;
+    margin-left: 2px;
+  }
+
+  small.ng-invalid {
+    color: red;
+  }
+  
+  
