@@ -1,78 +1,153 @@
-<div class="container">
-    <h2>Gestion des Documents</h2>
-  
-    <!-- Sélectionner une classe de document -->
-    <div class="mb-3">
-      <label for="documentClassSelect" class="form-label">Sélectionner une Classe de Document</label>
-      <select id="documentClassSelect" class="form-select" [(ngModel)]="selectedDocumentClassId" (change)="filterByDocumentClass()">
-        <option value="">Toutes les classes</option>
-        <option *ngFor="let documentClass of documentClasses" [value]="documentClass.id">
-          {{ documentClass.libelle }}
-        </option>
-      </select>
-    </div>
-  
-    <!-- Liste des documents -->
-    <div class="mb-3">
-      <h4>Liste des Documents</h4>
-      <table class="table">
-        <thead>
+<div class="grid">
+  <div class="col-12">
+    <div class="card">
+      <p-toast></p-toast>
+
+      <p-toolbar class="mb-4">
+        <ng-template pTemplate="left">
+          <button pButton label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+          <button pButton label="Supprimer" icon="pi pi-trash" class="p-button-danger"
+                  (click)="deleteSelectedDocuments()"
+                  [disabled]="!selectedDocuments || !selectedDocuments.length"></button>
+        </ng-template>
+
+        <ng-template pTemplate="right">
+          <button pButton label="Exporter" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+        </ng-template>
+      </p-toolbar>
+
+      <p-table #dt [value]="documents" [(selection)]="selectedDocuments" selectionMode="multiple" dataKey="id"
+               [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
+               [globalFilterFields]="['libelle', 'code', 'documentClass.libelle']">
+
+        <ng-template pTemplate="caption">
+          <div class="flex justify-content-between">
+            <h5>Liste des Documents</h5>
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Recherche globale..." />
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template pTemplate="header">
           <tr>
+            <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
             <th>Libellé</th>
             <th>Code</th>
             <th>Classe</th>
+            <th>Code Classe</th>
+            <th>Num Séquence</th>
+            <th>Date Document</th>
+            <th>État</th>
+            <th>Préparateur</th>
+            <th>Client</th>
+            <th>Devise</th>
+            <th>Taux Échange</th>
+            <th>Date Livraison</th>
             <th>Actions</th>
           </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let document of documents">
-            <td>{{ document.libelle }}</td>
-            <td>{{ document.code }}</td>
-            <td>{{ document.documentClass?.libelle }}</td>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-doc>
+          <tr>
+            <td><p-tableCheckbox [value]="doc"></p-tableCheckbox></td>
+            <td>{{ doc.libelle }}</td>
+            <td>{{ doc.code }}</td>
+            <td>{{ doc.documentClass?.libelle }}</td>
+            <td>{{ doc.codeclassedocument }}</td>
+            <td>{{ doc.num_seq }}</td>
+            <td>{{ doc.dateDocument }}</td>
+            <td>{{ doc.etat }}</td>
+            <td>{{ doc.preparateur?.username || doc.preparateur?.username || '-' }}</td>
+            <td>{{ doc.client_id?.nom || '-' }}</td>
+            <td>{{ doc.devise }}</td>
+            <td>{{ doc.tauxEchange }}</td>
+            <td>{{ doc.dateLivraison }}</td>
             <td>
-              <button class="btn btn-primary" (click)="selectDocument(document)">Modifier</button>
-              <button class="btn btn-danger" (click)="deleteDocument(document.id)">Supprimer</button>
+              <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocument(doc)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteDocument(doc)"></button>
             </td>
           </tr>
-        </tbody>
-      </table>
+        </ng-template>
+      </p-table>
     </div>
-  
-    <!-- Formulaire d'ajout / modification de document -->
-    <div *ngIf="selectedDocument || newDocument.id === 0" class="mb-3">
-      <h4>{{ selectedDocument ? 'Modifier le Document' : 'Ajouter un Nouveau Document' }}</h4>
-      <form (ngSubmit)="selectedDocument ? updateDocument() : addDocument()">
-        <div class="form-group">
-          <label for="libelle">Libellé</label>
-          <input type="text" id="libelle" class="form-control" [(ngModel)]="newDocument.libelle" name="libelle" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="code">Code</label>
-          <input type="text" id="code" class="form-control" [(ngModel)]="newDocument.code" name="code" required>
-        </div>
-  
-        <!-- Sélectionner la classe de document -->
-        <div class="form-group">
-          <label for="documentClass">Classe de Document</label>
-          <select id="documentClass" class="form-select" [(ngModel)]="newDocument.document_class_id" name="document_class_id" required>
-            <option value="">Choisir une classe</option>
-            <option *ngFor="let documentClass of documentClasses" [value]="documentClass.id">
-              {{ documentClass.libelle }}
-            </option>
-          </select>
-        </div>
-  
-        <div class="form-group">
-          <button type="submit" class="btn btn-success">
-            {{ selectedDocument ? 'Mettre à jour' : 'Ajouter' }}
-          </button>
-          <button *ngIf="selectedDocument" class="btn btn-secondary" (click)="selectedDocument = null">
-            Annuler
-          </button>
-        </div>
-      </form>
-    </div>
-  
   </div>
-  
+</div>
+
+<!-- DIALOG -->
+<p-dialog [(visible)]="documentDialog" [modal]="true" [style]="{width: '500px'}" header="Document" class="p-fluid">
+  <div class="field">
+    <label>Libellé</label>
+    <input pInputText [(ngModel)]="document.libelle" required autofocus />
+  </div>
+
+  <div class="field">
+    <label>Code</label>
+    <input pInputText [(ngModel)]="document.code" required />
+  </div>
+
+  <div class="field">
+    <label>Classe de Document</label>
+    <p-dropdown [options]="documentClasses" optionLabel="libelle" optionValue="id" [(ngModel)]="document.document_class_id" placeholder="Choisir une classe"></p-dropdown>
+  </div>
+
+  <div class="field">
+    <label>Code Classe Document</label>
+    <input pInputText [(ngModel)]="document.codeclassedocument" />
+  </div>
+
+  <div class="field">
+    <label>Numéro Séquence</label>
+    <input pInputText [(ngModel)]="document.num_seq" />
+  </div>
+
+  <div class="field">
+    <label>Date Document</label>
+    <input type="date" pInputText [(ngModel)]="document.dateDocument" />
+  </div>
+
+  <div class="field">
+    <label>État</label>
+    <input pInputText [(ngModel)]="document.etat" />
+  </div>
+
+  <div class="field">
+    <label>Préparateur</label>
+    <p-dropdown [options]="utilisateurs" optionLabel="username" optionValue="id" [(ngModel)]="document.preparateur"></p-dropdown>
+  </div>
+
+  <div class="field">
+    <label>Client</label>
+    <p-dropdown [options]="clients" optionLabel="nom" optionValue="id" [(ngModel)]="document.client_id"></p-dropdown>
+  </div>
+
+  <div class="field">
+    <label>Devise</label>
+    <input pInputText [(ngModel)]="document.devise" />
+  </div>
+
+  <div class="field">
+    <label>Taux d'Échange</label>
+    <input type="number" pInputText [(ngModel)]="document.tauxEchange" />
+  </div>
+
+  <div class="field">
+    <label>Date Livraison</label>
+    <input type="date" pInputText [(ngModel)]="document.dateLivraison" />
+  </div>
+
+  <div class="field" *ngIf="document.produitsCommandes?.length">
+    <label>Produits Commandés</label>
+    <ul>
+      <li *ngFor="let p of document.produitsCommandes">
+        {{ p.nom || 'Produit' }} - Qté: {{ p.quantite || '?' }}
+      </li>
+    </ul>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+    <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocument()"></button>
+  </ng-template>
+</p-dialog>

@@ -2,124 +2,127 @@ import { Component, OnInit } from '@angular/core';
 import { DocumentService } from '../demo/service/document.service';
 import { Document } from '../demo/domain/document';
 import { DocumentClass } from '../demo/domain/documentClass';
+import { MessageService } from 'primeng/api';
+import { Client } from '../demo/domain/client';
+import { User } from '../demo/domain/user';
+import { UserService } from '../demo/service/user.service';
+import { DataService } from '../demo/service/data.service';
 
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
+  providers: [MessageService]
 })
 export class DocumentComponent implements OnInit {
   documents: Document[] = [];
   documentClasses: DocumentClass[] = [];
+  selectedDocuments: Document[] = [];
+  document: Document = this.getEmptyDocument();
   selectedDocumentClassId: number | null = null;
-  newDocument: Document = {
-    id: 0,  // Si vous avez un id généré côté backend, laissez-le à 0
-    libelle: '',
-    code: '',
-    codeclassedocument: '',
-    document_class_id: 0,
-    documentClass: null,  // Initialisé à null, ou vous pouvez définir une instance vide de DocumentClass
-  };
-  selectedDocument: Document | null = null;
 
-  constructor(private documentService: DocumentService) {}
+  documentDialog: boolean = false;
+  submitted: boolean = false;
+  clients: Client[] = [];
+  utilisateurs: User[] = [];
+
+
+  constructor(
+    private documentService: DocumentService, 
+    private messageService: MessageService ,
+    private userService: UserService,
+    private clientService: DataService) {}
 
   ngOnInit(): void {
     this.loadDocuments();
     this.loadDocumentClasses();
+    this.clientService.getClients().subscribe(c => this.clients = c);
+    this.userService.getUsers().subscribe(u => this.utilisateurs = u);
+
   }
 
-  // Charger tous les documents
+  getEmptyDocument(): Document {
+    return {
+      id: 0,
+      document_class_id: 0,
+      codeclassedocument: '',
+      num_seq: '',
+      libelle: '',
+      code: '',
+      dateDocument: '',
+      etat: '',
+      preparateur: null,
+      client_id: null,
+      devise: '',
+      tauxEchange: 0,
+      dateLivraison: '',
+      produitsCommandes: [],
+      documentClass: null
+    };
+  }
+
   loadDocuments(): void {
-    this.documentService.getDocuments().subscribe(
-      (data) => {
-        this.documents = data;
-      },
-      (error) => {
-        console.error('Error loading documents:', error);
-      }
-    );
+    this.documentService.getDocuments().subscribe({
+      next: (data) => this.documents = data,
+      error: (err) => console.error('Erreur chargement documents', err)
+    });
   }
 
-  // Charger toutes les classes de documents
   loadDocumentClasses(): void {
-    this.documentService.getDocumentClasses().subscribe(
-      (data) => {
-        this.documentClasses = data;
-      },
-      (error) => {
-        console.error('Error loading document classes:', error);
-      }
-    );
+    this.documentService.getDocumentClasses().subscribe({
+      next: (data) => this.documentClasses = data,
+      error: (err) => console.error('Erreur chargement classes', err)
+    });
   }
 
-  // Filtrer les documents par classe de document
-  filterByDocumentClass(): void {
-    if (this.selectedDocumentClassId) {
-      this.documentService.getDocumentsByClass(this.selectedDocumentClassId).subscribe(
-        (data) => {
-          this.documents = data;
-        },
-        (error) => {
-          console.error('Error filtering documents:', error);
+  openNew(): void {
+    this.document = this.getEmptyDocument();
+    this.submitted = false;
+    this.documentDialog = true;
+  }
+
+  editDocument(doc: Document): void {
+    this.document = { ...doc };
+    this.documentDialog = true;
+  }
+
+  deleteDocument(doc: Document): void {
+    this.documentService.deleteDocument(doc.id).subscribe(() => {
+      this.documents = this.documents.filter(d => d.id !== doc.id);
+      this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document supprimé' });
+    });
+  }
+
+  deleteSelectedDocuments(): void {
+    this.selectedDocuments.forEach(d => this.deleteDocument(d));
+    this.selectedDocuments = [];
+  }
+
+  saveDocument(): void {
+    this.submitted = true;
+
+    if (this.document.id === 0) {
+      this.documentService.saveDocument(this.document).subscribe({
+        next: (data) => {
+          this.documents.push(data);
+          this.messageService.add({ severity: 'success', summary: 'Ajouté', detail: 'Document ajouté' });
+          this.documentDialog = false;
+          this.document = this.getEmptyDocument();
         }
-      );
+      });
     } else {
-      this.loadDocuments();
-    }
-  }
-
-  // Sélectionner un document pour la modification
-  selectDocument(document: Document): void {
-    this.selectedDocument = { ...document };
-  }
-
-  // Ajouter un nouveau document
-  addDocument(): void {
-    this.documentService.saveDocument(this.newDocument).subscribe(
-      (data) => {
-        this.documents.push(data);
-        this.newDocument = {
-          id: 0,  // Réinitialisation des valeurs après ajout
-          libelle: '',
-          code: '',
-          codeclassedocument: '',
-          document_class_id: 0,
-          documentClass: null,
-        };
-      },
-      (error) => {
-        console.error('Error adding document:', error);
-      }
-    );
-  }
-
-  // Mettre à jour un document existant
-  updateDocument(): void {
-    if (this.selectedDocument) {
-      this.documentService.updateDocument(this.selectedDocument.id, this.selectedDocument).subscribe(
-        (data) => {
+      this.documentService.updateDocument(this.document.id, this.document).subscribe({
+        next: (data) => {
           const index = this.documents.findIndex(doc => doc.id === data.id);
-          if (index !== -1) {
-            this.documents[index] = data;
-          }
-          this.selectedDocument = null; // Réinitialiser la sélection
-        },
-        (error) => {
-          console.error('Error updating document:', error);
+          if (index !== -1) this.documents[index] = data;
+          this.messageService.add({ severity: 'success', summary: 'Mis à jour', detail: 'Document mis à jour' });
+          this.documentDialog = false;
         }
-      );
+      });
     }
   }
 
-  // Supprimer un document
-  deleteDocument(id: number): void {
-    this.documentService.deleteDocument(id).subscribe(
-      () => {
-        this.documents = this.documents.filter(doc => doc.id !== id);
-      },
-      (error) => {
-        console.error('Error deleting document:', error);
-      }
-    );
+  hideDialog(): void {
+    this.documentDialog = false;
+    this.submitted = false;
   }
 }
