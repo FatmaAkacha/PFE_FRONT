@@ -21,6 +21,7 @@ export class DocumentComponent implements OnInit {
   selectedDocumentClassId: number | null = null;
 
   documentDialog: boolean = false;
+  documentClassesDialog: boolean = false; 
   submitted: boolean = false;
   clients: Client[] = [];
   utilisateurs: User[] = [];
@@ -39,6 +40,19 @@ export class DocumentComponent implements OnInit {
     this.userService.getUsers().subscribe(u => this.utilisateurs = u);
 
   }
+  documentClass: DocumentClass = this.getEmptyDocumentClass();
+  getEmptyDocumentClass(): DocumentClass {
+    return {
+      id: 0,
+      libelle: '',
+      prefix: '',
+      isvent: false,
+      isachat: false,
+      actif: true
+    };
+  }
+  
+
 
   getEmptyDocument(): Document {
     return {
@@ -125,4 +139,28 @@ export class DocumentComponent implements OnInit {
     this.documentDialog = false;
     this.submitted = false;
   }
+// Ouvrir le Dialog des Classes de Documents
+showDocumentClassesDialog(): void {
+  this.documentClass = this.getEmptyDocumentClass();
+  this.documentClassesDialog = true;
+}
+
+// Fermer le Dialog des Classes de Documents
+closeDocumentClassesDialog(): void {
+  this.documentClassesDialog = false;
+}
+
+// Ajouter une nouvelle classe de document (logique à personnaliser selon l'API)
+addDocumentClass(docClass: DocumentClass): void {
+  this.messageService.add({ severity: 'info', summary: 'Classe ajoutée', detail: docClass.libelle });
+  this.closeDocumentClassesDialog();  // Fermer le dialog
+  // Vous pouvez aussi ajouter de la logique pour gérer l'ajout à la liste ou une autre action
+}
+saveDocumentClass(): void {
+  // Ajoute ici l'appel à ton service pour enregistrer
+  this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Classe enregistrée' });
+  this.closeDocumentClassesDialog();
+}
+
+
 }

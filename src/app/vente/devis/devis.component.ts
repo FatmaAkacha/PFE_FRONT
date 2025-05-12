@@ -51,7 +51,7 @@ export class DevisComponent implements OnInit {
     { label: 'Dollar ($)', value: 'USD' }
   ];
   devis: Devis = {
-    client_id: 1, // à adapter dynamiquement
+    client_id: "", // à adapter dynamiquement
     totalHT: 100,
     tva: 20,
     totalTTC: 120,
@@ -129,6 +129,17 @@ export class DevisComponent implements OnInit {
     console.log(this.devisProduits);
 
   }
+
+  getClientLogoUrl(logo: string | File): string {
+    if (typeof logo === 'string') {
+      return logo;
+    } else if (logo instanceof File) {
+      return URL.createObjectURL(logo);
+    }
+    return '';
+  }
+
+  
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {
@@ -136,7 +147,7 @@ export class DevisComponent implements OnInit {
         this.documentClasses = classes;
   
         const bonDeCommande = this.documentClasses.find(dc =>
-          dc.prefixe == 'Bon de commande'
+          dc.prefix == 'Bon de commande'
         );
   
         if (bonDeCommande) {
@@ -154,7 +165,7 @@ export class DevisComponent implements OnInit {
   const lowerLabel = label.toLowerCase().trim();
   const docClass = this.documentClasses.find(dc =>
     (dc.libelle && dc.libelle.toLowerCase().trim() === lowerLabel) ||
-    (dc.prefixe && dc.prefixe.toLowerCase().trim() === lowerLabel)
+    (dc.prefix && dc.prefix.toLowerCase().trim() === lowerLabel)
   );
   return docClass ? docClass.id : null;
 }

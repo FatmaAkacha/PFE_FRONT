@@ -21,10 +21,17 @@
 
   <div class="client-info">
     <h3>Informations du Client</h3>
+    
     <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
         <label>Client</label>
-        <p-dropdown [options]="clients" optionLabel="nom" [(ngModel)]="selectedClient" (onChange)="onClientSelect($event.value)" class="mb-2 mt-2"></p-dropdown>
+        <p-dropdown 
+          [options]="clients" 
+          optionLabel="nom" 
+          [(ngModel)]="selectedClient" 
+          (onChange)="onClientSelect($event.value)" 
+          class="mb-2 mt-2">
+        </p-dropdown>
       </div>
       <div class="col-12 md:col-4">
         <label>Code client</label>
@@ -35,22 +42,45 @@
         <input pInputText [value]="selectedClient?.raison_sociale || ''" [disabled]="true">
       </div>
     </div>
-
+  
     <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
-        <label>Matricule fiscale</label>
-        <input pInputText [value]="selectedClient?.logo || ''" [disabled]="true">
+        <label>Contact</label>
+        <input pInputText [value]="selectedClient?.contact || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Email</label>
+        <input pInputText [value]="selectedClient?.email || ''" [disabled]="true">
       </div>
       <div class="col-12 md:col-4">
         <label>Téléphone</label>
         <input pInputText [value]="selectedClient?.numero_telephone || ''" [disabled]="true">
       </div>
-      <div class="col-12 md:col-4">
+    </div>
+  
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-12">
         <label>Adresse</label>
         <input pInputText [value]="selectedClient?.adresse || ''" [disabled]="true">
       </div>
     </div>
+  
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Logo</label>
+        <div *ngIf="selectedClient?.logo">
+          <img 
+            [src]="getClientLogoUrl(selectedClient.logo)" 
+            alt="Logo client" 
+            style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; padding: 4px;">
+        </div>
+        <div *ngIf="!selectedClient?.logo">
+          <p>Aucun logo disponible</p>
+        </div>
+      </div>
+    </div>
   </div>
+  
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">

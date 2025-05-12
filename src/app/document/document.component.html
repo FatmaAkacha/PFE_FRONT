@@ -9,6 +9,7 @@
           <button pButton label="Supprimer" icon="pi pi-trash" class="p-button-danger"
                   (click)="deleteSelectedDocuments()"
                   [disabled]="!selectedDocuments || !selectedDocuments.length"></button>
+                  <button pButton label="Classes de Documents" icon="pi pi-list" class="p-button-info" (click)="showDocumentClassesDialog()"></button>
         </ng-template>
 
         <ng-template pTemplate="right">
@@ -76,6 +77,41 @@
 </div>
 
 <!-- DIALOG -->
+ <!-- Dialog des Classes de Documents -->
+ <p-dialog [(visible)]="documentClassesDialog" [modal]="true" [style]="{width: '500px'}" header="Ajouter / Modifier une Classe de Document" class="p-fluid">
+  <div class="field">
+    <label for="libelle">Libellé</label>
+    <input id="libelle" type="text" pInputText [(ngModel)]="documentClass.libelle" required />
+  </div>
+
+  <div class="field">
+    <label for="prefix">Préfixe</label>
+    <input id="prefix" type="text" pInputText [(ngModel)]="documentClass.prefix" />
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox name="isvent" [(ngModel)]="documentClass.isvent" binary="true" inputId="isvent"></p-checkbox>
+    <label for="isvent">Est Vente</label>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox name="isachat" [(ngModel)]="documentClass.isachat" binary="true" inputId="isachat"></p-checkbox>
+    <label for="isachat">Est Achat</label>
+  </div>
+
+  <div class="field-checkbox">
+    <p-checkbox name="actif" [(ngModel)]="documentClass.actif" binary="true" inputId="actif"></p-checkbox>
+    <label for="actif">Actif</label>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="closeDocumentClassesDialog()"></button>
+    <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocumentClass()"></button>
+  </ng-template>
+</p-dialog>
+
+
+
 <p-dialog [(visible)]="documentDialog" [modal]="true" [style]="{width: '500px'}" header="Document" class="p-fluid">
   <div class="field">
     <label>Libellé</label>
