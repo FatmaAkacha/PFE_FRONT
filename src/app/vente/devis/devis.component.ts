@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DevisService } from 'src/app/demo/service/devis.service';
 import { Client } from 'src/app/demo/domain/client';
 import { Produit } from 'src/app/demo/domain/produit';
 import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { BreadcrumbService } from 'src/app/breadcrumb.service';
 import { Router } from '@angular/router';
 import { DocumentService } from 'src/app/demo/service/document.service';
 import { Document } from 'src/app/demo/domain/document';
 import { DocumentClass } from 'src/app/demo/domain/documentClass';
 import { PanierService } from 'src/app/demo/service/panier.service';
+import { User } from 'src/app/demo/domain/user';
+import { UserService } from 'src/app/demo/service/user.service';
 
 @Component({
   selector: 'app-devis',
@@ -20,6 +22,8 @@ import { PanierService } from 'src/app/demo/service/panier.service';
   providers: [MessageService, ConfirmationService],
 })
 export class DevisComponent implements OnInit {
+  num_seq: string = '00001';  
+  formattedOrderNumber: string = '';
   devisDialog: boolean = false;
   devisList: Devis[] = [];
   devisForm: FormGroup;
@@ -34,7 +38,6 @@ export class DevisComponent implements OnInit {
   selectedClient: Client = {} as Client;
   clientDevis: Devis[] = [];
   currentOrderNumber: number = 1;
-  formattedOrderNumber: string = '';
   currentDate: Date = new Date(); 
   afficherProduits: boolean = false;
   documentClasses: DocumentClass[] = [];
@@ -42,6 +45,7 @@ export class DevisComponent implements OnInit {
   tauxEchange: number = 1;
   totalStock: number = 0;
   dateLivraison: Date = new Date();
+  users: User[] = [];
 
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
@@ -79,7 +83,11 @@ export class DevisComponent implements OnInit {
     private confirmationService: ConfirmationService,
     private documentService: DocumentService,
     private panierService: PanierService,
-    private router: Router
+    private router: Router,
+    private userService: UserService,
+    private breadcrumbService: BreadcrumbService,
+    private sanitizer: DomSanitizer,
+    private cdRef: ChangeDetectorRef
   ) {
     this.devisForm = this.fb.group({
       client: [null]
@@ -95,7 +103,7 @@ export class DevisComponent implements OnInit {
       totalTTC: 0,
       date: '',
       etat: '', 
-      preparateur: '',
+      preparateur_id: {} as User,
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
@@ -104,6 +112,7 @@ export class DevisComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadClients();
+    this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
     this.getDocumentClasses();
@@ -122,24 +131,23 @@ export class DevisComponent implements OnInit {
   
     this.calculerTotal();
   
-    const savedOrderNumber = localStorage.getItem('currentOrderNumber');
-    this.currentOrderNumber = savedOrderNumber ? parseInt(savedOrderNumber, 10) : 1;
-    this.formatOrderNumber();
+    const savedOrderNumber = localStorage.getItem('num_seq');
+    this.num_seq = savedOrderNumber ? savedOrderNumber : '00001';  // Valeur initiale si non trouvée
+    this.formatOrderNumber();  // Mettre à jour le format du numéro
 
     console.log(this.devisProduits);
 
   }
-
-  getClientLogoUrl(logo: string | File): string {
-    if (typeof logo === 'string') {
-      return logo;
-    } else if (logo instanceof File) {
-      return URL.createObjectURL(logo);
-    }
-    return '';
+  loadUsers() {
+    this.userService.getUsers().subscribe({
+      next: (data: User[]) => {
+        this.users = data;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des utilisateurs :", err);
+      }
+    });
   }
-
-  
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {
@@ -256,14 +264,34 @@ export class DevisComponent implements OnInit {
   }
 
   incrementOrderNumber() {
-    this.currentOrderNumber++;
-    this.formatOrderNumber();
-    localStorage.setItem('currentOrderNumber', this.currentOrderNumber.toString());
+    // Récupérer la valeur de num_seq depuis le localStorage
+    let savedOrderNumber = localStorage.getItem('num_seq');
+    
+    // Si savedOrderNumber n'est pas null, on l'incrémente
+    if (savedOrderNumber) {
+      // Convertir la valeur récupérée en entier, enlever les zéros à gauche
+      let num = parseInt(savedOrderNumber, 10); // Exemple : "00001" devient 1
+  
+      num++; // Incrémenter le numéro
+  
+      // Reformater le numéro avec des zéros à gauche pour avoir toujours 5 chiffres
+      savedOrderNumber = num.toString().padStart(5, '0');  // Exemple : "00001" -> "00002"
+  
+      // Sauvegarder la nouvelle valeur dans le localStorage
+      localStorage.setItem('num_seq', savedOrderNumber);
+  
+      // Mettre à jour num_seq dans l'application
+      this.num_seq = savedOrderNumber;
+  
+      this.formatOrderNumber();
+    } else {
+      this.num_seq = '00001';
+      this.formatOrderNumber();
+    }
   }
 
   formatOrderNumber() {
-    this.formattedOrderNumber = ('000000' + this.currentOrderNumber).slice(-6);
-  }
+    this.formattedOrderNumber = this.num_seq;  }
 
   
   modifierProduit(produit: DevisProduit) {
@@ -318,7 +346,7 @@ export class DevisComponent implements OnInit {
       code: '',  // Le code pourra être généré par le backend
       dateDocument: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date du document (livraison ou actuelle)
       etat: this.devis.etat,  // État du document (par exemple: En cours, Validé)
-      preparateur: this.devis.preparateur,  // Préparateur du document
+      preparateur_id: this.devis.preparateur_id,  // Préparateur du document
       client_id: this.selectedClient?.id,  // ID du client sélectionné
       devise: this.devis.devise,  // Devise
       tauxEchange: this.devis.tauxEchange,  // Taux de change

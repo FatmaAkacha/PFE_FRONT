@@ -11,7 +11,7 @@ import { User } from './user';
     code?: string;
     dateDocument?: string;
     etat?: string;
-    preparateur?: User;
+    preparateur_id?: User;
     client_id?: Client;
     devise?: string;
     tauxEchange?: number;

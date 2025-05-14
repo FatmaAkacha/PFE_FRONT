@@ -11,11 +11,11 @@
     </div>
     <div class="col-12 md:col-4">
       <label>État Document</label>
-      <p-dropdown [options]="etatOptions" [(ngModel)]="devis.etat"></p-dropdown>
+      <p-dropdown [options]="etatOptions" [(ngModel)]="devis.etat" placeholder="Sélectionner un état"[filter]="true"></p-dropdown>    
     </div>
     <div class="col-12 md:col-4">
       <label>Préparé par</label>
-      <p-dropdown [options]="preparateurs" optionLabel="nom" [(ngModel)]="devis.preparateur" optionValue="nom"></p-dropdown>
+      <p-dropdown [options]="users" [(ngModel)]="devis.preparateur_id" optionLabel="username" optionValue="id" placeholder="Sélectionner un préparateur" [filter]="true"></p-dropdown>    
     </div>
   </div>
 
@@ -65,23 +65,6 @@
       </div>
     </div>
   
-    <div class="grid formgrid p-fluid">
-      <div class="col-12 md:col-4">
-        <label>Logo</label>
-        <div *ngIf="selectedClient?.logo">
-          <img 
-            [src]="getClientLogoUrl(selectedClient.logo)" 
-            alt="Logo client" 
-            style="max-width: 150px; max-height: 150px; border: 1px solid #ccc; padding: 4px;">
-        </div>
-        <div *ngIf="!selectedClient?.logo">
-          <p>Aucun logo disponible</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Devise</label>

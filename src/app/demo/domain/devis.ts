@@ -1,5 +1,6 @@
 import { Client } from "./client";
 import { Produit } from "./produit";
+import { User } from "./user";
 
 export interface Devis {
     id?: any;
@@ -11,7 +12,7 @@ export interface Devis {
     totalTTC: any;
     date: any;
     etat?: any;  
-    preparateur?: any;
+    preparateur_id?: User;
     dateDocument?:any;  
 
     devise?: string;        

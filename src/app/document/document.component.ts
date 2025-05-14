@@ -33,13 +33,16 @@ export class DocumentComponent implements OnInit {
     private userService: UserService,
     private clientService: DataService) {}
 
-  ngOnInit(): void {
-    this.loadDocuments();
-    this.loadDocumentClasses();
-    this.clientService.getClients().subscribe(c => this.clients = c);
-    this.userService.getUsers().subscribe(u => this.utilisateurs = u);
-
-  }
+    ngOnInit(): void {
+      this.loadDocumentClasses();
+      this.clientService.getClients().subscribe(c => {
+        this.clients = c;
+        this.loadDocuments();
+      });
+    
+      this.userService.getUsers().subscribe(u => this.utilisateurs = u);
+    }
+    
   documentClass: DocumentClass = this.getEmptyDocumentClass();
   getEmptyDocumentClass(): DocumentClass {
     return {
@@ -64,7 +67,7 @@ export class DocumentComponent implements OnInit {
       code: '',
       dateDocument: '',
       etat: '',
-      preparateur: null,
+      preparateur_id: {} as User,
       client_id: null,
       devise: '',
       tauxEchange: 0,
@@ -76,10 +79,22 @@ export class DocumentComponent implements OnInit {
 
   loadDocuments(): void {
     this.documentService.getDocuments().subscribe({
-      next: (data) => this.documents = data,
+      next: (data) => {
+        this.documents = data.map(doc => {
+          const client = this.clients.find(c => c.id === doc.client_id);
+          const preparateur = this.utilisateurs.find(u => u.id === doc.preparateur_id);
+          return {
+            ...doc,
+            clientNom: client ? client.nom : null,
+            preparateurNom: preparateur ? preparateur.username : null
+
+          };
+        });
+      },
       error: (err) => console.error('Erreur chargement documents', err)
     });
   }
+  
 
   loadDocumentClasses(): void {
     this.documentService.getDocumentClasses().subscribe({

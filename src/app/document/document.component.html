@@ -35,8 +35,6 @@
           <tr>
             <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
             <th>Libellé</th>
-            <th>Code</th>
-            <th>Classe</th>
             <th>Code Classe</th>
             <th>Num Séquence</th>
             <th>Date Document</th>
@@ -54,14 +52,12 @@
           <tr>
             <td><p-tableCheckbox [value]="doc"></p-tableCheckbox></td>
             <td>{{ doc.libelle }}</td>
-            <td>{{ doc.code }}</td>
-            <td>{{ doc.documentClass?.libelle }}</td>
-            <td>{{ doc.codeclassedocument }}</td>
+            <td>{{ doc.codeClasseDoc }}</td>
             <td>{{ doc.num_seq }}</td>
             <td>{{ doc.dateDocument }}</td>
             <td>{{ doc.etat }}</td>
-            <td>{{ doc.preparateur?.username || doc.preparateur?.username || '-' }}</td>
-            <td>{{ doc.client_id?.nom || '-' }}</td>
+            <td>{{ doc.preparateurNom || '-' }}</td>
+            <td>{{ doc.clientNom || '-' }}</td>
             <td>{{ doc.devise }}</td>
             <td>{{ doc.tauxEchange }}</td>
             <td>{{ doc.dateLivraison }}</td>
@@ -150,7 +146,7 @@
 
   <div class="field">
     <label>Préparateur</label>
-    <p-dropdown [options]="utilisateurs" optionLabel="username" optionValue="id" [(ngModel)]="document.preparateur"></p-dropdown>
+    <p-dropdown [options]="utilisateurs" optionLabel="username" optionValue="id" [(ngModel)]="document.preparateur_id"></p-dropdown>
   </div>
 
   <div class="field">
