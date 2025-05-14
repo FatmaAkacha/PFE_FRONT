@@ -99,7 +99,7 @@ export class ProduitsCommandesComponent implements OnInit {
       detail: 'La commande a été enregistrée avec succès.'
     });
   
-    this.router.navigate(['/vente/bon-commande']);
+    this.router.navigate(['/vente/panier']);
   }
   
 

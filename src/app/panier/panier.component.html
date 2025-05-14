@@ -1,36 +1,141 @@
-<div class="card">
-  <h2>Mon Panier</h2>
+<div class="card p-4">
+  <h2 class="mb-4 text-2xl font-semibold text-center text-primary">🛒 Mon Panier</h2>
 
   <ng-container *ngIf="produitsCommandes.length > 0; else vide">
-    <div *ngFor="let produit of produitsCommandes; let i = index" class="mb-3">
-      <div class="flex justify-content-between align-items-center">
-        <div>
-          <strong>{{ produit.nom }}</strong><br>
-          <small>Quantité : {{ produit.quantitystock }}</small><br>
-          <small>Prix unitaire : {{ produit.prix | currency:'DT' }}</small>
+    <div *ngFor="let produit of produitsCommandes; let i = index" class="mb-4 p-3 border rounded-lg shadow-sm bg-gray-50">
+      <div class="flex items-start gap-4">
+    
+        <!-- 📷 Image du produit -->
+        <img *ngIf="produit.image_data"
+             [src]="getImageSrc(produit)"
+             alt="Image de {{ produit.nom }}"
+             class="logo-img"
+             style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;" />
+    
+        <!-- 🛒 Infos produit -->
+        <div class="flex-1">
+          <p class="text-lg font-medium text-gray-800">{{ produit.nom }}</p>
+          <p class="text-sm text-gray-600">Quantité : {{ produit.quantitystock }}</p>
+          <p class="text-sm text-gray-600">Prix unitaire : {{ produit.prix | currency:'DT' }}</p>
         </div>
-        <div>
-          <strong>Total : {{ produit.prix! * produit.quantitystock! | currency:'DT' }}</strong>
-          <button pButton icon="pi pi-trash" class="p-button-danger ml-2" (click)="retirerProduit(i)"></button>
+    
+        <!-- 💰 Total + bouton suppression -->
+        <div class="text-right">
+          <p class="text-md font-semibold text-green-700">
+            Total : {{ produit.prix! * produit.quantitystock! | currency:'DT' }}
+          </p>
+          <button 
+            pButton 
+            icon="pi pi-trash" 
+            class="p-button-sm p-button-rounded p-button-danger mt-2" 
+            (click)="retirerProduit(i)" 
+            aria-label="Retirer le produit"
+            title="Supprimer ce produit">
+          </button>
         </div>
       </div>
-    </div>
+    </div>    
 
-    <h3 class="mt-4">Total général : {{ getTotal() | currency:'DT' }}</h3>
+    <hr class="my-4 border-gray-300" />
 
-    <div class="mt-2 flex gap-2">
-      <button pButton label="Vider" icon="pi pi-times" class="p-button-secondary" (click)="viderPanier()"></button>
+    <h3 class="text-xl font-bold text-right text-primary">
+      Total général : {{ getTotal() | currency:'DT' }}
+    </h3>
+
+    <div class="boutons-panier">
+      <button 
+        pButton 
+        label="Vider le panier" 
+        icon="pi pi-times-circle" 
+        class="p-button-secondary p-button-outlined my-2" 
+        (click)="viderPanier()">
+      </button>
+
+      <button 
+        pButton 
+        label="Valider la commande" 
+        icon="pi pi-check-circle" 
+        class="p-button-success my-2" 
+        [routerLink]="['/vente/bon-commande']">
+      </button>
       <button 
       pButton 
-      label="Valider la commande" 
-      icon="pi pi-check" 
-      class="p-button-success" 
-      [routerLink]="['/vente/bon-commande']">
+      label="Modifier" 
+      icon="pi pi-pencil" 
+      class="p-button-info my-2"  
+      (click)="afficherSelectionProduits = true">
     </button>
-        </div>
+
+    </div>
   </ng-container>
 
   <ng-template #vide>
-    <p>Votre panier est vide.</p>
+    <div class="text-center py-10 text-gray-600">
+      <p class="text-lg">Votre panier est vide.</p>
+    </div>
   </ng-template>
+
+  <p-dialog 
+  header="Ajouter ou modifier des produits" 
+  [(visible)]="afficherSelectionProduits" 
+  [modal]="true" 
+  [style]="{ width: '60vw' }"
+  [closable]="true"
+  [dismissableMask]="true"
+>
+
+  <!-- 🔍 Barre de recherche -->
+  <div class="mb-3">
+    <input 
+      type="text" 
+      pInputText 
+      placeholder="Rechercher un produit..." 
+      [(ngModel)]="recherche" 
+      class="w-full"
+    />
+  </div>
+
+  <ng-container *ngIf="produitsFiltres.length > 0; else aucunProduit">
+    <div *ngFor="let produit of produitsFiltres" class="mb-3 p-3 border rounded shadow-sm bg-white flex gap-4 items-center">
+      
+      <!-- 📷 Image du produit -->
+      <img *ngIf="produit.image_data"
+      [src]="getImageSrc(produit)"
+      alt="Image de {{ produit.nom }}"
+      style="width: 50px; height: 50px; object-fit: cover;" 
+      class="logo-img" />
+
+      <div class="flex-1">
+        <p class="text-lg font-semibold mb-1">{{ produit.nom }}</p>
+        <p class="text-sm text-gray-600 mb-2">Prix : {{ produit.prix | currency:'DT' }}</p>
+
+        <!-- 🔢 Quantité à ajouter -->
+        <input 
+          type="number" 
+          [(ngModel)]="quantites[produit.id]" 
+          pInputText 
+          placeholder="Quantité" 
+          class="w-24 mr-2"
+          min="1"
+        />
+
+        <!-- ➕ Bouton d'ajout -->
+        <button 
+          pButton 
+          label="Ajouter" 
+          icon="pi pi-plus" 
+          class="p-button-success p-button-sm" 
+          (click)="ajouterProduitAvecQuantite(produit)">
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #aucunProduit>
+    <p>Aucun produit trouvé.</p>
+  </ng-template>
+
+</p-dialog>
+
+
 </div>
