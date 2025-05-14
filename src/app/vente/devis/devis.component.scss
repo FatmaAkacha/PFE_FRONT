@@ -73,6 +73,19 @@
     width: 95px;
     gap: 8px;
 }
+.bon-commande-container label {
+  display: block;
+  margin-bottom: 0.5rem; /* espace entre label et input */
+  font-weight: 500;
+  color: #333;
+}
+
+.bon-commande-container .p-inputtext,
+.bon-commande-container .p-dropdown,
+.bon-commande-container .p-calendar {
+  width: 100%;
+  margin-bottom: 1.25rem; /* espace sous chaque champ */
+}
 
   
   

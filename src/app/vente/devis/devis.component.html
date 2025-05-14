@@ -21,17 +21,18 @@
 
   <div class="client-info">
     <h3>Informations du Client</h3>
-    
     <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
         <label>Client</label>
         <p-dropdown 
-          [options]="clients" 
-          optionLabel="nom" 
-          [(ngModel)]="selectedClient" 
-          (onChange)="onClientSelect($event.value)" 
-          class="mb-2 mt-2">
-        </p-dropdown>
+        [options]="clients" 
+        [(ngModel)]="devis.client_id" 
+        optionLabel="nom" 
+        optionValue="id"
+        placeholder="Sélectionner un client" 
+        [filter]="true"
+        (onChange)="onClientSelect($event.value)">
+      </p-dropdown>
       </div>
       <div class="col-12 md:col-4">
         <label>Code client</label>
