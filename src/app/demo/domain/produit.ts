@@ -16,7 +16,6 @@ export interface Produit {
   quantity?: number;
   seuil?: number;
   image_data?: any;
-  rating?: number;
   inventoryStatus?: string;
   categorie: Categorie;
   fournisseur?: Fournisseur;

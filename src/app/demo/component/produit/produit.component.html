@@ -75,7 +75,7 @@
           <td><span class="p-column-title">Quantity Stock</span>{{ produit.quantitystock }}</td>
           <td><span class="p-column-title">Quantite</span>{{ produit.quantite }}</td>
           <td><span class="p-column-title">Seuil</span>{{ produit.seuil }}</td>
-          <td><span class="p-column-title">Rating</span>{{ produit.rating }}</td>
+          <td><span class="p-column-title">TVA</span>{{ produit.tva }}</td>
           <td><span class="p-column-title">Inventory Status</span>{{ produit.inventoryStatus }}</td>
           <td><span class="p-column-title">Catégorie</span>{{ produit.categorie?.nom }}</td>
           <td><span class="p-column-title">Fournisseur</span>{{ produit.fournisseur?.name }}</td>
@@ -196,8 +196,8 @@
         <!-- Étape 4 : Image -->
         <div *ngIf="activeStep === 3">
           <div class="field">
-            <label for="rating">Note<span class="required-star">*</span></label>
-            <input type="number" pInputText id="rating" [(ngModel)]="produit.rating" min="0" max="5" />
+            <label for="tva">TVA<span class="required-star">*</span></label>
+            <input type="number" pInputText id="tva" [(ngModel)]="produit.tva" />
           </div>
     
           <div class="field">

@@ -418,7 +418,7 @@ export class DevisComponent implements OnInit {
    
   validerEtPasserALivraison() {
     this.saveBonDeCommandeAsDocument();
-    // this.router.navigate(['vente/bon-livraison/:id']); 
+    this.router.navigate(['vente/bon-livraison/:id']); 
   }
 
   sauvegarderBonCommande() {

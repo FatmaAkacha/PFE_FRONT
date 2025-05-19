@@ -57,7 +57,7 @@ export class ProduitComponent implements OnInit {
       { field: 'quantitystock', header: 'Stock' },
       { field: 'quantite', header: 'Quantité' },
       { field: 'seuil', header: 'Seuil' },
-      { field: 'rating', header: 'Note' },
+      { field: 'tva', header: 'tva' },
       { field: 'inventoryStatus', header: 'Statut Stock' },
       { field: 'fournisseur', header: 'Fournisseur ' },
       { field: 'image_data', header: 'Image' },
@@ -250,7 +250,7 @@ export class ProduitComponent implements OnInit {
     formData.append('prix_vente_ttc', String(this.produit.prix_vente_ttc ?? 0));
     formData.append('remise_maximale', String(this.produit.remise_maximale ?? 0));
     formData.append('quantite', String(this.produit.quantite ?? 0));
-    formData.append('rating', String(this.produit.rating ?? 0));
+    formData.append('tva', String(this.produit.tva ?? 0));
     formData.append('inventoryStatus', this.produit.inventoryStatus ?? '');
     formData.append('fournisseur_id', String(this.produit.fournisseur?.id ?? this.produit.fournisseur ?? ''));
 

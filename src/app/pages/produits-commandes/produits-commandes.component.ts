@@ -45,7 +45,18 @@ export class ProduitsCommandesComponent implements OnInit {
         rating: p.rating ?? (Math.floor(Math.random() * 5) + 1),
         categorie: p.categorie ?? { id: 0, nom: 'Général' },
         categorieNom: p.categorie?.nom ?? 'Général',
-        inventoryStatus: p.inventoryStatus || (p.quantitystock && p.quantitystock > 0 ? 'INSTOCK' : 'OUTOFSTOCK')
+        inventoryStatus: (() => {
+          const quantity = p.quantity ?? 0;
+          const quantitystock = p.quantitystock ?? 0;
+          if (quantitystock === 0) {
+            return 'OUTOFSTOCK';
+          } else if (Math.abs(quantity - quantitystock) <= 1) {
+            return 'LOWSTOCK';
+          } else {
+            return 'INSTOCK';
+          }
+        })()
+        
       }));
     });
   }

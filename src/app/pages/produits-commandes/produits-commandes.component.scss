@@ -4,12 +4,20 @@
     object-fit: cover;
     border-radius: 8px;
   }
+  
 @media (max-width: 768px) {
   .p-button {
     font-size: 0.9rem; 
     padding: 0.6rem 1.2rem; 
     width: 100%; 
   }
+  /* Taille personnalisée pour le bouton */
+.btn-small {
+  font-size: 0.75rem !important;
+  padding: 0.3rem 0.8rem !important;
+  line-height: 1.2 !important;
+}
+
 
   .product-image {
     width: 120px; 

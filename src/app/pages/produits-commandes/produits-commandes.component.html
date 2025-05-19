@@ -40,9 +40,8 @@
         <div class="flex-1 text-center md:text-left">
           <!-- Nom et description -->
           <div class="font-bold text-2xl">{{product.nom}}</div>
-          <div class="mb-3">{{product.description}}</div>
-          <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
-          
+          <div class="mb-3">{{product.prix | currency:'DT'}}</div>
+          <div class="mb-3">{{product.description}}</div>          
           <div class="flex align-items-center mt-2">
             <i class="pi pi-tag mr-2"></i>
             <span class="font-semibold">{{product.categorie.nom}}</span>
@@ -51,7 +50,6 @@
 
         <!-- Alignement horizontal des éléments : Prix, Quantité, et Bouton -->
         <div class="flex flex-column md:flex-row justify-content-between w-full md:w-auto align-items-center md:align-items-end mt-5 md:mt-0">
-          <span class="text-2xl font-semibold mb-2 align-self-center md:align-self-end">{{product.prix | currency:'EUR'}}</span>
 
           <!-- Quantité -->
           <div class="flex flex-column gap-2 mt-2 md:mt-0">
@@ -95,14 +93,12 @@
         <div class="text-center">
           <img [src]="product.image" [alt]="product.nom" class="product-image shadow-2 my-3 mx-0"/>
           <div class="text-2xl font-bold">{{product.nom}}</div>
-          <div class="mb-3">{{product.description}}</div>
-          <p-rating [ngModel]="product.rating" [readonly]="true" [cancel]="false"></p-rating>
-        </div>
+          <div class="mb-3">{{ product.prix | number:'1.0-3' }} DT</div>
+          <div class="mb-3">{{product.description}}</div>       
+         </div>
 
         <!-- Alignement horizontal des éléments : Prix, Quantité, et Bouton -->
         <div class="flex justify-content-between align-items-center gap-3 mt-3">
-          <!-- Affichage du prix -->
-          <span class="text-xl font-semibold">{{ product.prix | number:'1.2-2' }} DT</span>
 
           <!-- Quantité -->
           <div class="flex align-items-center">
@@ -126,8 +122,8 @@
             icon="pi pi-check" 
             label="Valider" 
             (click)="onAddToCart(product)" 
-            [disabled]="product.inventoryStatus === 'OUTOFSTOCK'" 
-            class="p-button-success">
+            [disabled]="product.inventoryStatus === 'OUTOFSTOCK' || !product.quantity || product.quantity < 1" 
+            class="p-button-success mt-2">
           </p-button>
         </div>
       </div>
