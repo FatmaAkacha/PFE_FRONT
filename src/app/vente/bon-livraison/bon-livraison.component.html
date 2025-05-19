@@ -1,9 +1,7 @@
 <div class="bon-commande-container">
   <div class="bon-commande-header">
-    <h2>Bon de Livraison</h2>
-    <p class="date">Date : <strong>{{ devis.dateLivraison | date:'EEEE, d MMMM y' }}</strong></p>
+    <h2>Bon de Livraison Client N°{{ formattedDeliveryNumber }}</h2>
   </div>
-
 
   <h3>Informations du Client</h3>
   <div class="grid formgrid p-fluid">
@@ -22,7 +20,7 @@
   </div>
 
   <h3>Produits Livrés</h3>
-  <p-table [value]="devisProduits" responsiveLayout="scroll" class="commande-table">
+  <p-table [value]="bonLivraisonProduits" responsiveLayout="scroll" class="commande-table">
     <ng-template pTemplate="header">
       <tr>
         <th>Code</th>
@@ -35,12 +33,12 @@
     </ng-template>
     <ng-template pTemplate="body" let-item>
       <tr>
-        <td>{{ item.id }}</td>
-        <td>{{ item.nom }}</td>
+        <td>{{ item.produit.id }}</td>
+        <td>{{ item.produit.nom }}</td>
         <td>{{ item.quantite }}</td>
-        <td>{{ item.prix_vente_ht }}</td>
-        <td>{{ tva }}%</td>
-        <td>{{ item.prix_vente_ht * item.quantite | number:'1.2-2' }}</td>
+        <td>{{ item.puht | number:'1.2-2' }}</td>
+        <td>{{ item.tva }}%</td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
       </tr>
     </ng-template>
   </p-table>
@@ -48,18 +46,10 @@
   <div class="p-mt-4">
     <button 
       pButton 
-      label="Valider le Bon de Livraison" 
+      label="Enregistrer Bon de Livraison" 
       icon="pi pi-check" 
       class="p-button-success" 
       (click)="saveBonDeLivraisonAsDocument()">
     </button>
   </div>
-
-  <button 
-    pButton 
-    label="Transformer en Facture" 
-    icon="pi pi-file" 
-    class="btn-facture p-ml-2" 
-    (click)="transformerEnFacture()">
-  </button>
 </div>
