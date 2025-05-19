@@ -19,7 +19,7 @@ export class ModalPanierComponent {
 
   get prixTotal(): number {
     return this.commandeProduits.reduce((total, p) =>
-      total + (p.prix || 0) * (p.quantitystock || 1), 0);
+      total + (p.prix || 0) * (p.quantity || 1), 0);
   }
 
   close() {

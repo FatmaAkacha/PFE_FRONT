@@ -18,5 +18,6 @@ import { User } from './user';
     dateLivraison?: string;
     produitsCommandes?: any[]; 
     documentClass?: DocumentClass;
+    numero:any;
   }
   

@@ -73,7 +73,8 @@ export class DocumentComponent implements OnInit {
       tauxEchange: 0,
       dateLivraison: '',
       produitsCommandes: [],
-      documentClass: null
+      documentClass: null,
+      numero:'',
     };
   }
 

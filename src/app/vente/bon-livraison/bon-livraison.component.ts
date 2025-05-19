@@ -1,92 +1,165 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { DocumentClass } from 'src/app/demo/domain/documentClass';
+import { Document } from 'src/app/demo/domain/document';
+import { DocumentService } from 'src/app/demo/service/document.service';
 import { MessageService } from 'primeng/api';
-import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
-import { Client } from 'src/app/demo/domain/client';
+import { PanierService } from 'src/app/demo/service/panier.service';
 import { Produit } from 'src/app/demo/domain/produit';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
-import { DevisService } from 'src/app/demo/service/devis.service';
+import { Client } from 'src/app/demo/domain/client';
+import { User } from 'src/app/demo/domain/user';
 
 @Component({
   selector: 'app-bon-livraison',
   templateUrl: './bon-livraison.component.html',
   styleUrls: ['./bon-livraison.component.scss'],
-  providers: [MessageService],
+  providers: [MessageService]
 })
 export class BonLivraisonComponent implements OnInit {
-  bonLivraisonProduits: DevisProduit[] = [];
-  selectedClient: Client = {} as Client;
-  formattedOrderNumber: string = '';
-  currentDate: Date = new Date();
-  totalHT = 0;
-  totalTTC = 0;
-  tva = 20;
+
+  devis = {
+    dateLivraison: new Date(),
+    preparateur_id: {} as User,
+    devise: 'TND',
+    tauxEchange: 1
+  };
+
+  documentClasses: DocumentClass[] = [];
+  selectedClient: Client | null = null;
+
+  devisProduits: any[] = []; // ou utilise ProduitCommande[] si tu as une interface dédiée
 
   constructor(
+    private documentService: DocumentService,
     private messageService: MessageService,
-    private router: Router,
-    private devisService: DevisService
+    private panierService: PanierService
   ) {}
 
-  ngOnInit(): void {
-    this.loadBonLivraison();
+  ngOnInit() {
+    this.getDocumentClassesAndLoadNextCode();
+    this.devisProduits = this.panierService.getProduitsCommandes(); // structure : { produit, quantite, prixTotal }
   }
 
-  loadBonLivraison() {
-    const storedClient = localStorage.getItem('factureClient');
-    const storedProduits = localStorage.getItem('factureProduits');
-    const storedOrderNumber = localStorage.getItem('factureOrderNumber');
+  getDocumentClassesAndLoadNextCode() {
+    this.documentService.getDocumentClasses().subscribe(classes => {
+      this.documentClasses = classes;
+      const bonDeLivraison = classes.find(dc =>
+        dc.prefix?.toLowerCase() === 'bon de livraison'
+      );
 
-    if (storedClient && storedProduits) {
-      this.selectedClient = JSON.parse(storedClient);
-      this.bonLivraisonProduits = JSON.parse(storedProduits);
-      this.formattedOrderNumber = storedOrderNumber || '000001';
-      this.calculerTotal();
-    }
-  }
-
-  calculerTotal() {
-    this.totalHT = this.bonLivraisonProduits.reduce((sum, p) => sum + p.prixTotal, 0);
-    this.totalTTC = this.totalHT * (1 + this.tva / 100);
-  }
-
-  generatePDF() {
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text(`Bon de Livraison N°${this.formattedOrderNumber}`, 14, 20);
-    doc.text(`Date: ${this.currentDate.toLocaleDateString()}`, 14, 30);
-    
-    doc.setFontSize(12);
-    doc.text(`Client: ${this.selectedClient.nom}`, 14, 40);
-    doc.text(`Code client: ${this.selectedClient.code}`, 14, 50);
-    doc.text(`Adresse: ${this.selectedClient.adresse}`, 14, 60);
-
-    const produitData = this.bonLivraisonProduits.map(p => [
-      p.produit.id,
-      p.produit.nom,
-      p.quantite,
-      p.produit.prix,
-      this.tva,
-      p.prixTotal
-    ]);
-
-    autoTable(doc, {
-      startY: 70,
-      head: [['Code', 'Désignation', 'Quantité', 'PUHT/U', 'TVA %', 'TTC']],
-      body: produitData,
+      if (bonDeLivraison) {
+        this.documentService.getDernierCodeDocumentParClasse(bonDeLivraison.id).subscribe(code => {
+          // sessionStorage.setItem('codeClasseDoc', code);
+        });
+      }
     });
-
-    doc.save(`Bon_de_Livraison_${this.formattedOrderNumber}.pdf`);
   }
-  transformerEnFacture() {
-    localStorage.setItem('factureClient', JSON.stringify(this.selectedClient));
-    localStorage.setItem('factureProduits', JSON.stringify(this.bonLivraisonProduits));
-    localStorage.setItem('factureOrderNumber', this.formattedOrderNumber);
+
+  getDocumentClassIdByLabel(libelle: string): number | undefined {
+    return this.documentClasses.find(dc => dc.prefix?.toLowerCase() === libelle.toLowerCase())?.id;
+  }
+
+  saveBonDeLivraisonAsDocument() {
+    const libelle = 'Bon de livraison';
+    const classId = this.getDocumentClassIdByLabel(libelle);
   
-    // On navigue avec l’orderNumber dans l’URL
-    this.router.navigate([`/vente/facture/${this.formattedOrderNumber}`]);
+    if (!classId) {
+      console.error(`Classe de document '${libelle}' non trouvée.`);
+      return;
+    }
+  
+    const document: Document = {
+      id: 0,
+      document_class_id: classId,
+      codeclassedocument: sessionStorage.getItem('codeClasseDoc') || '',
+      libelle: 'Bon de livraison',
+      code: '',
+      numero:'',
+      dateDocument: this.devis.dateLivraison?.toISOString(),
+      etat: 'Livré',
+      preparateur_id: this.devis.preparateur_id,
+      client_id: this.selectedClient?.id,
+      devise: this.devis.devise,
+      tauxEchange: this.devis.tauxEchange,
+      dateLivraison: this.devis.dateLivraison?.toISOString(),
+      produitsCommandes: this.devisProduits.map(p => ({
+        produit_id: p.id,
+        quantite: p.quantite,
+        prixTotal: p.prix_vente_ht! * p.quantite!
+      })),
+      documentClass: { id: classId, libelle: '', prefix: '', isachat: false, isvent: false, actif: true }
+    };
+  
+    this.documentService.saveDocument(document).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Bon de livraison enregistré avec succès.'
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Échec de l’enregistrement du bon de livraison.'
+        });
+      }
+    });
+  }
+
+  transformerEnFacture() {
+    // À adapter selon ta logique métier
+    console.log("Transformation du bon de livraison en facture en cours...");
+  
+    // Exemple : changer la classe de document et appeler saveDocument à nouveau avec un autre type
+    const factureClassId = this.getDocumentClassIdByLabel('Facture');
+    if (!factureClassId) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Classe "Facture" introuvable.'
+      });
+      return;
+    }
+  
+    const facture: Document = {
+      id: 0,
+      document_class_id: factureClassId,
+      codeclassedocument: '...', // à générer ou récupérer via un service
+      libelle: 'Facture',
+      code: '',
+      numero:'',
+      dateDocument: new Date().toISOString(),
+      etat: 'Validé',
+      preparateur_id: this.devis.preparateur_id,
+      client_id: this.selectedClient?.id,
+      devise: this.devis.devise,
+      tauxEchange: this.devis.tauxEchange,
+      dateLivraison: this.devis.dateLivraison?.toISOString(),
+      produitsCommandes: this.devisProduits.map(p => ({
+        produit_id: p.id,
+        quantite: p.quantite,
+        prixTotal: p.prix_vente_ht! * p.quantite!
+      })),
+      documentClass: { id: factureClassId, libelle: '', prefix: '', isachat: false, isvent: true, actif: true }
+    };
+  
+    this.documentService.saveDocument(facture).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Facture générée avec succès.'
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: 'Échec de la génération de la facture.'
+        });
+      }
+    });
   }
   
   

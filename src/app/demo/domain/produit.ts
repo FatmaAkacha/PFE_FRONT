@@ -11,7 +11,9 @@ export interface Produit {
   prix_vente_ttc?: number;
   remise_maximale?: number;
   quantitystock?: number; 
+  tva?:any;
   quantite?: number;
+  quantity?: number;
   seuil?: number;
   image_data?: any;
   rating?: number;

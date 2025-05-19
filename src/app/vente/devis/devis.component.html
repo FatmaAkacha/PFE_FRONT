@@ -26,13 +26,14 @@
         <label>Client</label>
         <p-dropdown 
         [options]="clients" 
-        [(ngModel)]="devis.client_id" 
         optionLabel="nom" 
         optionValue="id"
-        placeholder="Sélectionner un client" 
-        [filter]="true"
-        (onChange)="onClientSelect($event.value)">
+        [(ngModel)]="devis.client_id" 
+        (onChange)="onClientSelect($event.value)"
+        placeholder="Sélectionner un client"
+        [filter]="true">
       </p-dropdown>
+      
       </div>
       <div class="col-12 md:col-4">
         <label>Code client</label>
@@ -100,10 +101,10 @@
       <tr>
         <td>{{ item.produit.id }}</td>
         <td>{{ item.produit.nom }}</td>
-        <td>{{ getStockRestant(item) }}</td>
+        <td>{{ item.produit.quantitystock }}</td>
         <td>
           <input type="number" 
-                 [(ngModel)]="item.quantite" 
+                 [(ngModel)]="item.produit.quantity" 
                  (ngModelChange)="mettreAJourProduit(item)" 
                  [max]="item.produit.quantitystock"
                  [min]="1"

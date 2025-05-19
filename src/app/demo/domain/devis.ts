@@ -24,4 +24,6 @@ export interface DevisProduit {
     produit: Produit;
     quantite: any;
     prixTotal: any;
+    tva :any;
+    puht : any;
 }

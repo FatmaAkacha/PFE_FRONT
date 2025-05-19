@@ -56,4 +56,9 @@ export class DocumentService {
   getDocumentsByClass(documentClassId: number): Observable<Document[]> {
     return this.httpClient.get<Document[]>(`${this.apiUrlDocuments}?document_class_id=${documentClassId}`, { headers: this.getHeaders() });
   }
+
+  getDernierCodeDocumentParClasse(codeClasseDoc): Observable<string> {
+    return this.httpClient.get<string>(`${this.apiUrlDocuments}/dernier-code/${codeClasseDoc}`, { headers: this.getHeaders() });
+  }  
+  
 }

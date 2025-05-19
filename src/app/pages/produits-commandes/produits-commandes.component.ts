@@ -59,8 +59,10 @@ export class ProduitsCommandesComponent implements OnInit {
   }
 
   onAddToCart(product: any) {
+
+    console.log(product)
     const quantite = product.quantity || 1;
-    const produitCopie: Produit = { ...product, quantitystock: quantite };
+    const produitCopie: Produit = { ...product };
     this.panierService.ajouterProduit(produitCopie);
 
     this.messageService.add({

@@ -15,14 +15,14 @@
         <!-- 🛒 Infos produit -->
         <div class="flex-1">
           <p class="text-lg font-medium text-gray-800">{{ produit.nom }}</p>
-          <p class="text-sm text-gray-600">Quantité : {{ produit.quantitystock }}</p>
+          <p class="text-sm text-gray-600">Quantité : {{ produit.quantity }}</p>
           <p class="text-sm text-gray-600">Prix unitaire : {{ produit.prix | currency:'DT' }}</p>
         </div>
     
         <!-- 💰 Total + bouton suppression -->
         <div class="text-right">
           <p class="text-md font-semibold text-green-700">
-            Total : {{ produit.prix! * produit.quantitystock! | currency:'DT' }}
+            Total : {{ produit.prix! * produit.quantity! | currency:'DT' }}
           </p>
           <button 
             pButton 

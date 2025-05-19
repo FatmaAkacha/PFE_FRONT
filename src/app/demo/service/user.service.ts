@@ -9,7 +9,7 @@ import { Role } from '../domain/role';
 })
 export class UserService {
   private apiUrlUser = 'http://127.0.0.1:8000/api/users';
-  private apiUrlRole = 'http://127.0.0.1:8000/api/roles'; // You must have a route for this
+  private apiUrlRole = 'http://127.0.0.1:8000/api/roles'; 
 
   constructor(private httpClient: HttpClient) {}
 

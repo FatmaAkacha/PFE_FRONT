@@ -75,7 +75,7 @@ export class PanierComponent implements OnInit {
     this.chargerProduitsDisponibles(); // Recalculer la liste disponible
   }
   getTotal(): number {
-    return this.produitsCommandes.reduce((total, p) => total + ((p.prix || 0) * (p.quantitystock || 1)), 0);
+    return this.produitsCommandes.reduce((total, p) => total + ((p.prix || 0) * (p.quantity || 1)), 0);
   }
 
   retirerProduit(index: number): void {

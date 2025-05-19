@@ -46,6 +46,7 @@ export class DevisComponent implements OnInit {
   totalStock: number = 0;
   dateLivraison: Date = new Date();
   users: User[] = [];
+  numero;
 
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
@@ -71,7 +72,9 @@ export class DevisComponent implements OnInit {
           categorie: { id: 1, nom: 'Catégorie A' } // ← ici
         },
         quantite: 2,
-        prixTotal: 100
+        prixTotal: 100,
+        puht:19,
+        tva:19
       }
     ]
   };
@@ -111,11 +114,11 @@ export class DevisComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
     this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
-    this.getDocumentClasses();
   
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
@@ -124,19 +127,16 @@ export class DevisComponent implements OnInit {
     produitsDuPanier.forEach(produit => {
       this.devisProduits.push({
         produit,
-        quantite: produit.quantitystock,
-        prixTotal: produit.quantitystock * produit.prix 
+        quantite: produit.quantity,
+        prixTotal: produit.quantity * produit.prix,
+        puht:produit.prix,
+        tva:produit.tva
+
       });
     });
   
     this.calculerTotal();
-  
-    const savedOrderNumber = localStorage.getItem('num_seq');
-    this.num_seq = savedOrderNumber ? savedOrderNumber : '00001';  // Valeur initiale si non trouvée
-    this.formatOrderNumber();  // Mettre à jour le format du numéro
-
     console.log(this.devisProduits);
-
   }
   loadUsers() {
     this.userService.getUsers().subscribe({
@@ -160,6 +160,20 @@ export class DevisComponent implements OnInit {
   
         if (bonDeCommande) {
           this.bonDeCommandeClassId = bonDeCommande.id;
+  
+          // 💡 Appeler ici, une fois l'ID correct obtenu
+          this.documentService.getDernierCodeDocumentParClasse(this.bonDeCommandeClassId).subscribe({
+            next: (dernierCode: string) => {
+              const numero = parseInt(dernierCode || '0', 10) + 1;
+              this.num_seq = numero.toString().padStart(5, '0');
+              this.formattedOrderNumber = this.num_seq;
+            },
+            error: () => {
+              this.num_seq = '00001';
+              this.formattedOrderNumber = '00001';
+            }
+          });
+  
         } else {
           console.error("Classe de document 'Bon de commande' non trouvée.");
         }
@@ -169,6 +183,42 @@ export class DevisComponent implements OnInit {
       }
     });
   }
+  
+  getDocumentClassesAndLoadNextCode() {
+    this.documentService.getDocumentClasses().subscribe({
+      next: (classes: DocumentClass[]) => {
+        this.documentClasses = classes;
+  
+        const bonDeCommande = classes.find(dc =>
+          dc.prefix?.toLowerCase() === 'bon de commande'
+        );
+  
+        if (bonDeCommande) {
+          this.bonDeCommandeClassId = bonDeCommande.id;
+  
+          // Charger le dernier code une fois la classe trouvée
+          this.documentService.getDernierCodeDocumentParClasse(sessionStorage.getItem('codeClasseDoc')).subscribe({
+            next: (dernierCode: string) => {
+              // Extraire le numéro sans préfixe (ex: "DOC-0002" → "0002")
+             
+              this.formattedOrderNumber = dernierCode;
+            },
+            error: () => {
+              this.num_seq = '00001';
+              this.formattedOrderNumber = '00001';
+            }
+          });
+  
+        } else {
+          console.error("Classe de document 'Bon de commande' non trouvée.");
+        }
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des classes de document :", err);
+      }
+    });
+  }
+  
  getDocumentClassIdByLabel(label: string): number | null {
   const lowerLabel = label.toLowerCase().trim();
   const docClass = this.documentClasses.find(dc =>
@@ -183,10 +233,13 @@ export class DevisComponent implements OnInit {
       this.clients = data;
     });
   }
-
   loadProduits() {
-    this.devisService.getProduits().subscribe(data => this.produitsDansCommande = data);
+    this.devisService.getProduits().subscribe(data => {
+      this.produitsDansCommande = data;
+
+    });
   }
+  
 
   loadDevis() {
     this.devisService.getDevis().subscribe(data => this.devisList = data);
@@ -199,13 +252,12 @@ export class DevisComponent implements OnInit {
     this.devisDialog = true;
   }
 
-  onClientSelect(client: Client) {
-    this.selectedClient = client;
-    this.devisForm.patchValue({ client: client.id });
-  
-    this.produitsClient = this.produitsDansCommande; // Afficher tous les produits
-    
-    this.totalStock = this.produitsClient.reduce((sum, produit) => sum + produit.quantitystock, 0);
+  onClientSelect(clientId: number) {
+    const client = this.clients.find(c => c.id === clientId);
+    if (client) {
+      this.selectedClient = client;
+      this.devis.client_id = client.id;
+    }
   }
   
   ajouterProduit(produit: Produit, quantite: number) {
@@ -241,7 +293,9 @@ export class DevisComponent implements OnInit {
       this.devisProduits.push({
         produit,
         quantite, 
-        prixTotal: quantite * produit.prix
+        prixTotal: quantite * produit.prix,
+        puht:produit.prix,
+        tva:produit.tva
       });
     }
   
@@ -249,9 +303,12 @@ export class DevisComponent implements OnInit {
   }
   
   getStockRestant(item: DevisProduit): number {
-    console.log('item', item)
-    return item.produit.quantitystock - item.quantite;
+    if (item && item.produit && item.produit.quantitystock != undefined) {
+      return item.produit.quantitystock - item.quantite;
+    }
+    return 0;  // Retourne 0 si les données sont invalides
   }
+  
   
   supprimerProduit(produit: DevisProduit) {
     this.devisProduits = this.devisProduits.filter(p => p !== produit);
@@ -263,35 +320,12 @@ export class DevisComponent implements OnInit {
     this.totalTTC = this.totalHT * (1 + this.tva / 100);
   }
 
-  incrementOrderNumber() {
-    // Récupérer la valeur de num_seq depuis le localStorage
-    let savedOrderNumber = localStorage.getItem('num_seq');
-    
-    // Si savedOrderNumber n'est pas null, on l'incrémente
-    if (savedOrderNumber) {
-      // Convertir la valeur récupérée en entier, enlever les zéros à gauche
-      let num = parseInt(savedOrderNumber, 10); // Exemple : "00001" devient 1
   
-      num++; // Incrémenter le numéro
-  
-      // Reformater le numéro avec des zéros à gauche pour avoir toujours 5 chiffres
-      savedOrderNumber = num.toString().padStart(5, '0');  // Exemple : "00001" -> "00002"
-  
-      // Sauvegarder la nouvelle valeur dans le localStorage
-      localStorage.setItem('num_seq', savedOrderNumber);
-  
-      // Mettre à jour num_seq dans l'application
-      this.num_seq = savedOrderNumber;
-  
-      this.formatOrderNumber();
-    } else {
-      this.num_seq = '00001';
-      this.formatOrderNumber();
-    }
-  }
-
   formatOrderNumber() {
-    this.formattedOrderNumber = this.num_seq;  }
+    const currentNumber = parseInt(this.numero|| '1', 10);
+    this.formattedOrderNumber = currentNumber.toString().padStart(5, '0');
+  }
+  
 
   
   modifierProduit(produit: DevisProduit) {
@@ -343,7 +377,8 @@ export class DevisComponent implements OnInit {
       document_class_id: classId,  // ID de la classe de document
       codeclassedocument: sessionStorage.getItem('codeClasseDoc'),  // Code de la classe du document, ici 'Bon de commande'
       libelle: 'Bon de commande',  // Libelle du document
-      code: '',  // Le code pourra être généré par le backend
+      code: '',  
+      numero:'',
       dateDocument: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date du document (livraison ou actuelle)
       etat: this.devis.etat,  // État du document (par exemple: En cours, Validé)
       preparateur_id: this.devis.preparateur_id,  // Préparateur du document
@@ -354,7 +389,9 @@ export class DevisComponent implements OnInit {
       produitsCommandes: this.devisProduits.map(p => ({
         produit_id: p.produit.id,
         quantite: p.quantite,
-        prixTotal: p.prixTotal
+        prixTotal: p.prixTotal,
+        puht:p.puht,
+        tva:p.tva,
       })),  // Détails des produits dans la commande
       documentClass: { id: classId } as DocumentClass,  // Classe du document
     };
@@ -381,7 +418,7 @@ export class DevisComponent implements OnInit {
    
   validerEtPasserALivraison() {
     this.saveBonDeCommandeAsDocument();
-    this.router.navigate(['vente/bon-livraison/:id']); 
+    // this.router.navigate(['vente/bon-livraison/:id']); 
   }
 
   sauvegarderBonCommande() {
@@ -395,22 +432,22 @@ export class DevisComponent implements OnInit {
         summary: 'Quantité non valide',
         detail: `Quantité maximale disponible : ${produit.produit.quantitystock}`
       });
-      produit.quantite = produit.produit.quantitystock;
+      produit.quantite = produit.produit.quantitystock; // Réinitialisation à la quantité max disponible
     }
   
     if (produit.quantite > produit.produit.seuil) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Seuil dépassé',
-        detail: `La quantité dépasse le seuil recommandé de ${produit.produit.seuil}.`
+        detail: `La quantité dépasse le seuil recommandé de ${produit.produit.seuil}`
       });
     }
-    produit.prixTotal = produit.quantite * produit.produit.prix;
   
+    produit.prixTotal = produit.quantite * produit.produit.prix; // Mise à jour du prix total
     this.calculerTotal();
   }
   
-  
+
   imprimerDevis(id: number) {
     if (id === 0) {
       this.saveBonDeCommandeAsDocument();
@@ -419,6 +456,4 @@ export class DevisComponent implements OnInit {
     console.log("ID à imprimer :", id);
     window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
   }
-  
-  
 }
