@@ -20,6 +20,11 @@ export function initializeKeycloak(keycloak: KeycloakService) {
         return keycloak.getToken().then((token) => {
           if (token) {
             localStorage.setItem('access_token', token);
+                        const keycloakInstance = keycloak.getKeycloakInstance();
+
+            const realmRoles = keycloakInstance.realmAccess?.roles || [];
+            console.log(realmRoles)
+
             console.log('Token Keycloak stocké dans le localStorage ✅');
           } else {
             console.warn('⚠️ Aucun token récupéré !');

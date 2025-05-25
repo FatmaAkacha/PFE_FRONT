@@ -61,4 +61,8 @@ export class DocumentService {
     return this.httpClient.get<string>(`${this.apiUrlDocuments}/dernier-code/${codeClasseDoc}`, { headers: this.getHeaders() });
   }  
   
+
+  getDocumentByIdAndCode(id, codeClasseDoc): Observable<string> {
+    return this.httpClient.get<string>(`${this.apiUrlDocuments}/${id}/${codeClasseDoc}`, { headers: this.getHeaders() });
+  }  
 }

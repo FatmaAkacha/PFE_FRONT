@@ -78,6 +78,7 @@ export class DevisComponent implements OnInit {
       }
     ]
   };
+  savedDoc: Document;
 
   constructor(
     private fb: FormBuilder,
@@ -114,6 +115,8 @@ export class DevisComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    sessionStorage.setItem('codeClasseDoc', 'BC')
     this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
     this.loadUsers();
@@ -128,7 +131,7 @@ export class DevisComponent implements OnInit {
       this.devisProduits.push({
         produit,
         quantite: produit.quantity,
-        prixTotal: produit.quantity * produit.prix,
+        prixTotal: produit.quantity * produit.prix * (1 + produit.tva / 100),
         puht:produit.prix,
         tva:produit.tva
 
@@ -279,7 +282,7 @@ export class DevisComponent implements OnInit {
       }
   
       produitExistant.quantite += quantite;
-      produitExistant.prixTotal = produitExistant.quantite * produit.prix;
+      produitExistant.prixTotal = produitExistant.quantite * produit.prix * (1 + produit.tva / 100);
     } else {
       if (quantite > produit.quantitystock) {
         this.messageService.add({
@@ -293,7 +296,7 @@ export class DevisComponent implements OnInit {
       this.devisProduits.push({
         produit,
         quantite, 
-        prixTotal: quantite * produit.prix,
+        prixTotal: quantite * produit.prix*(1 + produit.tva / 100),
         puht:produit.prix,
         tva:produit.tva
       });
@@ -351,7 +354,7 @@ export class DevisComponent implements OnInit {
       }
   
       produit.quantite = newQuantite;
-      produit.prixTotal = produit.quantite * produit.produit.prix;
+      produit.prixTotal = produit.quantite * produit.produit.prix * (1 + produit.tva / 100);
       this.calculerTotal();
       this.messageService.add({ severity: 'info', summary: 'Modification', detail: 'Produit modifié' });
     }
@@ -399,6 +402,9 @@ export class DevisComponent implements OnInit {
     // Appel au service pour enregistrer le document
     this.documentService.saveDocument(document).subscribe({
       next: (savedDoc) => {
+
+        this.savedDoc = savedDoc
+        console.log('savedDoc', savedDoc)
         this.messageService.add({
           severity: 'success',
           summary: 'Succès',
@@ -418,7 +424,12 @@ export class DevisComponent implements OnInit {
    
   validerEtPasserALivraison() {
     this.saveBonDeCommandeAsDocument();
-    this.router.navigate(['vente/bon-livraison/:id']); 
+          setTimeout(() => {
+
+    console.log(this.savedDoc['data'].id)
+    this.router.navigate(['vente/bon-livraison/', this.savedDoc['data'].id]);
+          }, 2000); // délai en millisecondes
+ 
   }
 
   sauvegarderBonCommande() {
@@ -443,7 +454,7 @@ export class DevisComponent implements OnInit {
       });
     }
   
-    produit.prixTotal = produit.quantite * produit.produit.prix; // Mise à jour du prix total
+produit.prixTotal = produit.quantite * produit.produit.prix * (1 + produit.tva / 100);
     this.calculerTotal();
   }
   

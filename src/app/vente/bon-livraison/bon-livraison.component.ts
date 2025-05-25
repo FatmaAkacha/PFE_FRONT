@@ -13,7 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
 import { UserService } from 'src/app/demo/service/user.service';
 import { DevisService } from 'src/app/demo/service/devis.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-bon-livraison',
@@ -79,6 +79,8 @@ export class BonLivraisonComponent implements OnInit {
     ]
   };
   devisList: Devis[];
+  id: string;
+  doc: any;
 
   constructor(
     private fb: FormBuilder,
@@ -91,7 +93,8 @@ export class BonLivraisonComponent implements OnInit {
     private userService: UserService,
     private breadcrumbService: BreadcrumbService,
     private sanitizer: DomSanitizer,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {
     this.devisForm = this.fb.group({
       client: [null]
@@ -115,12 +118,19 @@ export class BonLivraisonComponent implements OnInit {
   }
 
   ngOnInit(): void {
+      this.route.paramMap.subscribe(params => {
+      this.id = params.get('id');
+        })
+    
+    sessionStorage.setItem('codeClasseDoc', 'BL')
+    this.loadDoc();
     this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
     this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
-  
+    this.getDocumentClasses(); 
+     
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
     this.produitsClient = produitsDuPanier;
@@ -139,7 +149,6 @@ export class BonLivraisonComponent implements OnInit {
     this.calculerTotal();
     console.log(this.bonLivraisonProduits);
     if (this.produitsDansCommande.length > 0) {
-    this.selectedClient = this.devis.client; 
 }
   }
   loadUsers() {
@@ -166,7 +175,7 @@ export class BonLivraisonComponent implements OnInit {
           this.bonDeCommandeClassId = bonDeCommande.id;
   
           // 💡 Appeler ici, une fois l'ID correct obtenu
-          this.documentService.getDernierCodeDocumentParClasse(this.bonDeCommandeClassId).subscribe({
+          this.documentService.getDernierCodeDocumentParClasse(sessionStorage.getItem('codeClasseDoc')).subscribe({
             next: (dernierCode: string) => {
              // const numero = parseInt(dernierCode || '0', 10) + 1;
               //this.num_seq = numero.toString().padStart(5, '0');
@@ -195,7 +204,7 @@ getDocumentClassesAndLoadNextCode() {
           dc.prefix?.toLowerCase() === 'bon de livraison'
         );
         if (bonLivraisonClass) {
-          this.documentService.getDernierCodeDocumentParClasse(bonLivraisonClass.id).subscribe({
+          this.documentService.getDernierCodeDocumentParClasse(sessionStorage.getItem('codeClasseDoc')).subscribe({
             next: (dernierCode: string) => {
               this.formattedDeliveryNumber = dernierCode;
             },
@@ -444,5 +453,14 @@ getDocumentClassesAndLoadNextCode() {
     }
     console.log("ID à imprimer :", id);
     window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  }
+
+  loadDoc() {
+    this.documentService.getDocumentByIdAndCode(this.id, 'BC').subscribe({
+      next: (Doc) => { 
+        this.doc = Doc 
+        this.selectedClient = Doc['client']; 
+
+      }})
   }
 }
