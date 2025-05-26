@@ -130,7 +130,7 @@ export class BonLivraisonComponent implements OnInit {
     this.loadProduits(); 
     this.loadDevis();
     this.getDocumentClasses(); 
-     
+
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
     this.produitsClient = produitsDuPanier;
@@ -151,16 +151,21 @@ export class BonLivraisonComponent implements OnInit {
     if (this.produitsDansCommande.length > 0) {
 }
   }
-  loadUsers() {
-    this.userService.getUsers().subscribe({
-      next: (data: User[]) => {
-        this.users = data;
-      },
-      error: (err) => {
-        console.error("Erreur lors du chargement des utilisateurs :", err);
+loadUsers() {
+  this.userService.getUsers().subscribe({
+    next: (data: User[]) => {
+      this.users = data;
+
+      // Si devis.preparateur_id est déjà défini (ex: en mode édition), le p-dropdown l'affichera
+      if (this.devis && this.devis.preparateur_id) {
+        this.devis.preparateur_id = data.find(u => u.id === this.devis.preparateur_id)?.id;
       }
-    });
-  }
+    },
+    error: (err) => {
+      console.error("Erreur lors du chargement des utilisateurs :", err);
+    }
+  });
+}
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {

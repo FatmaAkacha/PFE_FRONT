@@ -19,6 +19,88 @@
     </div>
   </div>
 
+<h3>Informations Générales</h3>
+<div class="grid formgrid p-fluid">
+  <!-- Date Document -->
+  <div class="col-12 md:col-4">
+    <label>Date document</label>
+    <p-calendar [(ngModel)]="devis.dateDocument" showTime appendTo="body"></p-calendar>
+  </div>
+
+  <!-- État Document -->
+  <div class="col-12 md:col-4">
+    <label>État Document</label>
+    <p-dropdown 
+      [options]="etatOptions" 
+      [(ngModel)]="devis.etat" 
+      placeholder="Sélectionner un état"
+      [filter]="true">
+    </p-dropdown>    
+  </div>
+
+  <!-- Préparé par -->
+  <div class="col-12 md:col-4">
+    <label>Préparé par</label>
+    <p-dropdown 
+      [options]="users" 
+      [(ngModel)]="devis.preparateur_id" 
+      optionLabel="username" 
+      optionValue="id" 
+      placeholder="Sélectionner un préparateur"
+      [filter]="true">
+    </p-dropdown>    
+  </div>
+</div>
+
+
+<div class="grid formgrid p-fluid">
+   <div class="col-12 md:col-4">
+        <label>Code client</label>
+        <input pInputText [value]="selectedClient?.code || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Raison sociale</label>
+        <input pInputText [value]="selectedClient?.raison_sociale || ''" [disabled]="true">
+      </div>
+    
+      <div class="col-12 md:col-4">
+        <label>Contact</label>
+        <input pInputText [value]="selectedClient?.contact || ''" [disabled]="true">
+      </div>
+      </div>
+
+      <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Email</label>
+        <input pInputText [value]="selectedClient?.email || ''" [disabled]="true">
+      </div>
+
+      <div class="col-12 md:col-4">
+        <label>Téléphone</label>
+        <input pInputText [value]="selectedClient?.numero_telephone || ''" [disabled]="true">
+      </div>
+  
+      <div class="col-12 md:col-4">
+        <label>Adresse</label>
+        <input pInputText [value]="selectedClient?.adresse || ''" [disabled]="true">
+      </div>
+</div>
+    <div class="grid formgrid p-fluid">
+    <div class="col-12 md:col-4">
+      <label>Devise</label>
+      <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true" filterBy="label"></p-dropdown>
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Taux d'échange</label>
+      <input pInputText [(ngModel)]="devis.tauxEchange" type="number" placeholder="Taux d'échange">
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Date de livraison</label>
+      <p-calendar [(ngModel)]="devis.dateLivraison" showTime></p-calendar>
+    </div>
+    </div>
+
+
   <h3>Produits Livrés</h3>
   <p-table [value]="bonLivraisonProduits" responsiveLayout="scroll" class="commande-table">
     <ng-template pTemplate="header">
@@ -52,4 +134,4 @@
       (click)="saveBonDeLivraisonAsDocument()">
     </button>
   </div>
-</div>
+
