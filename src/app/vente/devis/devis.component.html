@@ -6,15 +6,15 @@
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
-      <label>Date document</label>
+      <label>Date document <span class="required-star">*</span></label>
       <p-calendar [(ngModel)]="devis.dateDocument" showTime></p-calendar>
     </div>
     <div class="col-12 md:col-4">
-      <label>État Document</label>
+      <label>État Document <span class="required-star">*</span></label>
       <p-dropdown [options]="etatOptions" [(ngModel)]="devis.etat" placeholder="Sélectionner un état"[filter]="true"></p-dropdown>    
     </div>
     <div class="col-12 md:col-4">
-      <label>Préparé par</label>
+      <label>Préparé par <span class="required-star">*</span></label>
       <p-dropdown [options]="users" [(ngModel)]="devis.preparateur_id" optionLabel="username" optionValue="id" placeholder="Sélectionner un préparateur" [filter]="true"></p-dropdown>    
     </div>
   </div>
@@ -23,7 +23,7 @@
     <h3>Informations du Client</h3>
     <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
-        <label>Client</label>
+        <label>Client <span class="required-star">*</span></label>
         <p-dropdown 
         [options]="clients" 
         optionLabel="nom" 
@@ -69,15 +69,15 @@
   
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
-      <label>Devise</label>
+      <label>Devise <span class="required-star">*</span></label>
       <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true" filterBy="label"></p-dropdown>
     </div>
     <div class="col-12 md:col-4">
-      <label>Taux d'échange</label>
+      <label>Taux d'échange <span class="required-star">*</span></label>
       <input pInputText [(ngModel)]="devis.tauxEchange" type="number" placeholder="Taux d'échange">
     </div>
     <div class="col-12 md:col-4">
-      <label>Date de livraison</label>
+      <label>Date de livraison <span class="required-star">*</span></label>
       <p-calendar [(ngModel)]="devis.dateLivraison" showTime></p-calendar>
     </div>
   </div>

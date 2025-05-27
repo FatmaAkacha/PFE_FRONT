@@ -47,7 +47,7 @@ export class BonLivraisonComponent implements OnInit {
   dateLivraison: Date = new Date();
   users: User[] = [];
   numero;  
-
+savedDoc: Document;
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
   deviseOptions = [
@@ -416,11 +416,6 @@ getDocumentClassesAndLoadNextCode() {
       }
     });
   }
-   
-  validerEtPasserALivraison() {
-    this.saveBonDeLivraisonAsDocument();
-    this.router.navigate(['vente/bon-livraison/:id']); 
-  }
 
   sauvegarderBonCommande() {
     console.log('Bon de livraison validé et sauvegardé');
@@ -478,6 +473,19 @@ getDocumentClassesAndLoadNextCode() {
 
   this.router.navigate(['/vente/facture', this.doc.id]);
 }
+
+
+
+
+  validerEtPasserALivraison() {
+    this.saveBonDeLivraisonAsDocument();
+          setTimeout(() => {
+
+    console.log(this.savedDoc['data'].id)
+    this.router.navigate(['/vente/facture/', this.savedDoc['data'].id]);
+          }, 2000); // délai en millisecondes
+ 
+  }
 imprimerBonLivraison(id: number | string) {
       window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
 }

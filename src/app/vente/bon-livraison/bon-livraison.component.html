@@ -26,13 +26,13 @@
 <div class="grid formgrid p-fluid">
   <!-- Date Document -->
   <div class="col-12 md:col-4">
-    <label>Date document</label>
+    <label>Date document <span class="required-star">*</span></label>
     <p-calendar [(ngModel)]="devis.dateDocument" showTime appendTo="body"></p-calendar>
   </div>
 
   <!-- État Document -->
   <div class="col-12 md:col-4">
-    <label>État Document</label>
+    <label>État Document <span class="required-star">*</span></label>
     <p-dropdown 
       [options]="etatOptions" 
       [(ngModel)]="devis.etat" 
@@ -43,7 +43,7 @@
 
   <!-- Préparé par -->
   <div class="col-12 md:col-4">
-    <label>Préparé par</label>
+    <label>Préparé par <span class="required-star">*</span></label>
     <p-dropdown 
       [options]="users" 
       [(ngModel)]="devis.preparateur_id" 
@@ -90,7 +90,7 @@
 </div>
     <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
-      <label>Devise</label>
+      <label>Devise <span class="required-star">*</span></label>
       <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true" filterBy="label"></p-dropdown>
     </div>
     <div class="col-12 md:col-4">

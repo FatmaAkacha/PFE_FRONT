@@ -309,7 +309,7 @@ export class DevisComponent implements OnInit {
     if (item && item.produit && item.produit.quantitystock != undefined) {
       return item.produit.quantitystock - item.quantite;
     }
-    return 0;  // Retourne 0 si les données sont invalides
+    return 0;  
   }
   
   
@@ -329,7 +329,6 @@ export class DevisComponent implements OnInit {
     this.formattedOrderNumber = currentNumber.toString().padStart(5, '0');
   }
   
-
   
   modifierProduit(produit: DevisProduit) {
     const quantite = prompt('Modifier la quantité', produit.quantite.toString());
