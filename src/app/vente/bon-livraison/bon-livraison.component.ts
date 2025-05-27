@@ -46,7 +46,7 @@ export class BonLivraisonComponent implements OnInit {
   totalStock: number = 0;
   dateLivraison: Date = new Date();
   users: User[] = [];
-  numero;
+  numero;  
 
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
@@ -182,12 +182,10 @@ loadUsers() {
           // 💡 Appeler ici, une fois l'ID correct obtenu
           this.documentService.getDernierCodeDocumentParClasse(sessionStorage.getItem('codeClasseDoc')).subscribe({
             next: (dernierCode: string) => {
-             // const numero = parseInt(dernierCode || '0', 10) + 1;
-              //this.num_seq = numero.toString().padStart(5, '0');
-              this.formattedDeliveryNumber = this.numero;
+              this.formattedDeliveryNumber = dernierCode;
             },
             error: () => {
-              this.numero = '00001';
+              this.num_seq = '00001';
               this.formattedDeliveryNumber = '00001';
             }
           });
@@ -381,7 +379,7 @@ getDocumentClassesAndLoadNextCode() {
       codeclassedocument: sessionStorage.getItem('codeClasseDoc'),  // Code de la classe du document, ici 'Bon de commande'
       libelle: 'Bon de livraison',  // Libelle du document
       code: '',  
-      numero:'',
+      numero: this.formattedDeliveryNumber, 
       dateDocument: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date du document (livraison ou actuelle)
       etat: this.devis.etat,  // État du document (par exemple: En cours, Validé)
       preparateur_id: this.devis.preparateur_id,  // Préparateur du document

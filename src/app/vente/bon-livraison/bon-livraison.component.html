@@ -1,7 +1,9 @@
-<div class="bon-commande-container">
+<div class="bon-livraison-container">
   <p-toast></p-toast>
-  <div class="bon-commande-header">
+  <div class="bon-livraison-header">
     <h2>Bon de Livraison Client N°{{ formattedDeliveryNumber }}</h2>
+    <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
+
   </div>
 
   <h3>Informations du Client</h3>
