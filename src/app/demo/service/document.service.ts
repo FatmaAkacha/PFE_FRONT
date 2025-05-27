@@ -65,4 +65,21 @@ export class DocumentService {
   getDocumentByIdAndCode(id, codeClasseDoc): Observable<string> {
     return this.httpClient.get<string>(`${this.apiUrlDocuments}/${id}/${codeClasseDoc}`, { headers: this.getHeaders() });
   }  
+  updateDocumentClass(id: number, docClass: DocumentClass): Observable<DocumentClass> {
+  return this.httpClient.put<DocumentClass>(`${this.apiUrlDocumentClasses}/${id}`, docClass, {
+    headers: this.getHeaders()
+  });
+}
+saveDocumentClass(docClass: DocumentClass): Observable<DocumentClass> {
+  return this.httpClient.post<DocumentClass>(this.apiUrlDocumentClasses, docClass, {
+    headers: this.getHeaders()
+  });
+}
+deleteDocumentClass(id: number): Observable<void> {
+  return this.httpClient.delete<void>(`${this.apiUrlDocumentClasses}/${id}`, {
+    headers: this.getHeaders()
+  });
+}
+
+
 }

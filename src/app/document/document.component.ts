@@ -16,53 +16,40 @@ import { DataService } from '../demo/service/data.service';
 export class DocumentComponent implements OnInit {
   documents: Document[] = [];
   documentClasses: DocumentClass[] = [];
-  selectedDocuments: Document[] = [];
-  document: Document = this.getEmptyDocument();
-  selectedDocumentClassId: number | null = null;
-
-  documentDialog: boolean = false;
-  documentClassesDialog: boolean = false; 
-  submitted: boolean = false;
   clients: Client[] = [];
   utilisateurs: User[] = [];
 
+  selectedDocuments: Document[] = [];
+  document: Document = this.getEmptyDocument();
+  documentClass: DocumentClass = this.getEmptyDocumentClass();
+
+  documentDialog = false;
+  documentClassesDialog = false;
+  submitted = false;
+  showClassForm = false;
 
   constructor(
-    private documentService: DocumentService, 
-    private messageService: MessageService ,
+    private documentService: DocumentService,
+    private messageService: MessageService,
     private userService: UserService,
-    private clientService: DataService) {}
+    private clientService: DataService
+  ) {}
 
-    ngOnInit(): void {
-      this.loadDocumentClasses();
-      this.clientService.getClients().subscribe(c => {
-        this.clients = c;
-        this.loadDocuments();
-      });
-    
-      this.userService.getUsers().subscribe(u => this.utilisateurs = u);
-    }
-    
-  documentClass: DocumentClass = this.getEmptyDocumentClass();
-  getEmptyDocumentClass(): DocumentClass {
-    return {
-      id: 0,
-      libelle: '',
-      prefix: '',
-      isvent: false,
-      isachat: false,
-      actif: true
-    };
+  ngOnInit(): void {
+    this.loadDocumentClasses();
+    this.userService.getUsers().subscribe(u => this.utilisateurs = u);
+    this.clientService.getClients().subscribe(c => {
+      this.clients = c;
+      this.loadDocuments();
+    });
   }
-  
-
 
   getEmptyDocument(): Document {
     return {
       id: 0,
       document_class_id: 0,
       codeclassedocument: '',
-      num_seq: '',
+      numero: '',
       libelle: '',
       code: '',
       dateDocument: '',
@@ -74,28 +61,32 @@ export class DocumentComponent implements OnInit {
       dateLivraison: '',
       produitsCommandes: [],
       documentClass: null,
-      numero:'',
+    };
+  }
+
+  getEmptyDocumentClass(): DocumentClass {
+    return {
+      id: 0,
+      libelle: '',
+      prefix: '',
+      isvent: false,
+      isachat: false,
+      actif: true
     };
   }
 
   loadDocuments(): void {
     this.documentService.getDocuments().subscribe({
       next: (data) => {
-        this.documents = data.map(doc => {
-          const client = this.clients.find(c => c.id === doc.client_id);
-          const preparateur = this.utilisateurs.find(u => u.id === doc.preparateur_id);
-          return {
-            ...doc,
-            clientNom: client ? client.nom : null,
-            preparateurNom: preparateur ? preparateur.username : null
-
-          };
-        });
+        this.documents = data.map(doc => ({
+          ...doc,
+          clientNom: this.clients.find(c => c.id === doc.client_id)?.nom || null,
+          preparateurNom: this.utilisateurs.find(u => u.id === doc.preparateur_id)?.username || null
+        }));
       },
       error: (err) => console.error('Erreur chargement documents', err)
     });
   }
-  
 
   loadDocumentClasses(): void {
     this.documentService.getDocumentClasses().subscribe({
@@ -104,7 +95,7 @@ export class DocumentComponent implements OnInit {
     });
   }
 
-  openNew(): void {
+  openNewDocument(): void {
     this.document = this.getEmptyDocument();
     this.submitted = false;
     this.documentDialog = true;
@@ -122,61 +113,136 @@ export class DocumentComponent implements OnInit {
     });
   }
 
+    deleteDocumentClasse(classe: Document): void {
+    this.documentService.deleteDocument(classe.id).subscribe(() => {
+      this.documents = this.documents.filter(d => d.id !== classe.id);
+      this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document supprimé' });
+    });
+  }
+
   deleteSelectedDocuments(): void {
-    this.selectedDocuments.forEach(d => this.deleteDocument(d));
+    this.selectedDocuments.forEach(doc => this.deleteDocument(doc));
     this.selectedDocuments = [];
   }
 
   saveDocument(): void {
     this.submitted = true;
 
-    if (this.document.id === 0) {
-      this.documentService.saveDocument(this.document).subscribe({
-        next: (data) => {
-          this.documents.push(data);
-          this.messageService.add({ severity: 'success', summary: 'Ajouté', detail: 'Document ajouté' });
-          this.documentDialog = false;
-          this.document = this.getEmptyDocument();
-        }
-      });
-    } else {
-      this.documentService.updateDocument(this.document.id, this.document).subscribe({
-        next: (data) => {
-          const index = this.documents.findIndex(doc => doc.id === data.id);
-          if (index !== -1) this.documents[index] = data;
-          this.messageService.add({ severity: 'success', summary: 'Mis à jour', detail: 'Document mis à jour' });
-          this.documentDialog = false;
-        }
-      });
+    if (!this.document.libelle || !this.document.code) {
+      this.messageService.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et Code sont obligatoires' });
+      return;
     }
+
+    const isNew = this.document.id === 0;
+    const action = isNew
+      ? this.documentService.saveDocument(this.document)
+      : this.documentService.updateDocument(this.document.id, this.document);
+
+    action.subscribe({
+      next: (savedDoc) => {
+        const enrichedDoc = {
+          ...savedDoc,
+          clientNom: this.clients.find(c => c.id === savedDoc.client_id)?.nom || null,
+          preparateurNom: this.utilisateurs.find(u => u.id === savedDoc.preparateur_id)?.username || null
+        };
+
+        if (isNew) {
+          this.documents.push(enrichedDoc);
+          this.messageService.add({ severity: 'success', summary: 'Ajouté', detail: 'Document ajouté' });
+        } else {
+          const index = this.documents.findIndex(d => d.id === savedDoc.id);
+          if (index !== -1) this.documents[index] = enrichedDoc;
+          this.messageService.add({ severity: 'success', summary: 'Mis à jour', detail: 'Document mis à jour' });
+        }
+
+        this.documentDialog = false;
+        this.document = this.getEmptyDocument();
+      },
+      error: (err) => {
+        console.error('Erreur sauvegarde document', err);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la sauvegarde du document' });
+      }
+    });
   }
 
   hideDialog(): void {
     this.documentDialog = false;
     this.submitted = false;
   }
-// Ouvrir le Dialog des Classes de Documents
+
 showDocumentClassesDialog(): void {
   this.documentClass = this.getEmptyDocumentClass();
   this.documentClassesDialog = true;
+  this.showClassForm = false; // Ne pas afficher le formulaire directement
 }
 
-// Fermer le Dialog des Classes de Documents
-closeDocumentClassesDialog(): void {
-  this.documentClassesDialog = false;
+  closeDocumentClassesDialog(): void {
+    this.documentClassesDialog = false;
+    this.submitted = false;
+  }
+
+  saveDocumentClass(): void {
+    this.submitted = true;
+
+    if (!this.documentClass.libelle || !this.documentClass.prefix.trim()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Champ requis',
+        detail: 'Le libellé est obligatoire'
+      });
+      return;
+    }
+
+    const isNew = this.documentClass.id === 0;
+
+    const action = isNew
+      ? this.documentService.saveDocumentClass(this.documentClass)
+      : this.documentService.updateDocumentClass(this.documentClass.id, this.documentClass);
+
+    action.subscribe({
+      next: (savedClass) => {
+        if (isNew) {
+          this.documentClasses.push(savedClass);
+          this.messageService.add({ severity: 'success', summary: 'Ajoutée', detail: 'Classe de document ajoutée' });
+        } else {
+          const index = this.documentClasses.findIndex(c => c.id === savedClass.id);
+          if (index !== -1) this.documentClasses[index] = savedClass;
+          this.messageService.add({ severity: 'success', summary: 'Modifiée', detail: 'Classe de document mise à jour' });
+        }
+
+        this.resetDocumentClassForm();
+        this.closeDocumentClassesDialog();
+      },
+      error: (err) => {
+        console.error('Erreur enregistrement classe', err);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de l\'enregistrement de la classe' });
+      }
+    });
+  }
+
+editDocumentClass(classe: DocumentClass): void {
+  this.documentClass = { ...classe };
+  this.showClassForm = true; // Affiche le formulaire lors de l'édition
 }
 
-// Ajouter une nouvelle classe de document (logique à personnaliser selon l'API)
-addDocumentClass(docClass: DocumentClass): void {
-  this.messageService.add({ severity: 'info', summary: 'Classe ajoutée', detail: docClass.libelle });
-  this.closeDocumentClassesDialog();  // Fermer le dialog
-  // Vous pouvez aussi ajouter de la logique pour gérer l'ajout à la liste ou une autre action
-}
-saveDocumentClass(): void {
-  // Ajoute ici l'appel à ton service pour enregistrer
-  this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Classe enregistrée' });
-  this.closeDocumentClassesDialog();
-}
+  confirmDeleteDocumentClass(classe: DocumentClass): void {
+    if (!classe.id) return;
 
+    this.documentService.deleteDocumentClass(classe.id).subscribe({
+      next: () => {
+        this.documentClasses = this.documentClasses.filter(c => c.id !== classe.id);
+        this.messageService.add({ severity: 'success', summary: 'Supprimée', detail: 'Classe de document supprimée' });
+      },
+      error: err => {
+        console.error('Erreur suppression classe', err);
+        this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la suppression' });
+      }
+    });
+  }
 
+resetDocumentClassForm(): void {
+  this.documentClass = this.getEmptyDocumentClass();
+  this.submitted = false;
+  this.showClassForm = true; // Affiche le formulaire quand on clique sur "Ajouter une Classe"
+}
 }

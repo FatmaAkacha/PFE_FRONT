@@ -1,40 +1,38 @@
-<div>
+<div class="email-form-container">
   <p-toast></p-toast>
-  <h2>Envoyer un Email</h2>
+  <h2 class="form-title">Envoyer un Email</h2>
+
   <p-card>
     <form (ngSubmit)="sendEmail()" #emailForm="ngForm">
       <div class="p-fluid">
-        
+
         <div class="p-field">
           <label for="client">Client</label>
           <p-dropdown 
-          id="client" 
-          [options]="clients" 
-          [(ngModel)]="selectedClient" 
-          optionLabel="nom"  
-          placeholder="Sélectionnez un client" 
-          name="client" 
-          (onChange)="onClientChange($event)"
-          required>
-        </p-dropdown>
-        
+            id="client" 
+            [options]="clients" 
+            [(ngModel)]="selectedClient" 
+            optionLabel="nom"  
+            placeholder="Sélectionnez un client" 
+            name="client" 
+            (onChange)="onClientChange($event)"
+            required>
+          </p-dropdown>
         </div>
-        
+
         <div class="p-field">
-          <label for="email">Email:</label>
-          <br/>
+          <label for="email">Email</label>
           <input type="email" 
                  id="email" 
                  [value]="selectedClient?.email" 
                  name="email" 
-                 required 
                  readonly 
-                 class="form-input">
+                 required 
+                 class="form-input readonly-input">
         </div>
-        
+
         <div class="p-field">
-          <label for="subject">Objet:</label>
-          <br/>
+          <label for="subject">Objet</label>
           <input type="text" 
                  id="subject" 
                  [(ngModel)]="subject" 
@@ -42,24 +40,22 @@
                  required 
                  class="form-input">
         </div>
-        
+
         <div class="p-field">
-          <label for="message">Message:</label>
-          <br/>
-          <textarea 
-            id="message" 
-            [(ngModel)]="message" 
-            name="message" 
-            required
-            rows="6"
-            class="form-input">
+          <label for="message">Message</label>
+          <textarea id="message" 
+                    [(ngModel)]="message" 
+                    name="message" 
+                    required 
+                    rows="6" 
+                    class="form-input">
           </textarea>
         </div>
-        
+
         <p-button 
           label="Envoyer" 
           type="submit" 
-          class="p-mt-2">
+          class="p-mt-2 send-button">
         </p-button>
       </div>
     </form>
@@ -67,26 +63,44 @@
 </div>
 
 <style>
-  .form-input {
-    width: 100%; 
-    box-sizing: border-box;
-    font: 14px ;
-    padding: 9px 10.5px;
-    border-radius: 5px;
-  }
+.email-form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
-  .form-input[type="email"] {
-    width: 100%;
-    border: 1px solid #ced4da;
-  }
-  
-  .form-input[type="text"] {
-    width: 100%;
-    border: 1px solid #ced4da;
-  }
+.form-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
 
-  .form-input[rows] {
-    width: 100%;
-    border: 1px solid #ced4da;
-  }
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 14px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input:focus {
+  border-color: #007ad9;
+  box-shadow: 0 0 0 2px rgba(0, 122, 217, 0.2);
+  outline: none;
+}
+
+.readonly-input {
+  background-color: #f5f5f5;
+  color: #555;
+}
+
+.p-field {
+  margin-bottom: 1.5rem;
+}
+
+.send-button {
+  width: 100%;
+}
 </style>

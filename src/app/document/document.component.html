@@ -5,11 +5,11 @@
 
       <p-toolbar class="mb-4">
         <ng-template pTemplate="left">
-          <button pButton label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+          <button pButton label="Nouveau" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNewDocument()"></button>
           <button pButton label="Supprimer" icon="pi pi-trash" class="p-button-danger"
                   (click)="deleteSelectedDocuments()"
                   [disabled]="!selectedDocuments || !selectedDocuments.length"></button>
-                  <button pButton label="Classes de Documents" icon="pi pi-list" class="p-button-info" (click)="showDocumentClassesDialog()"></button>
+          <button pButton label="Classes de Documents" icon="pi pi-list" class="p-button-info" (click)="showDocumentClassesDialog()"[ngStyle]="{'margin-left': '7px'}"></button>
         </ng-template>
 
         <ng-template pTemplate="right">
@@ -17,6 +17,7 @@
         </ng-template>
       </p-toolbar>
 
+      <!-- TABLEAU PRINCIPAL DES DOCUMENTS -->
       <p-table #dt [value]="documents" [(selection)]="selectedDocuments" selectionMode="multiple" dataKey="id"
                [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
                [globalFilterFields]="['libelle', 'code', 'documentClass.libelle']">
@@ -53,7 +54,7 @@
             <td><p-tableCheckbox [value]="doc"></p-tableCheckbox></td>
             <td>{{ doc.libelle }}</td>
             <td>{{ doc.codeClasseDoc }}</td>
-            <td>{{ doc.num_seq }}</td>
+            <td>{{ doc.numero }}</td>
             <td>{{ doc.dateDocument }}</td>
             <td>{{ doc.etat }}</td>
             <td>{{ doc.preparateurNom || '-' }}</td>
@@ -72,41 +73,87 @@
   </div>
 </div>
 
-<!-- DIALOG -->
- <!-- Dialog des Classes de Documents -->
- <p-dialog [(visible)]="documentClassesDialog" [modal]="true" [style]="{width: '500px'}" header="Ajouter / Modifier une Classe de Document" class="p-fluid">
-  <div class="field">
-    <label for="libelle">Libellé</label>
-    <input id="libelle" type="text" pInputText [(ngModel)]="documentClass.libelle" required />
-  </div>
+<!-- DIALOGUE CLASSES DE DOCUMENTS -->
+<p-dialog header="Liste des Classes de Documents"
+          [(visible)]="documentClassesDialog"
+          [modal]="true"
+          [style]="{ width: '700px' }"
+          (onHide)="closeDocumentClassesDialog()">
 
-  <div class="field">
-    <label for="prefix">Préfixe</label>
-    <input id="prefix" type="text" pInputText [(ngModel)]="documentClass.prefix" />
-  </div>
+  <p-toolbar>
+    <ng-template pTemplate="left">
+      <button pButton label="Ajouter une Classe" icon="pi pi-plus" class="p-button-success" (click)="resetDocumentClassForm()"></button>
+    </ng-template>
+  </p-toolbar>
 
-  <div class="field-checkbox">
-    <p-checkbox name="isvent" [(ngModel)]="documentClass.isvent" binary="true" inputId="isvent"></p-checkbox>
-    <label for="isvent">Est Vente</label>
-  </div>
+  <p-table [value]="documentClasses" [paginator]="true" [rows]="5">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Libellé</th>
+        <th>Préfixe</th>
+        <th>Vente</th>
+        <th>Achat</th>
+        <th>Actif</th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-classe>
+      <tr>
+        <td>{{ classe.libelle }}</td>
+        <td>{{ classe.prefix }}</td>
+        <td><p-tag [value]="classe.isvent ? 'Oui' : 'Non'" [severity]="classe.isvent ? 'warning' : 'danger'"></p-tag></td>
+        <td><p-tag [value]="classe.isachat ? 'Oui' : 'Non'" [severity]="classe.isachat ? 'warning' : 'danger'"></p-tag></td>
+        <td><p-tag [value]="classe.actif ? 'Actif' : 'Inactif'" [severity]="classe.actif ? 'warning' : 'danger'"></p-tag></td>
+        <td>
+             <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocumentClass(classe)"></button>
 
-  <div class="field-checkbox">
-    <p-checkbox name="isachat" [(ngModel)]="documentClass.isachat" binary="true" inputId="isachat"></p-checkbox>
-    <label for="isachat">Est Achat</label>
-  </div>
+          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteDocumentClass(classe)"></button>
 
-  <div class="field-checkbox">
-    <p-checkbox name="actif" [(ngModel)]="documentClass.actif" binary="true" inputId="actif"></p-checkbox>
-    <label for="actif">Actif</label>
-  </div>
+        </td>
 
-  <ng-template pTemplate="footer">
-    <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="closeDocumentClassesDialog()"></button>
-    <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocumentClass()"></button>
-  </ng-template>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <!-- Formulaire conditionnel -->
+  <div class="col-12 mt-4" *ngIf="showClassForm">
+    <h5>Ajouter / Modifier Classe</h5>
+    <div class="p-fluid">
+      <div class="field">
+        <label for="libelle">Libellé</label>
+        <input id="libelle" type="text" pInputText [(ngModel)]="documentClass.libelle" required />
+      </div>
+
+      <div class="field">
+        <label for="prefix">Préfixe</label>
+        <input id="prefix" type="text" pInputText [(ngModel)]="documentClass.prefix" />
+      </div>
+
+      <div class="field-checkbox">
+        <p-checkbox name="isvent" [(ngModel)]="documentClass.isvent" binary="true" inputId="isvent"></p-checkbox>
+        <label for="isvent">Est Vente</label>
+      </div>
+
+      <div class="field-checkbox">
+        <p-checkbox name="isachat" [(ngModel)]="documentClass.isachat" binary="true" inputId="isachat"></p-checkbox>
+        <label for="isachat">Est Achat</label>
+      </div>
+
+      <div class="field-checkbox">
+        <p-checkbox name="actif" [(ngModel)]="documentClass.actif" binary="true" inputId="actif"></p-checkbox>
+        <label for="actif">Actif</label>
+      </div>
+
+      <div class="text-right mt-3">
+        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="showClassForm = false"></button>
+        <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocumentClass()"></button>
+      </div>
+    </div>
+  </div>
 </p-dialog>
 
 
+<!-- DIALOGUE DOCUMENT -->
 
 <p-dialog [(visible)]="documentDialog" [modal]="true" [style]="{width: '500px'}" header="Document" class="p-fluid">
   <div class="field">
@@ -115,23 +162,13 @@
   </div>
 
   <div class="field">
-    <label>Code</label>
-    <input pInputText [(ngModel)]="document.code" required />
-  </div>
-
-  <div class="field">
     <label>Classe de Document</label>
     <p-dropdown [options]="documentClasses" optionLabel="libelle" optionValue="id" [(ngModel)]="document.document_class_id" placeholder="Choisir une classe"></p-dropdown>
   </div>
 
   <div class="field">
-    <label>Code Classe Document</label>
-    <input pInputText [(ngModel)]="document.codeclassedocument" />
-  </div>
-
-  <div class="field">
     <label>Numéro Séquence</label>
-    <input pInputText [(ngModel)]="document.num_seq" />
+    <input pInputText [(ngModel)]="document.numero" />
   </div>
 
   <div class="field">
@@ -182,4 +219,8 @@
     <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
     <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocument()"></button>
   </ng-template>
+  <ng-template pTemplate="right">
+  <button pButton icon="pi pi-times" class="p-button-text" (click)="closeDocumentClassesDialog()"></button>
+</ng-template>
+
 </p-dialog>

@@ -79,6 +79,8 @@ import { RoleComponent } from './demo/component/role/role.component';
                     {path: 'pages/user', component: UserComponent},
                     {path: 'pages/email', component: EmailComponent},
                     {path: 'pages/role', component: RoleComponent},
+                    {path: 'pages/document', component: DocumentComponent },
+
 
                     {path: 'vente/bon-commande', component: DevisComponent},
                     { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
@@ -86,7 +88,6 @@ import { RoleComponent } from './demo/component/role/role.component';
                     { path: 'vente/produits-commandes', component: ProduitsCommandesComponent },
 
 
-                    { path: 'vente/document', component: DocumentComponent },
                     { path: 'vente/panier', component: PanierComponent },
 
                     { path: 'achat/bon-commande-fournisseur', component: BonCommandeFournisseurComponent }, 
