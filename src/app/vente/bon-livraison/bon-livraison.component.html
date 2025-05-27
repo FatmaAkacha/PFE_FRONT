@@ -1,4 +1,5 @@
 <div class="bon-commande-container">
+  <p-toast></p-toast>
   <div class="bon-commande-header">
     <h2>Bon de Livraison Client N°{{ formattedDeliveryNumber }}</h2>
   </div>
@@ -131,7 +132,27 @@
       label="Enregistrer Bon de Livraison" 
       icon="pi pi-check" 
       class="p-button-success" 
-      (click)="saveBonDeLivraisonAsDocument()">
+      (click)="saveBonDeLivraisonAsDocument()"
+      [ngStyle]="{'margin-top': '10px'}">
     </button>
-  </div>
+
+
+    <button pButton type="button" 
+    label="Générer Facture" 
+    icon="pi pi-arrow-right"
+    class="p-button-info" 
+    (click)="redirigerVersFacture()"
+    [ngStyle]="{'margin-left': '10px'}">
+    </button>
+
+<button 
+  pButton 
+  label="Imprimer" 
+  icon="pi pi-print" 
+  class="p-button-secondary" 
+  (click)="imprimerBonLivraison(doc?.id)"
+  [ngStyle]="{'margin-left': '10px'}">
+</button>
+</div>
+</div>
 

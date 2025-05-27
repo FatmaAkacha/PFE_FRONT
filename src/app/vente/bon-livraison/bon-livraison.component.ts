@@ -184,10 +184,10 @@ loadUsers() {
             next: (dernierCode: string) => {
              // const numero = parseInt(dernierCode || '0', 10) + 1;
               //this.num_seq = numero.toString().padStart(5, '0');
-              this.formattedDeliveryNumber = this.num_seq;
+              this.formattedDeliveryNumber = this.numero;
             },
             error: () => {
-              this.num_seq = '00001';
+              this.numero = '00001';
               this.formattedDeliveryNumber = '00001';
             }
           });
@@ -468,4 +468,20 @@ getDocumentClassesAndLoadNextCode() {
 
       }})
   }
+  redirigerVersFacture() {
+  if (!this.doc?.id) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Erreur',
+      detail: "Le bon de livraison n'est pas encore enregistré ou l'ID est manquant."
+    });
+    return;
+  }
+
+  this.router.navigate(['/vente/facture', this.doc.id]);
+}
+imprimerBonLivraison(id: number | string) {
+      window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+}
+
 }

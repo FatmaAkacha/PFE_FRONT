@@ -84,7 +84,7 @@ import { RoleComponent } from './demo/component/role/role.component';
 
                     {path: 'vente/bon-commande', component: DevisComponent},
                     { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
-                    { path: 'vente/facture/:orderNumber', component: FactureComponent }, 
+                    { path: 'vente/facture/:id', component: FactureComponent }, 
                     { path: 'vente/produits-commandes', component: ProduitsCommandesComponent },
 
 
