@@ -1,23 +1,154 @@
-<p-confirmDialog></p-confirmDialog>
-<h2>Bon de Commande Fournisseur N°{{ formattedOrderNumber }}</h2>
-<!-- Infos Fournisseur -->
-<p>{{ fournisseur.name }}</p>
+<div class="bon-commande-container"> 
+  <div class="bon-commande-header">
+    <h2>Bon de Commande Fournisseur N°{{ formattedOrderNumber }}</h2>
+    <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
+  </div>
 
-<!-- Liste des produits -->
-<p-table [value]="produitsCommandes">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Code</th><th>Nom</th><th>Quantité</th><th>Prix</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-prod>
-    <tr>
-      <td>{{ prod.produit.id }}</td>
-      <td>{{ prod.produit.nom }}</td>
-      <td>{{ prod.quantite }}</td>
-      <td>{{ prod.produit.prix }}</td>
-    </tr>
-  </ng-template>
-</p-table>
+  <div class="grid formgrid p-fluid">
+    <div class="col-12 md:col-4">
+      <label>Date document <span class="required-star">*</span></label>
+      <p-calendar [(ngModel)]="commande.dateDocument" showTime></p-calendar>
+    </div>
+    <div class="col-12 md:col-4">
+      <label>État Document <span class="required-star">*</span></label>
+      <p-dropdown [options]="etatOptions" [(ngModel)]="commande.etat" placeholder="Sélectionner un état" [filter]="true"></p-dropdown>
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Préparé par <span class="required-star">*</span></label>
+      <p-dropdown [options]="users" [(ngModel)]="commande.preparateur_id" optionLabel="username" optionValue="id" placeholder="Sélectionner un préparateur" [filter]="true"></p-dropdown>
+    </div>
+  </div>
 
-<button pButton label="Confirmer Réception" icon="pi pi-check" (click)="confirmerReception()"></button>
+  <div class="client-info">
+    <h3>Informations du Fournisseur</h3>
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Fournisseur <span class="required-star">*</span></label>
+        <p-dropdown 
+          [options]="fournisseurs" 
+          optionLabel="name" 
+          optionValue="id"
+          [(ngModel)]="commande.fournisseur_id" 
+          (onChange)="onFournisseurSelect($event.value)"
+          placeholder="Sélectionner un fournisseur"
+          [filter]="true">
+        </p-dropdown>
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Matricule fiscal</label>
+        <input pInputText [value]="selectedFournisseur?.matricule_fiscal || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Email</label>
+        <input pInputText [value]="selectedFournisseur?.email || ''" [disabled]="true">
+      </div>
+    </div>
+
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Téléphone</label>
+        <input pInputText [value]="selectedFournisseur?.phone || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-8">
+        <label>Adresse</label>
+        <input pInputText [value]="selectedFournisseur?.address || ''" [disabled]="true">
+      </div>
+    </div>
+  </div>
+
+  <div class="grid formgrid p-fluid">
+    <div class="col-12 md:col-4">
+      <label>Devise <span class="required-star">*</span></label>
+      <p-dropdown [options]="deviseOptions" [(ngModel)]="commande.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true"></p-dropdown>
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Taux d'échange <span class="required-star">*</span></label>
+      <input pInputText [(ngModel)]="commande.tauxEchange" type="number" placeholder="Taux d'échange">
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Date de livraison <span class="required-star">*</span></label>
+      <p-calendar [(ngModel)]="commande.dateLivraison" showTime></p-calendar>
+    </div>
+  </div>
+
+  <h3>Produits Commandés</h3>
+
+  <p-table [value]="commandeProduits" responsiveLayout="scroll" class="commande-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code</th>
+        <th>Désignation</th>
+        <th>Stock</th>
+        <th>Quantité</th>
+        <th>PUHT/U</th>
+        <th>TVA %</th>
+        <th>TTC</th>
+        <th>Action</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.produit.id }}</td>
+        <td>{{ item.produit.nom }}</td>
+        <td>{{ item.produit.quantitystock }}</td>
+        <td>
+          <input type="number" 
+                 [(ngModel)]="item.produit.quantity" 
+                 (ngModelChange)="mettreAJourProduit(item)" 
+                 [max]="item.produit.quantitystock"
+                 [min]="1"
+                 class="p-inputtext p-component" />
+        </td>
+
+        <td>
+          <input type="number" 
+                 [(ngModel)]="item.produit.prix" 
+                 (ngModelChange)="mettreAJourProduit(item)" 
+                 min="0"
+                 class="p-inputtext p-component" />
+        </td>
+
+        <td>{{ item.tva }}</td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
+        <td class="icon-spacing">
+          <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="modifierProduit(item)"></button>
+          <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <br>
+  <div class="bon-commande-actions">
+    <button
+      pButton
+      type="button"
+      label="Voir Produits"
+      icon="pi pi-eye"
+      (click)="naviguerVersAjoutProduit()">
+    </button>
+
+    <br><br>
+    <button 
+      pButton 
+      label="Valider et Passer au Bon de Livraison" 
+      icon="pi pi-check" 
+      class="p-button-success" 
+      (click)="validerEtPasserALivraison()">
+    </button>
+    <button 
+      pButton 
+      label="Imprimer" 
+      icon="pi pi-print" 
+      class="p-button-secondary" 
+      (click)="imprimerCommande()">
+    </button>
+  </div>
+
+  <p-confirmDialog 
+    header="Confirmation" 
+    icon="pi pi-exclamation-triangle" 
+    acceptLabel="Oui" 
+    rejectLabel="Non">
+  </p-confirmDialog>
+</div>

@@ -145,20 +145,26 @@ export class DataService {
   
   insertProduitForm(formData: FormData): Observable<Produit> {
     return this.httpClient.post<Produit>(this.apiUrlProduits, formData, {
-      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) // PAS de 'Content-Type'
+      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) 
     });
   }
   
   updateProduitForm(id: string, formData: FormData): Observable<Produit> {
     return this.httpClient.post<Produit>(`${this.apiUrlProduits}/${id}?_method=PUT`, formData, {
-      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) // PAS de 'Content-Type'
+      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) 
     });
   }
   getImageSrc(produit: Produit): string | undefined {
     return typeof produit.image_data === 'string' ? produit.image_data : undefined;
   }
   
-  
+
+  ajouterProduitFournisseur(formData: FormData): Observable<Produit> {
+    return this.httpClient.post<Produit>(`${this.apiUrlProduits}/produits/fournisseur`, formData , {
+        headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) 
+      });  
+  }
+
 
   // =======================
   // ✅ Gestion de l'Authentification

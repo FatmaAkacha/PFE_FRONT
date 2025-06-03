@@ -172,6 +172,7 @@ import { CategorieComponent } from './demo/component/categorie/categorie.compone
 import { ModalPanierComponent } from './pages/modal-panier/modal-panier.component';
 import { EmailComponent } from './demo/component/email/email.component';
 import { RoleComponent } from './demo/component/role/role.component';
+import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -325,7 +326,8 @@ FullCalendarModule.registerPlugins([
         ModalPanierComponent ,
         UserComponent,
         EmailComponent,
-        RoleComponent  ],
+        RoleComponent,
+        FournisseurAjoutProduitComponent  ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,
