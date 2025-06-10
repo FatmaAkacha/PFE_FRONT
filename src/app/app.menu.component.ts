@@ -52,14 +52,14 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Pages', icon: 'pi pi-fw pi-copy', routerLink: ['/pages'],
                 items: [
-                    { label: 'Client', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/client'] },
-                    { label: 'Category', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/categorie'] },
-                    { label: 'Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/fournisseur'] },
-                    { label: 'Product', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/produit'] },
-                    { label: 'User', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/user'] },
-                    { label: 'Role', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/role'] },
+                    { label: 'Clients', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/client'] },
+                    { label: 'Catégories', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/categorie'] },
+                    { label: 'Fournisseurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/fournisseur'] },
+                    { label: 'Produits', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/produit'] },
+                    { label: 'Utilisateurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/user'] },
+                    { label: 'Rôles', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/role'] },
                     { label: 'Email', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/email'] },
-                    { label: 'Document', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/document'] },
+                    { label: 'Documents', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/document'] },
 
 
 

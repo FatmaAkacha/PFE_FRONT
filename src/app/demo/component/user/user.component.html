@@ -17,7 +17,7 @@
                  [globalFilterFields]="['username','email','role_id']" selectionMode="multiple">
           <ng-template pTemplate="caption">
             <div class="flex justify-content-between align-items-center">
-              <h5 class="m-0">Manage Users</h5>
+              <h5 class="m-0">Gestion des utilisateurs</h5>
               <span class="p-input-icon-left">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
@@ -28,9 +28,9 @@
           <ng-template pTemplate="header">
             <tr>
               <th style="width: 3rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-              <th pSortableColumn="username">Username <p-sortIcon field="username"></p-sortIcon></th>
+              <th pSortableColumn="username">Nom d'utilisateur <p-sortIcon field="username"></p-sortIcon></th>
               <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
-              <th pSortableColumn="role.name">Role <p-sortIcon field="role.name"></p-sortIcon></th>
+              <th pSortableColumn="role.name">Rôle <p-sortIcon field="role.name"></p-sortIcon></th>
               <th>Actions</th>
             </tr>
           </ng-template>
@@ -51,47 +51,47 @@
       </div>
   
       <!-- Add/Edit Dialog -->
-      <p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="User Details" [modal]="true" class="p-fluid">
+      <p-dialog [(visible)]="userDialog" [style]="{ width: '450px' }" header="Détails des utilisateurs" [modal]="true" class="p-fluid">
         <ng-template pTemplate="content">
           <div class="field">
-            <label for="username">Username <span class="required-star">*</span></label>
+            <label for="username">Nom d'utilisateur <span class="required-star">*</span></label>
             <input pInputText id="username" [(ngModel)]="user.username" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.username }" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.username">Username is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.username">Le nom d'utilisateur est requis.</small>
           </div>
-  
-          <div class="field">
-            <label for="email">Email <span class="required-star">*</span></label>
-            <input type="email" pInputText id="email" [(ngModel)]="user.email" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.email }" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.email">Email is required.</small>
-          </div>
-  
-          <div class="field">
-            <label for="password">Password <span class="required-star">*</span></label>
-            <input type="password" pInputText id="password" [(ngModel)]="user.password" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.password }" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.password">Password is required.</small>
-          </div>
-  
+          
           <div class="field" style="margin-bottom: 15px;">
-            <label for="role_id">Role <span class="required-star">*</span></label>
+            <label for="role_id">Rôle <span class="required-star">*</span></label>
             <p-dropdown
                 inputId="role_id"
                 [options]="roles"
                 [(ngModel)]="user.role_id"
                 optionLabel="name"
                 optionValue="id"
-                placeholder="Select a role"
+                placeholder="Sélectionner un rôle"
                 [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.role_id }"
                 style="margin-bottom: 15px; " >
             </p-dropdown>
 
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.role_id">Role is required.</small>
-          </div>          
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.role_id">Le Role est requis.</small>
+          </div> 
+  
+          <div class="field">
+            <label for="email">Email <span class="required-star">*</span></label>
+            <input type="email" pInputText id="email" [(ngModel)]="user.email" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.email }" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.email">L'Email est requis</small>
+          </div>
+  
+          <div class="field">
+            <label for="password">Password <span class="required-star">*</span></label>
+            <input type="password" pInputText id="password" [(ngModel)]="user.password" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !user.password }" />
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !user.password">Le mot de passe est requis.</small>
+          </div>         
           
         </ng-template>
   
         <ng-template pTemplate="footer">
-          <button pButton label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-          <button pButton label="Save" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
+          <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveUser()"></button>
         </ng-template>
       </p-dialog>
   
@@ -99,7 +99,7 @@
       <p-dialog [(visible)]="deleteUserDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
         <div class="flex align-items-center justify-content-center">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-          <span *ngIf="user">Are you sure you want to delete <b>{{ user.username }}</b>?</span>
+          <span *ngIf="user">Êtes-vous sûr de vouloir supprimer <b>{{ user.username }}</b>?</span>
         </div>
         <ng-template pTemplate="footer">
           <button pButton label="No" icon="pi pi-times" class="p-button-text" (click)="deleteUserDialog = false"></button>
@@ -111,7 +111,7 @@
       <p-dialog [(visible)]="deleteUsersDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
         <div class="flex align-items-center justify-content-center">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-          <span>Are you sure you want to delete the selected users?</span>
+          <span>Êtes-vous sûr de vouloir supprimer les utilisateurs sélectionnés ?</span>
         </div>
         <ng-template pTemplate="footer">
           <button pButton label="No" icon="pi pi-times" class="p-button-text" (click)="deleteUsersDialog = false"></button>

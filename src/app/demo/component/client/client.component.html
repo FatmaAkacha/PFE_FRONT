@@ -53,7 +53,7 @@
               Code <p-sortIcon field="code"></p-sortIcon>
             </th>
             <th pSortableColumn="nom">
-              Name <p-sortIcon field="nom"></p-sortIcon>
+              Nom <p-sortIcon field="nom"></p-sortIcon>
             </th>
             <th pSortableColumn="raison_sociale">
               Raison Sociale <p-sortIcon field="raison_sociale"></p-sortIcon>
@@ -65,7 +65,7 @@
               Adresse <p-sortIcon field="adresse"></p-sortIcon>
             </th>
             <th pSortableColumn="numero_telephone">
-              Phone number <p-sortIcon field="numero_telephone"></p-sortIcon>
+              Numéro Téléphone <p-sortIcon field="numero_telephone"></p-sortIcon>
             </th>
             <th >Logo </th>
             <th pSortableColumn="email">
@@ -109,7 +109,7 @@
     <!-- Dialog pour la création/édition d'un client -->
     <p-dialog [(visible)]="clientDialog" header="Détails du client" [modal]="true" [style]="{ width: '450px' }" class="p-fluid">
       <ng-template pTemplate="content">
-        <div class="field" *ngFor="let field of ['code', 'nom', 'raison_sociale', 'contact', 'adresse', 'numero_telephone', 'email']">
+        <div class="field" *ngFor="let field of ['code', 'nom', 'raison sociale', 'contact', 'adresse', 'numero telephone', 'email']">
           <label [for]="field">{{ field | titlecase }}<span class="required-star">*</span></label>
           <input *ngIf="field !== 'email'" type="text" pInputText [id]="field" [(ngModel)]="client[field]" [required]="field === 'nom'" [ngClass]="{'ng-invalid ng-dirty' : submitted && !client[field]}" />
           <input *ngIf="field === 'email'" type="email" pInputText id="email" [(ngModel)]="client.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !client.email}" />
@@ -128,7 +128,7 @@
             accept="image/*"
             (onSelect)="onFileUploadSelect($event)">
           </p-fileUpload>
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && client.logo">Logo is required.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && client.logo">Le logo est requis.</small>
         </div>
         
         <div *ngIf="previewUrl" class="preview mt-2">
@@ -142,8 +142,8 @@
         </div>
       </ng-template>
       <ng-template pTemplate="footer">
-        <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-        <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveClient()"></button>
+        <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveClient()"></button>
       </ng-template>
     </p-dialog>
 
@@ -151,7 +151,7 @@
     <p-dialog [(visible)]="deleteClientDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span *ngIf="client">Are you sure you want to delete <b>{{ client.nom }}</b>?</span>
+        <span *ngIf="client">Êtes-vous sûr de vouloir supprimer ?<b>{{ client.nom }}</b>?</span>
       </div>
       <ng-template pTemplate="footer">
         <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteClientDialog = false" label="No"></button>
@@ -163,7 +163,7 @@
     <p-dialog [(visible)]="deleteClientsDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
       <div class="flex align-items-center justify-content-center">
         <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-        <span>Are you sure you want to delete the selected clients?</span>
+        <span>Êtes-vous sûr de vouloir supprimer les clients sélectionnés ?</span>
       </div>
       <ng-template pTemplate="footer">
         <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteClientsDialog = false" label="No"></button>

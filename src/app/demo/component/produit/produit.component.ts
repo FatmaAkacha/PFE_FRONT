@@ -267,7 +267,7 @@ export class ProduitComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: 'Produit Updated',
+            detail: 'Produit mis à jour',
             life: 3000,
           });
           this.refreshProduitList();
@@ -276,7 +276,7 @@ export class ProduitComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Produit update failed',
+            detail: 'La mise à jour du produit a échoué',
             life: 3000,
           });
         }
@@ -287,7 +287,7 @@ export class ProduitComponent implements OnInit {
           this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: 'Produit Created',
+            detail: 'Produit Ajouté',
             life: 3000,
           });
           this.refreshProduitList();
@@ -296,7 +296,7 @@ export class ProduitComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Produit creation failed',
+            detail: 'La création du produit a échoué',
             life: 3000,
           });
         }

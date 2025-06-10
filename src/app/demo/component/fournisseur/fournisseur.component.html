@@ -20,7 +20,7 @@
         <p-table #dt [value]="fournisseurs" [columns]="cols" responsiveLayout="scroll" [rows]="10" [globalFilterFields]="['name','address','phone','matricule_fiscal','email']" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions" [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [(selection)]="selectedFournisseurs" selectionMode="multiple" [rowHover]="true" dataKey="id">
           <ng-template pTemplate="caption">
             <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-              <h5 class="m-0">Manage Fournisseurs</h5>
+              <h5 class="m-0">Gestion des Fournisseurs</h5>
               <span class="block mt-2 md:mt-0 p-input-icon-left">
                 <i class="pi pi-search"></i>
                 <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Search..." />
@@ -32,10 +32,10 @@
               <th style="width: 3rem">
                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
               </th>
-              <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
+              <th pSortableColumn="name">Nom <p-sortIcon field="name"></p-sortIcon></th>
               <th pSortableColumn="logo">Logo <p-sortIcon field="logo"></p-sortIcon></th>
-              <th pSortableColumn="address">Address <p-sortIcon field="address"></p-sortIcon></th>
-              <th pSortableColumn="phone">Phone number <p-sortIcon field="phone"></p-sortIcon></th>
+              <th pSortableColumn="address">Adresse <p-sortIcon field="address"></p-sortIcon></th>
+              <th pSortableColumn="phone">Numéro Télephone  <p-sortIcon field="phone"></p-sortIcon></th>
               <th pSortableColumn="matricule_fiscal">Matricule Fiscal <p-sortIcon field="matricule_fiscal"></p-sortIcon></th>
               <th pSortableColumn="email">Email <p-sortIcon field="email"></p-sortIcon></th>
               <th>Action</th>
@@ -46,7 +46,7 @@
               <td>
                 <p-tableCheckbox [value]="fournisseur"></p-tableCheckbox>
               </td>
-              <td><span class="p-column-title">Name</span>{{fournisseur.name}}</td>
+              <td><span class="p-column-title">Nom</span>{{fournisseur.name}}</td>
               <td>
                 <span class="p-column-title">Logo</span>
                 <img *ngIf="getImageSrc(fournisseur)"
@@ -55,9 +55,9 @@
                   style="width: 50px; height: 50px; object-fit: contain; border-radius: 4px" />
 
               </td>
-                <td><span class="p-column-title">Address</span>{{fournisseur.address}}</td>
-              <td><span class="p-column-title">Phone number</span>{{fournisseur.phone}}</td>
-              <td><span class="p-column-title">Fiscal ID</span>{{fournisseur.matricule_fiscal}}</td>
+                <td><span class="p-column-title">Adresse</span>{{fournisseur.address}}</td>
+              <td><span class="p-column-title">Numéro Télephone</span>{{fournisseur.phone}}</td>
+              <td><span class="p-column-title">Matricule Fiscal </span>{{fournisseur.matricule_fiscal}}</td>
               <td><span class="p-column-title">Email</span>{{fournisseur.email}}</td>
               <td>
                 <div class="flex">
@@ -73,9 +73,9 @@
       <p-dialog [(visible)]="fournisseurDialog" [style]="{width: '450px'}" header="Fournisseur Details" [modal]="true" class="p-fluid">
         <ng-template pTemplate="content">
           <div class="field">
-            <label for="name">Name <span class="required-star">*</span></label>
+            <label for="name">Nom <span class="required-star">*</span></label>
             <input type="text" pInputText id="name" [(ngModel)]="fournisseur.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.name}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.name">Name is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.name">Le nom est requis.</small>
           </div>
         <!-- Input de type image -->
         <div class="field">
@@ -89,7 +89,7 @@
             accept="image/*"
             (onSelect)="onFileUploadSelect($event)">
           </p-fileUpload>
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.logo">Logo is required.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.logo">Le logo est requis.</small>
         </div>
         
         <div *ngIf="previewUrl" class="preview mt-2">
@@ -97,36 +97,36 @@
         </div>
         
           <div class="field">
-            <label for="address">Address <span class="required-star">*</span></label>
+            <label for="address">Adresse <span class="required-star">*</span></label>
             <input type="text" pInputText id="address" [(ngModel)]="fournisseur.address" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.address}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.address">Address is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.address">L'adresse est requis.</small>
           </div>
           <div class="field">
-            <label for="phone">Phone number <span class="required-star">*</span></label>
+            <label for="phone">Numéro Télephone <span class="required-star">*</span></label>
             <input type="text" pInputText id="phone" [(ngModel)]="fournisseur.phone" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.phone}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.phone">Phone number is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.phone">Le numéro télephone est requis.</small>
           </div>
           <div class="field">
-            <label for="matricule_fiscal">Fiscal ID <span class="required-star">*</span></label>
+            <label for="matricule_fiscal">Matricule Fiscal <span class="required-star">*</span></label>
             <input type="text" pInputText id="matricule_fiscal" [(ngModel)]="fournisseur.matricule_fiscal" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.matricule_fiscal}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.matricule_fiscal">Fiscal ID is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.matricule_fiscal">Le matricule fiscal est requis.</small>
           </div>
           <div class="field">
             <label for="email">Email <span class="required-star">*</span></label>
             <input type="email" pInputText id="email" [(ngModel)]="fournisseur.email" required [ngClass]="{'ng-invalid ng-dirty' : submitted && !fournisseur.email}" />
-            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.email">Email is required.</small>
+            <small class="ng-dirty ng-invalid" *ngIf="submitted && !fournisseur.email">L'Email est requis.</small>
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
-          <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-          <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveFournisseur()"></button>
+          <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+          <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveFournisseur()"></button>
         </ng-template>
       </p-dialog>
   
       <p-dialog [(visible)]="deleteFournisseurDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
         <div class="flex align-items-center justify-content-center">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-          <span *ngIf="fournisseur">Are you sure you want to delete <b>{{fournisseur.name}}</b>?</span>
+          <span *ngIf="fournisseur">Êtes-vous sûr de vouloir supprimer <b>{{fournisseur.name}}</b>?</span>
         </div>
         <ng-template pTemplate="footer">
           <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteFournisseurDialog = false"></button>
@@ -137,7 +137,7 @@
       <p-dialog [(visible)]="deleteFournisseursDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
         <div class="flex align-items-center justify-content-center">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-          <span>Are you sure you want to delete the selected fournisseurs?</span>
+          <span>Êtes-vous sûr de vouloir supprimer les fournisseurs sélectionnés ?</span>
         </div>
         <ng-template pTemplate="footer">
           <button pButton pRipple icon="pi pi-times" class="p-button-text" label="No" (click)="deleteFournisseursDialog = false"></button>
