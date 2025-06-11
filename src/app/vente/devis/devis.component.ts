@@ -12,8 +12,8 @@ import { DocumentService } from 'src/app/demo/service/document.service';
 import { Document } from 'src/app/demo/domain/document';
 import { DocumentClass } from 'src/app/demo/domain/documentClass';
 import { PanierService } from 'src/app/demo/service/panier.service';
-import { User } from 'src/app/demo/domain/user';
-import { UserService } from 'src/app/demo/service/user.service';
+import { Magasinier } from 'src/app/demo/domain/magasinier';
+import { MagasinierService } from 'src/app/demo/service/magasinier.service';
 
 @Component({
   selector: 'app-devis',
@@ -29,6 +29,7 @@ export class DevisComponent implements OnInit {
   devisForm: FormGroup;
   client: Client;
   clients: Client[] = [];
+  magasiniers : Magasinier[] = [];
   produitsDansCommande: Produit[] = [];
   produitsClient: Produit[] = [];
   devisProduits: DevisProduit[] = [];
@@ -45,8 +46,9 @@ export class DevisComponent implements OnInit {
   tauxEchange: number = 1;
   totalStock: number = 0;
   dateLivraison: Date = new Date();
-  users: User[] = [];
   numero;
+  selectedMagasinier: Magasinier = {} as Magasinier;
+  savedDoc: Document;
 
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
@@ -57,6 +59,7 @@ export class DevisComponent implements OnInit {
   ];
   devis: Devis = {
     client_id: "", // à adapter dynamiquement
+    preparateur_id:"",
     totalHT: 100,
     tva: 20,
     totalTTC: 120,
@@ -78,7 +81,6 @@ export class DevisComponent implements OnInit {
       }
     ]
   };
-  savedDoc: Document;
 
   constructor(
     private fb: FormBuilder,
@@ -88,7 +90,7 @@ export class DevisComponent implements OnInit {
     private documentService: DocumentService,
     private panierService: PanierService,
     private router: Router,
-    private userService: UserService,
+    private magasinierService:MagasinierService,
     private breadcrumbService: BreadcrumbService,
     private sanitizer: DomSanitizer,
     private cdRef: ChangeDetectorRef
@@ -107,7 +109,7 @@ export class DevisComponent implements OnInit {
       totalTTC: 0,
       date: '',
       etat: '', 
-      preparateur_id: {} as User,
+      preparateur_id: {} as Magasinier, 
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
@@ -119,9 +121,9 @@ export class DevisComponent implements OnInit {
     sessionStorage.setItem('codeClasseDoc', 'BC')
     this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
-    this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
+    this.loadMagasinier();
   
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
@@ -141,16 +143,18 @@ export class DevisComponent implements OnInit {
     this.calculerTotal();
     console.log(this.devisProduits);
   }
-  loadUsers() {
-    this.userService.getUsers().subscribe({
-      next: (data: User[]) => {
-        this.users = data;
+  
+    loadMagasinier() {
+    this.magasinierService.getMagasiniers().subscribe({
+      next: (data: Magasinier[]) => {
+        this.magasiniers = data;
       },
       error: (err) => {
         console.error("Erreur lors du chargement des utilisateurs :", err);
       }
     });
   }
+
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {
@@ -236,6 +240,7 @@ export class DevisComponent implements OnInit {
       this.clients = data;
     });
   }
+
   loadProduits() {
     this.devisService.getProduits().subscribe(data => {
       this.produitsDansCommande = data;
@@ -249,17 +254,37 @@ export class DevisComponent implements OnInit {
   }
 
   openNew() {
-    this.devis = {} as Devis;
+    this.devis = {
+      id: 0,
+      client_id: 0,
+      client: {} as Client,
+      produits: [],
+      totalHT: 0,
+      tva: 0,
+      totalTTC: 0,
+      date: '',
+      etat: '',
+      preparateur_id: {} as Magasinier,
+      devise: '',
+      tauxEchange: 1,
+      dateLivraison: new Date()
+    };
     this.devisProduits = [];
     this.calculerTotal();
     this.devisDialog = true;
   }
-
   onClientSelect(clientId: number) {
     const client = this.clients.find(c => c.id === clientId);
     if (client) {
       this.selectedClient = client;
       this.devis.client_id = client.id;
+    }
+  }
+  onMagasinierSelect(magasinierId: string) {
+    const magasinier = this.magasiniers.find(c => c.id === magasinierId);
+    if (magasinier) {
+      this.selectedMagasinier= magasinier;
+      this.devis.preparateur_id = magasinier.id;
     }
   }
   
@@ -383,7 +408,7 @@ export class DevisComponent implements OnInit {
       numero:'',
       dateDocument: this.devis.dateLivraison?.toISOString() || new Date().toISOString(),  // Date du document (livraison ou actuelle)
       etat: this.devis.etat,  // État du document (par exemple: En cours, Validé)
-      preparateur_id: this.devis.preparateur_id,  // Préparateur du document
+      preparateur_id: this.devis.preparateur_id,
       client_id: this.selectedClient?.id,  // ID du client sélectionné
       devise: this.devis.devise,  // Devise
       tauxEchange: this.devis.tauxEchange,  // Taux de change

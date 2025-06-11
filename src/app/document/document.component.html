@@ -64,7 +64,7 @@
             <td>{{ doc.dateLivraison }}</td>
             <td>
               <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocument(doc)"></button>
-              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteDocument(doc)"></button>
+              <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteDocument(doc)"></button>
             </td>
           </tr>
         </ng-template>
@@ -105,9 +105,8 @@
         <td><p-tag [value]="classe.isachat ? 'Oui' : 'Non'" [severity]="classe.isachat ? 'warning' : 'danger'"></p-tag></td>
         <td><p-tag [value]="classe.actif ? 'Actif' : 'Inactif'" [severity]="classe.actif ? 'warning' : 'danger'"></p-tag></td>
         <td>
-             <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocumentClass(classe)"></button>
-
-          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteDocumentClass(classe)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocumentClass(classe)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteDocumentClass(classe)"></button>
 
         </td>
 
@@ -145,7 +144,7 @@
       </div>
 
       <div class="mt-3" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 3% !important;">
-        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" style=" border: 1px solid #5E81AC; padding: 10px; border-radius: 5px;" (click)="showClassForm = false"></button>
+        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" style=" border: 1px solid #ccc; padding: 10px; border-radius: 5px;" (click)="showClassForm = false"></button>
         <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" style=" border: 1px solid #5E81AC; padding: 10px; border-radius: 5px;"(click)="saveDocumentClass()"></button>
       </div>
       

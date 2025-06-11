@@ -1,6 +1,6 @@
 import { DocumentClass } from "./documentClass";
 import { Client } from './client';
-import { User } from './user';
+import { Magasinier } from "./magasinier";
   
   export interface Document {
     id: number;
@@ -11,7 +11,7 @@ import { User } from './user';
     code?: string;
     dateDocument?: string;
     etat?: string;
-    preparateur_id?: User;
+    preparateur_id?: Magasinier;
     client_id?: Client;
     devise?: string;
     tauxEchange?: number;

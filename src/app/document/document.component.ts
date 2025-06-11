@@ -7,6 +7,7 @@ import { Client } from '../demo/domain/client';
 import { User } from '../demo/domain/user';
 import { UserService } from '../demo/service/user.service';
 import { DataService } from '../demo/service/data.service';
+import { Magasinier } from '../demo/domain/magasinier';
 
 @Component({
   selector: 'app-document',
@@ -54,7 +55,7 @@ export class DocumentComponent implements OnInit {
       code: '',
       dateDocument: '',
       etat: '',
-      preparateur_id: {} as User,
+      preparateur_id: {} as Magasinier,
       client_id: null,
       devise: '',
       tauxEchange: 0,

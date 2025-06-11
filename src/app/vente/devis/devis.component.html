@@ -15,7 +15,15 @@
     </div>
     <div class="col-12 md:col-4">
       <label>Préparé par <span class="required-star">*</span></label>
-      <p-dropdown [options]="users" [(ngModel)]="devis.preparateur_id" optionLabel="username" optionValue="id" placeholder="Sélectionner un préparateur" [filter]="true"></p-dropdown>    
+      <p-dropdown 
+        [options]="magasiniers" 
+        optionLabel="nom" 
+        optionValue="id"
+        [(ngModel)]="devis.preparateur_id" 
+        (onChange)="onMagasinierSelect($event.value)"
+        placeholder="Sélectionner un preparateur"
+        [filter]="true">
+      </p-dropdown>   
     </div>
   </div>
 

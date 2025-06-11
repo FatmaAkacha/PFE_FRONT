@@ -11,9 +11,10 @@ import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
-import { UserService } from 'src/app/demo/service/user.service';
 import { DevisService } from 'src/app/demo/service/devis.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Magasinier } from 'src/app/demo/domain/magasinier';
+import { MagasinierService } from 'src/app/demo/service/magasinier.service';
 
 @Component({
   selector: 'app-bon-livraison',
@@ -45,9 +46,11 @@ export class BonLivraisonComponent implements OnInit {
   tauxEchange: number = 1;
   totalStock: number = 0;
   dateLivraison: Date = new Date();
-  users: User[] = [];
   numero;  
-savedDoc: Document;
+ savedDoc: Document;
+ magasiniers : Magasinier[] = [];
+ selectedMagasinier: Magasinier = {} as Magasinier;
+
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
   deviseOptions = [
@@ -90,7 +93,7 @@ savedDoc: Document;
     private documentService: DocumentService,
     private panierService: PanierService,
     private router: Router,
-    private userService: UserService,
+    private magasinierService: MagasinierService,
     private breadcrumbService: BreadcrumbService,
     private sanitizer: DomSanitizer,
     private cdRef: ChangeDetectorRef,
@@ -110,7 +113,7 @@ savedDoc: Document;
       totalTTC: 0,
       date: '',
       etat: '', 
-      preparateur_id: {} as User,
+      preparateur_id: {} as Magasinier,
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
@@ -126,10 +129,10 @@ savedDoc: Document;
     this.loadDoc();
     this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
-    this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
     this.getDocumentClasses(); 
+    this.loadMagasinier();
 
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
@@ -151,21 +154,24 @@ savedDoc: Document;
     if (this.produitsDansCommande.length > 0) {
 }
   }
-loadUsers() {
-  this.userService.getUsers().subscribe({
-    next: (data: User[]) => {
-      this.users = data;
-
-      // Si devis.preparateur_id est déjà défini (ex: en mode édition), le p-dropdown l'affichera
-      if (this.devis && this.devis.preparateur_id) {
-        this.devis.preparateur_id = data.find(u => u.id === this.devis.preparateur_id)?.id;
+    loadMagasinier() {
+    this.magasinierService.getMagasiniers().subscribe({
+      next: (data: Magasinier[]) => {
+        this.magasiniers = data;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des utilisateurs :", err);
       }
-    },
-    error: (err) => {
-      console.error("Erreur lors du chargement des utilisateurs :", err);
+    });
+  }
+    onMagasinierSelect(magasinierId: string) {
+    const magasinier = this.magasiniers.find(c => c.id === magasinierId);
+    if (magasinier) {
+      this.selectedMagasinier= magasinier;
+      this.devis.preparateur_id = magasinier.id;
     }
-  });
-}
+  }
+  
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {

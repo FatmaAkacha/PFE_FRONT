@@ -92,12 +92,10 @@ voirProduitsCommandes() {
     });
   }
   
-  validerEtPasserALivraison(): void {
-  // Implement the actual logic here
+  validerEtPasserAReception(): void {
   console.log('Commande validée et transférée vers la livraison.');
 }
 imprimerCommande(): void {
-  // Implement print logic
   console.log('Commande imprimée');
 }
 

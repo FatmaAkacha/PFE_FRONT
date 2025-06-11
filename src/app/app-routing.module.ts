@@ -46,6 +46,7 @@ import { UserComponent } from './demo/component/user/user.component';
 import { EmailComponent } from './demo/component/email/email.component';
 import { RoleComponent } from './demo/component/role/role.component';
 import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
+import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
 
 @NgModule({
     imports: [
@@ -76,6 +77,7 @@ import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-prod
                     {path: 'pages/client', component: ClientComponent},
                     {path: 'pages/categorie', component: CategorieComponent},
                     {path: 'pages/fournisseur', component: FournisseurComponent},
+                    {path: 'pages/magasinier', component: MagasinierComponent},
                     {path: 'pages/produit', component: ProduitComponent},
                     {path: 'pages/user', component: UserComponent},
                     {path: 'pages/email', component: EmailComponent},

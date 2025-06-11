@@ -45,9 +45,9 @@
   <div class="col-12 md:col-4">
     <label>Préparé par <span class="required-star">*</span></label>
     <p-dropdown 
-      [options]="users" 
+      [options]="magasiniers" 
       [(ngModel)]="devis.preparateur_id" 
-      optionLabel="username" 
+      optionLabel="nom" 
       optionValue="id" 
       placeholder="Sélectionner un préparateur"
       [filter]="true">

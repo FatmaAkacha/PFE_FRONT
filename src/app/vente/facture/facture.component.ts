@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DocumentService } from 'src/app/demo/service/document.service';
 import { PanierService } from 'src/app/demo/service/panier.service';
-import { UserService } from 'src/app/demo/service/user.service';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Document } from 'src/app/demo/domain/document';
@@ -9,11 +8,12 @@ import { DocumentClass } from 'src/app/demo/domain/documentClass';
 import { Client } from 'src/app/demo/domain/client';
 import { Produit } from 'src/app/demo/domain/produit';
 import { Devis, DevisProduit } from 'src/app/demo/domain/devis';
-import { User } from 'src/app/demo/domain/user';
 import { DevisService } from 'src/app/demo/service/devis.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { MagasinierService } from 'src/app/demo/service/magasinier.service';
+import { Magasinier } from 'src/app/demo/domain/magasinier';
 
 @Component({
   selector: 'app-facture',
@@ -45,9 +45,10 @@ export class FactureComponent implements OnInit {
   tauxEchange: number = 1;
   totalStock: number = 0;
   dateLivraison: Date = new Date();
-  users: User[] = [];
   numero;  
 savedDoc: Document;
+ magasiniers : Magasinier[] = [];
+ selectedMagasinier: Magasinier = {} as Magasinier;
   etatOptions: string[] = ['En cours', 'Validé', 'Annulé']; 
   preparateurs = [{ nom: 'John Doe' }, { nom: 'Jane Doe' }];
   deviseOptions = [
@@ -90,7 +91,7 @@ savedDoc: Document;
     private documentService: DocumentService,
     private panierService: PanierService,
     private router: Router,
-    private userService: UserService,
+    private magasinierService: MagasinierService,
     private breadcrumbService: BreadcrumbService,
     private sanitizer: DomSanitizer,
     private cdRef: ChangeDetectorRef,
@@ -110,7 +111,7 @@ savedDoc: Document;
       totalTTC: 0,
       date: '',
       etat: '', 
-      preparateur_id: {} as User,
+      preparateur_id: {} as Magasinier,
       devise: '',          
       tauxEchange: 1,         
       dateLivraison: new Date()
@@ -126,10 +127,10 @@ savedDoc: Document;
     this.loadDoc();
     this.getDocumentClassesAndLoadNextCode();
     this.loadClients();
-    this.loadUsers();
     this.loadProduits(); 
     this.loadDevis();
     this.getDocumentClasses(); 
+     this.loadMagasinier();
 
     const produitsDuPanier = this.panierService.getProduitsCommandes();
     this.produitsDansCommande = produitsDuPanier;
@@ -151,21 +152,16 @@ savedDoc: Document;
     if (this.produitsDansCommande.length > 0) {
 }
   }
-loadUsers() {
-  this.userService.getUsers().subscribe({
-    next: (data: User[]) => {
-      this.users = data;
-
-      // Si devis.preparateur_id est déjà défini (ex: en mode édition), le p-dropdown l'affichera
-      if (this.devis && this.devis.preparateur_id) {
-        this.devis.preparateur_id = data.find(u => u.id === this.devis.preparateur_id)?.id;
+      loadMagasinier() {
+    this.magasinierService.getMagasiniers().subscribe({
+      next: (data: Magasinier[]) => {
+        this.magasiniers = data;
+      },
+      error: (err) => {
+        console.error("Erreur lors du chargement des utilisateurs :", err);
       }
-    },
-    error: (err) => {
-      console.error("Erreur lors du chargement des utilisateurs :", err);
-    }
-  });
-}
+    });
+  }
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {
