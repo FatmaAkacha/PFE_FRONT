@@ -47,6 +47,7 @@ import { EmailComponent } from './demo/component/email/email.component';
 import { RoleComponent } from './demo/component/role/role.component';
 import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
 import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
+import { ProduitUpdateComponent } from './achat/produit-update/produit-update.component';
 
 @NgModule({
     imports: [
@@ -95,6 +96,7 @@ import { MagasinierComponent } from './demo/component/magasinier/magasinier.comp
 
                     { path: 'achat/bon-commande-fournisseur', component: BonCommandeFournisseurComponent }, 
                     { path: 'achat/Produitfournisseur', component:FournisseurAjoutProduitComponent  }, 
+                    { path: 'achat/Updateproduit', component:ProduitUpdateComponent},
                     { path: 'achat/bon-reception/:id', component: BonReceptionComponent }, 
 
                     {path: 'pages/calendar', component: AppCalendarComponent},

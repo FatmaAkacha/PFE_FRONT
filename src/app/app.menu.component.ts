@@ -90,6 +90,7 @@ export class AppMenuComponent implements OnInit {
                 items: [
                     { label: 'Bon de Commande Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-commande-fournisseur'] },
                     { label: 'Produits Fournisseurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Produitfournisseur'] },
+                    { label: 'Produits à modifier', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Updateproduit'] },
                     { label: 'Bon de Reception', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-reception'] },
                     { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
                 ]

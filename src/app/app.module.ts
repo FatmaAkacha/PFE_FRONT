@@ -174,6 +174,7 @@ import { EmailComponent } from './demo/component/email/email.component';
 import { RoleComponent } from './demo/component/role/role.component';
 import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
 import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
+import { ProduitUpdateComponent } from './achat/produit-update/produit-update.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -329,7 +330,8 @@ FullCalendarModule.registerPlugins([
         EmailComponent,
         RoleComponent,
         FournisseurAjoutProduitComponent,
-        MagasinierComponent  ],
+        MagasinierComponent,
+        ProduitUpdateComponent  ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

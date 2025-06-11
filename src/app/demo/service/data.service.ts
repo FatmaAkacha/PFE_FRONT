@@ -159,12 +159,15 @@ export class DataService {
   }
   
 
-  ajouterProduitFournisseur(formData: FormData): Observable<Produit> {
-    return this.httpClient.post<Produit>(`${this.apiUrlProduits}/produits/fournisseur`, formData , {
-        headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) 
-      });  
-  }
-
+ajouterProduitFournisseur(fournisseurId: string, formData: FormData): Observable<Produit> {
+  return this.httpClient.post<Produit>(
+    `${this.apiUrlProduits}/produits/fournisseur/${fournisseurId}`, 
+    formData,
+    {
+      headers: new HttpHeaders({ 'Authorization': `Bearer ${this.token}` }) 
+    }
+  );
+}
 
   // =======================
   // ✅ Gestion de l'Authentification

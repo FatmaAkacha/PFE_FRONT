@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DataService } from 'src/app/demo/service/data.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Categorie } from 'src/app/demo/domain/Categorie';
 import { Produit } from 'src/app/demo/domain/produit';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -37,7 +37,8 @@ export class FournisseurAjoutProduitComponent implements OnInit {
       private confirmationService: ConfirmationService,
       private breadcrumbService: BreadcrumbService,
       private cdRef: ChangeDetectorRef,
-      private sanitizer: DomSanitizer
+      private sanitizer: DomSanitizer,
+      private router: Router
     ) {
       this.breadcrumbService.setItems([{ label: 'Produit', routerLink: ['/produit'] }]);
     }
@@ -237,6 +238,79 @@ export class FournisseurAjoutProduitComponent implements OnInit {
       this.produitDialog = false;
       this.submitted = false;
     }
+    updateProduit(){
+      this.submitted = true;
+      const formData = new FormData();
+      formData.append('nom', this.produit.nom);
+      formData.append('description', this.produit.description ?? '');
+      formData.append('prix', String(this.produit.prix ?? 0));
+      formData.append('quantitystock', String(this.produit.quantitystock ?? 0));
+      formData.append('seuil', String(this.produit.seuil ?? 0));
+      formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
+      formData.append('prix_achat', String(this.produit.prix_achat ?? 0));
+      formData.append('prix_vente_ht', String(this.produit.prix_vente_ht ?? 0));
+      formData.append('prix_vente_ttc', String(this.produit.prix_vente_ttc ?? 0));
+      formData.append('remise_maximale', String(this.produit.remise_maximale ?? 0));
+      formData.append('quantite', String(this.produit.quantite ?? 0));
+      formData.append('tva', String(this.produit.tva ?? 0));
+      formData.append('inventoryStatus', this.produit.inventoryStatus ?? '');
+      formData.append('fournisseur_id', String(this.produit.fournisseur?.id ?? this.produit.fournisseur ?? ''));
+  
+  
+  
+  
+      if (this.produit.image_data instanceof File) {
+        formData.append('image_data', this.produit.image_data, this.produit.image_data.name);
+      }
+  
+      if (this.produit.id) {
+        this.produitService.updateProduitForm(this.produit.id, formData).subscribe({
+          next: () => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Produit Updated',
+              life: 3000,
+            });
+            this.refreshProduitList();
+            this.router.navigate(['/achat/Updateproduit', this.produit.id]);
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Produit update failed',
+              life: 3000,
+            });
+          }
+        });
+      } else {
+        this.produitService.insertProduitForm(formData).subscribe({
+          next: (newProduit: Produit) => {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Successful',
+              detail: 'Produit Created',
+              life: 3000,
+            });
+            this.refreshProduitList();
+            this.router.navigate(['/achat/Updateproduit', newProduit.id]);
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Produit creation failed',
+              life: 3000,
+            });
+          }
+        });
+      }
+  
+      this.produitDialog = false;
+      this.produit = {} as Produit;
+      this.previewUrl = null;
+    }
   
     saveProduit() {
       this.submitted = true;
@@ -273,6 +347,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
               life: 3000,
             });
             this.refreshProduitList();
+            this.router.navigate(['/achat/bon-commande-fournisseur', this.produit.id]);
           },
           error: () => {
             this.messageService.add({
@@ -284,8 +359,8 @@ export class FournisseurAjoutProduitComponent implements OnInit {
           }
         });
       } else {
-        this.produitService.ajouterProduitFournisseur(formData).subscribe({
-          next: () => {
+        this.produitService.insertProduitForm(formData).subscribe({
+          next: (newProduit: Produit) => {
             this.messageService.add({
               severity: 'success',
               summary: 'Successful',
@@ -293,6 +368,8 @@ export class FournisseurAjoutProduitComponent implements OnInit {
               life: 3000,
             });
             this.refreshProduitList();
+            this.router.navigate(['/achat/bon-commande-fournisseur', newProduit.id]);
+
           },
           error: () => {
             this.messageService.add({

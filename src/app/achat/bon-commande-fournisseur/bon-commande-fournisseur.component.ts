@@ -11,14 +11,7 @@ import { Document } from 'src/app/demo/domain/document';
 import { User } from 'src/app/demo/domain/user';
 import { Fournisseur } from 'src/app/demo/domain/fournisseur';
 import { DataService } from 'src/app/demo/service/data.service';
-
-interface DevisProduit {
-  produit: Produit;
-  quantite: number;
-  puht: number;
-  tva: number;
-  prixTotal: number;
-}
+import { DevisProduit } from 'src/app/demo/domain/devis';
 
 @Component({
   selector: 'app-bon-commande-fournisseur',
@@ -47,7 +40,7 @@ commande: any = {};
   currentDate = new Date();
 
   users: User[] = [];
-  savedDoc!: Document;
+  savedDoc: Document;
 
   constructor(
     private fb: FormBuilder,
