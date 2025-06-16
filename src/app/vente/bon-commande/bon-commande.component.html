@@ -107,34 +107,64 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
-      <tr>
-        <td>{{ item.produit.id }}</td>
-        <td>{{ item.produit.nom }}</td>
-        <td>{{ item.produit.quantitystock }}</td>
-        <td>
-          <input type="number" 
-                 [(ngModel)]="item.produit.quantity" 
-                 (ngModelChange)="mettreAJourProduit(item)" 
-                 [max]="item.produit.quantitystock"
-                 [min]="1"
-                 class="p-inputtext p-component" />
-        </td>
+<tr>
+      <!-- Affichage en lecture seule -->
+      <td>{{ item.produit.id }}</td>
+      <td>{{ item.produit.nom }}</td>
 
-        <td>
-          <input type="number" 
-                 [(ngModel)]="item.produit.prix" 
-                 (ngModelChange)="mettreAJourProduit(item)" 
-                 min="0"
-                 class="p-inputtext p-component" />
-        </td>
+      <!-- Lecture seule pour stock -->
+      <td>{{ item.produit.quantitystock }}</td>
 
-        <td>{{ item.tva }}</td>
-        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
-        <td class="icon-spacing">
-          <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-warning" (click)="modifierProduit(item)"></button>
-          <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
-        </td>
-      </tr>
+      <!-- Éditable : Quantité -->
+      <td>
+        <input
+          type="number"
+          [(ngModel)]="item.quantite"
+          (ngModelChange)="mettreAJourProduit(item)"
+          [max]="item.produit.quantitystock"
+          [min]="1"
+          class="p-inputtext p-component"
+        />
+      </td>
+
+      <!-- Éditable : PUHT -->
+      <td>
+        <input
+          type="number"
+          [(ngModel)]="item.puht"
+          (ngModelChange)="mettreAJourProduit(item)"
+          min="0"
+          class="p-inputtext p-component"
+        />
+      </td>
+
+      <!-- Éditable : TVA -->
+      <td>
+        <input
+          type="number"
+          [(ngModel)]="item.tva"
+          (ngModelChange)="mettreAJourProduit(item)"
+          min="0"
+          max="100"
+          class="p-inputtext p-component"
+        />
+      </td>
+
+      <!-- Calculé : TTC -->
+      <td>{{ item.prixTotal | number: '1.2-2' }}</td>
+
+      <!-- Actions -->
+      <td class="icon-spacing">
+
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-rounded p-button-danger"
+          (click)="supprimerProduit(item)"
+        ></button>
+      </td>
+    </tr>
     </ng-template>
   </p-table>
   <br>
