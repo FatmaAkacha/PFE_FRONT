@@ -1,145 +1,159 @@
 <div class="grid">
+  <p-toast></p-toast>
   <div class="col-12">
     <div class="card">
-  <!-- Étapes du formulaire -->
-  <p-steps [model]="steps" [activeIndex]="activeStep" (onChange)="onStepChange($event.index)" class="mb-4"></p-steps>
+      <!-- Étapes du formulaire -->
+      <p-steps [model]="steps" [activeIndex]="activeStep" (onChange)="onStepChange($event.index)" class="mb-4"></p-steps>
 
-  <!-- Étape 1 : Informations -->
-  <div *ngIf="activeStep === 0" class="formgrid grid">
-    <div class="field col-12 md:col-6">
-      <label for="nom">Nom du produit<span class="required-star">*</span></label>
-      <input id="nom" type="text" pInputText [(ngModel)]="produit.nom" required />
-    </div>
+      <!-- Étape 1 : Informations -->
+      <div *ngIf="activeStep === 0" class="formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="nom">Nom du produit<span class="required-star">*</span></label>
+          <input id="nom" type="text" pInputText [(ngModel)]="produit.nom" required />
+        </div>
 
-    <div class="field col-12 md:col-6">
-      <label for="description">Description<span class="required-star">*</span></label>
-      <textarea id="description" rows="3" pInputTextarea [(ngModel)]="produit.description"></textarea>
-    </div>
+        <div class="field col-12 md:col-6">
+          <label for="description">Description<span class="required-star">*</span></label>
+          <textarea id="description" rows="3" pInputTextarea [(ngModel)]="produit.description"></textarea>
+        </div>
 
-    <div class="field col-12 md:col-6">
-      <label for="categorie">Catégorie<span class="required-star">*</span></label>
-      <p-dropdown [options]="categories" [(ngModel)]="produit.categorie" optionLabel="nom" placeholder="Choisir une catégorie" inputId="categorie"></p-dropdown>
-    </div>
+        <div class="field col-12 md:col-6">
+          <label for="categorie">Catégorie<span class="required-star">*</span></label>
+          <p-dropdown
+            [options]="categories"
+            [(ngModel)]="produit.categorie"
+            optionLabel="nom"
+            placeholder="Choisir une catégorie"
+            inputId="categorie"
+            [filter]="true"
+            filterBy="nom"
+          ></p-dropdown>
+        </div>
 
-    <div class="field col-12 md:col-6">
-      <label for="fournisseur">Fournisseur<span class="required-star">*</span></label>
-      <p-dropdown [options]="fournisseurs" [(ngModel)]="produit.fournisseur" optionLabel="name" placeholder="Choisir un fournisseur" inputId="fournisseur"></p-dropdown>
-    </div>
-  </div>
+        <div class="field col-12 md:col-6">
+          <label for="fournisseur">Fournisseur<span class="required-star">*</span></label>
+          <p-dropdown
+            [options]="fournisseurs"
+            [(ngModel)]="produit.fournisseur"
+            optionLabel="name"
+            placeholder="Choisir un fournisseur"
+            inputId="fournisseur"
+            [filter]="true"
+            filterBy="name"
+          ></p-dropdown>
+        </div>
+      </div>
 
-  <!-- Étape 2 : Prix -->
-  <div *ngIf="activeStep === 1" class="formgrid grid">
-    <div class="field col-12 md:col-4">
-      <label for="prixAchat">Prix d'achat<span class="required-star">*</span></label>
-      <input id="prixAchat" type="number" pInputText [(ngModel)]="produit.prix_achat" />
-    </div>
+      <!-- Étape 2 : Prix -->
+      <div *ngIf="activeStep === 1" class="formgrid grid">
+        <div class="field col-12 md:col-4">
+          <label for="prixAchat">Prix d'achat<span class="required-star">*</span></label>
+          <input id="prixAchat" type="number" pInputText [(ngModel)]="produit.prix_achat" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="prixVenteHT">Prix vente HT<span class="required-star">*</span></label>
-      <input id="prixVenteHT" type="number" pInputText [(ngModel)]="produit.prix_vente_ht" />
-    </div>
+        <div class="field col-12 md:col-4">
+          <label for="prixVenteHT">Prix vente HT<span class="required-star">*</span></label>
+          <input id="prixVenteHT" type="number" pInputText [(ngModel)]="produit.prix_vente_ht" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="prixVenteTTC">Prix vente TTC<span class="required-star">*</span></label>
-      <input id="prixVenteTTC" type="number" pInputText [(ngModel)]="produit.prix_vente_ttc" />
-    </div>
+        <div class="field col-12 md:col-4">
+          <label for="prixVenteTTC">Prix vente TTC<span class="required-star">*</span></label>
+          <input id="prixVenteTTC" type="number" pInputText [(ngModel)]="produit.prix_vente_ttc" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="remise">Remise maximale (%)<span class="required-star">*</span></label>
-      <input id="remise" type="number" pInputText [(ngModel)]="produit.remise_maximale" />
-    </div>
+        <div class="field col-12 md:col-4">
+          <label for="remise">Remise maximale (%)<span class="required-star">*</span></label>
+          <input id="remise" type="number" pInputText [(ngModel)]="produit.remise_maximale" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="tva">TVA (%)<span class="required-star">*</span></label>
-      <input id="tva" type="number" pInputText [(ngModel)]="produit.tva" />
-    </div>
-  </div>
+        <div class="field col-12 md:col-4">
+          <label for="tva">TVA (%)<span class="required-star">*</span></label>
+          <input id="tva" type="number" pInputText [(ngModel)]="produit.tva" />
+        </div>
+      </div>
 
-  <!-- Étape 3 : Stock -->
-  <div *ngIf="activeStep === 2" class="formgrid grid">
-    <div class="field col-12 md:col-4">
-      <label for="stock">Stock<span class="required-star">*</span></label>
-      <input id="stock" type="number" pInputText [(ngModel)]="produit.quantitystock" />
-    </div>
+      <!-- Étape 3 : Stock -->
+      <div *ngIf="activeStep === 2" class="formgrid grid">
 
-    <div class="field col-12 md:col-4">
-      <label for="quantite">Quantité<span class="required-star">*</span></label>
-      <input id="quantite" type="number" pInputText [(ngModel)]="produit.quantite" />
-    </div>
+        <div class="field col-12 md:col-4">
+          <label for="quantite">Quantité<span class="required-star">*</span></label>
+          <input id="quantite" type="number" pInputText [(ngModel)]="produit.quantite" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="seuil">Seuil<span class="required-star">*</span></label>
-      <input id="seuil" type="number" pInputText [(ngModel)]="produit.seuil" />
-    </div>
+        <div class="field col-12 md:col-4">
+          <label for="seuil">Seuil<span class="required-star">*</span></label>
+          <input id="seuil" type="number" pInputText [(ngModel)]="produit.seuil" />
+        </div>
 
-    <div class="field col-12 md:col-4">
-      <label for="status">Statut du stock<span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="[
-          { label: 'En stock', value: 'INSTOCK' },
-          { label: 'Stock faible', value: 'LOWSTOCK' },
-          { label: 'Rupture', value: 'OUTOFSTOCK' }
-        ]"
-        [(ngModel)]="produit.inventoryStatus"
-        placeholder="Choisir un statut"
-        inputId="status"
-      ></p-dropdown>
-    </div>
-  </div>
+        <div class="field col-12 md:col-4">
+          <label for="status">Statut du stock<span class="required-star">*</span></label>
+          <p-dropdown
+            [options]="[
+              { label: 'En stock', value: 'INSTOCK' },
+              { label: 'Stock faible', value: 'LOWSTOCK' },
+              { label: 'Rupture', value: 'OUTOFSTOCK' }
+            ]"
+            [(ngModel)]="produit.inventoryStatus"
+            placeholder="Choisir un statut"
+            inputId="status"
+            [filter]="true"
+            filterBy="label"
+          ></p-dropdown>
+        </div>
+      </div>
 
-  <!-- Étape 4 : Image -->
-  <div *ngIf="activeStep === 3" class="formgrid grid">
-    <div class="field col-12 md:col-6">
-      <label for="image">Image du produit<span class="required-star">*</span></label>
-       <p-fileUpload
-              mode="basic"
-              name="image_data"
-              chooseLabel="Choisir une image"
-              [auto]="false"
-              [customUpload]="true"
-              accept="image/*"
-              (onSelect)="onImageSelect($event)">
-            </p-fileUpload>
-    </div>
+      <!-- Étape 4 : Image -->
+      <div *ngIf="activeStep === 3" class="formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="image">Image du produit<span class="required-star">*</span></label>
+          <p-fileUpload
+            mode="basic"
+            name="image_data"
+            chooseLabel="Choisir une image"
+            [auto]="false"
+            [customUpload]="true"
+            accept="image/*"
+            (onSelect)="onFileUploadSelect($event)"
+          ></p-fileUpload>
+        </div>
 
-    <div class="field col-12 md:col-6" *ngIf="previewUrl">
-      <label>Prévisualisation<span class="required-star">*</span></label><br />
-      <img [src]="previewUrl" alt="Preview" width="200" style="border: 1px solid #ccc; border-radius: 4px;" />
-    </div>
-  </div>
+        <div class="field col-12 md:col-6" *ngIf="previewUrl">
+          <label>Prévisualisation<span class="required-star">*</span></label><br />
+          <img [src]="previewUrl" alt="Preview" width="200" style="border: 1px solid #ccc; border-radius: 4px;" />
+        </div>
+      </div>
 
-  <!-- Boutons de navigation -->
-  <div class="flex justify-content-between mt-4">
-    <button pButton type="button" label="Précédent" icon="pi pi-angle-left" (click)="previousStep()" [disabled]="activeStep === 0"></button>
-    <button
-      *ngIf="activeStep < steps.length - 1"
-      pButton
-      type="button"
-      label="Suivant"
-      icon="pi pi-angle-right"
-      iconPos="right"
-      (click)="nextStep()"
-    ></button>
-    <button
-      *ngIf="activeStep === steps.length - 1"
-      pButton
-      type="button"
-      label="Enregistrer"
-      icon="pi pi-check"
-      class="p-button-success"
-      (click)="saveProduit()"
-    ></button>
-
+      <!-- Boutons de navigation -->
+      <div class="flex justify-content-between mt-4">
+        <button pButton type="button" label="Précédent" icon="pi pi-angle-left" (click)="previousStep()" [disabled]="activeStep === 0"></button>
         <button
-      *ngIf="activeStep === steps.length - 1"
-      pButton
-      type="button"
-      label="Update"
-      icon="pi pi-check"
-      class="p-button-success"
-      (click)="updateProduit()"
-    ></button>
-
-  </div>
+          *ngIf="activeStep < steps.length - 1"
+          pButton
+          type="button"
+          label="Suivant"
+          icon="pi pi-angle-right"
+          iconPos="right"
+          (click)="nextStep()"
+        ></button>
+        <button
+          *ngIf="activeStep === steps.length - 1"
+          pButton
+          type="button"
+          label="Enregistrer"
+          icon="pi pi-check"
+          class="p-button-success"
+          (click)="saveProduit()"
+        ></button>
+        <button
+          *ngIf="activeStep === steps.length - 1"
+          pButton
+          type="button"
+          label="Mettre à jour"
+          icon="pi pi-check"
+          class="p-button-success"
+          (click)="updateProduit()"
+        ></button>
+      </div>
+    </div>
   </div>
 </div>

@@ -33,7 +33,7 @@ import {BlocksComponent} from './blocks/blocks/blocks.component';
 import { ClientComponent } from './demo/component/client/client.component';
 import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
 import { ProduitComponent } from './demo/component/produit/produit.component';
-import { DevisComponent } from './vente/devis/devis.component';
+import { BonCommandeComponent } from './vente/bon-commande/bon-commande.component';
 import { FactureComponent } from './vente/facture/facture.component';
 import { BonLivraisonComponent } from './vente/bon-livraison/bon-livraison.component';
 import { BonCommandeFournisseurComponent } from './achat/bon-commande-fournisseur/bon-commande-fournisseur.component';
@@ -86,7 +86,7 @@ import { ProduitUpdateComponent } from './achat/produit-update/produit-update.co
                     {path: 'pages/document', component: DocumentComponent },
 
 
-                    {path: 'vente/bon-commande', component: DevisComponent},
+                    { path: 'vente/bon-commande', component: BonCommandeComponent},
                     { path: 'vente/bon-livraison/:id', component: BonLivraisonComponent },
                     { path: 'vente/facture/:id', component: FactureComponent }, 
                     { path: 'vente/produits-commandes', component: ProduitsCommandesComponent },

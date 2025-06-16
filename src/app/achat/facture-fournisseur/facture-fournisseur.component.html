@@ -1,7 +1,7 @@
-<div class="bon-reception-container">
+<div class="facture-fournisseur-container">
   <p-toast></p-toast>
-  <div class="bon-reception-header">
-    <h2>Bon de Réception N°{{ formattedOrderNumber }}</h2>
+  <div class="facture-header">
+    <h2>Facture Fournisseur N°{{ formattedOrderNumber }}</h2>
     <p class="date">Date : <strong>{{ currentDate | date: 'EEEE, d MMMM y' }}</strong></p>
   </div>
 
@@ -36,13 +36,13 @@
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Date document <span class="required-star">*</span></label>
-      <p-calendar [(ngModel)]="bonReceptionForm.value.dateDocument" showTime appendTo="body"></p-calendar>
+      <p-calendar [(ngModel)]="FactureForm.value.dateDocument" showTime appendTo="body"></p-calendar>
     </div>
     <div class="col-12 md:col-4">
       <label>État Document <span class="required-star">*</span></label>
       <p-dropdown
         [options]="etatOptions"
-        [(ngModel)]="bonReceptionForm.value.etat"
+        [(ngModel)]="FactureForm.value.etat"
         placeholder="Sélectionner un état"
         [filter]="true"
       ></p-dropdown>
@@ -53,7 +53,7 @@
         [options]="magasiniers"
         optionLabel="nom"
         optionValue="id"
-        [(ngModel)]="bonReceptionForm.value.preparateur_id"
+        [(ngModel)]="FactureForm.value.preparateur_id"
         (onChange)="onMagasinierSelect($event.value)"
         placeholder="Sélectionner un préparateur"
         [filter]="true"
@@ -66,7 +66,7 @@
       <label>Devise <span class="required-star">*</span></label>
       <p-dropdown
         [options]="deviseOptions"
-        [(ngModel)]="bonReceptionForm.value.devise"
+        [(ngModel)]="FactureForm.value.devise"
         placeholder="Sélectionner une devise"
         appendTo="body"
         filter="true"
@@ -77,7 +77,7 @@
       <label>Taux d'échange</label>
       <input
         pInputText
-        [(ngModel)]="bonReceptionForm.value.tauxEchange"
+        [(ngModel)]="FactureForm.value.tauxEchange"
         type="number"
         placeholder="Taux d'échange"
       />
@@ -85,74 +85,67 @@
     <div class="col-12 md:col-4">
       <label>Date de réception</label>
       <p-calendar
-        [(ngModel)]="bonReceptionForm.value.dateLivraison"
+        [(ngModel)]="FactureForm.value.dateLivraison"
         showTime
       ></p-calendar>
     </div>
   </div>
 
-  <h3>Produits Reçus</h3>
-<p-table [value]="bonReceptionProduits" responsiveLayout="scroll" class="commande-table">
+  <h3>Produits Facturés</h3>
+  <p-table [value]="FactureProduits" responsiveLayout="scroll" class="commande-table">
     <ng-template pTemplate="header">
-        <tr>
-            <th>Code</th>
-            <th>Désignation</th>
-            <th>Stock</th>
-            <th>Quantité</th>
-            <th>PUHT/U</th>
-            <th>Prix Vente HT</th>
-            <th>Prix Vente TTC</th>
-            <th>Remise Max (%)</th>
-            <th>TVA %</th>
-            <th>TTC</th>
-        </tr>
+      <tr>
+        <th>Code</th>
+        <th>Désignation</th>
+        <th>Quantité</th>
+        <th>PUHT/U</th>
+        <th>TVA %</th>
+        <th>TTC</th>
+        <th>Actions</th>
+      </tr>
     </ng-template>
-    <ng-template pTemplate="body" let-item let-i="index">
-        <tr>
-            <td>{{ item.produit.id }}</td>
-            <td>{{ item.produit.nom }}</td>
-            <td>{{ item.produit.quantitystock || 0 }}</td>
-            <td>
-                <input
-                    pInputText
-                    type="number"
-                    [(ngModel)]="item.produit.quantitystock"
-                    (ngModelChange)="updatePrixTotal(i)"
-                    min="1"
-                    required
-                />
-            </td>
-            <td>{{ item.puht | number: '1.2-2' }}</td>
-            <td>{{ item.produit.prix_vente_ht || 0 | number: '1.2-2' }}</td>
-            <td>{{ item.produit.prix_vente_ttc || 0 | number: '1.2-2' }}</td>
-            <td>{{ item.produit.remise_maximale || 0 }}%</td>
-            <td>{{ item.tva }}</td>
-            <td>{{ item.produit.prixTotal | number: '1.2-2' }}</td>
-        </tr>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.produit.id }}</td>
+        <td>{{ item.produit.nom }}</td>
+        <td>{{ item.quantite }}</td>
+        <td>{{ item.puht | number: '1.2-2' }}</td>
+        <td>{{ item.tva }}%</td>
+        <td>{{ item.prixTotal | number: '1.2-2' }}</td>
+        <td>
+          <button
+            pButton
+            icon="pi pi-pencil"
+            class="p-button-rounded p-button-warning p-mr-2"
+            (click)="modifierProduit(item)"
+          ></button>
+          <button
+            pButton
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-danger"
+            (click)="supprimerProduit(item)"
+          ></button>
+        </td>
+      </tr>
     </ng-template>
-</p-table>
+  </p-table>
 
   <div class="p-mt-4">
     <button
       pButton
-      label="Enregistrer Bon de Réception"
+      label="Enregistrer Facture Fournisseur"
       icon="pi pi-check"
       class="p-button-success"
-      (click)="saveBonDeReceptionAsDocument()"
-    ></button>
-    <button
-      pButton
-      label="Valider et Passer à Facture"
-      icon="pi pi-arrow-right"
-      class="p-button-info"
-      (click)="validerEtPasserAFacture()"
+      (click)="saveFactureAsDocument()"
+      [ngStyle]="{'margin-top': '10px'}"
     ></button>
     <button
       pButton
       label="Imprimer"
       icon="pi pi-print"
       class="p-button-secondary"
-      (click)="imprimerBonReception(savedDoc?.id)"
+      (click)="imprimerFacture(savedDoc?.id)"
+      [ngStyle]="{'margin-left': '10px'}"
     ></button>
   </div>
 

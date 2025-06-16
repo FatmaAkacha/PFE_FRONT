@@ -157,7 +157,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { ClientComponent } from './demo/component/client/client.component';
 import { FournisseurComponent } from './demo/component/fournisseur/fournisseur.component';
 import { ProduitComponent } from './demo/component/produit/produit.component';
-import { DevisComponent } from './vente/devis/devis.component';
+import { BonCommandeComponent } from './vente/bon-commande/bon-commande.component';
 import { UserComponent } from './demo/component/user/user.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
@@ -175,6 +175,7 @@ import { RoleComponent } from './demo/component/role/role.component';
 import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
 import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
 import { ProduitUpdateComponent } from './achat/produit-update/produit-update.component';
+import { FactureFournisseurComponent } from './achat/facture-fournisseur/facture-fournisseur.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -316,7 +317,7 @@ FullCalendarModule.registerPlugins([
         ClientComponent,
         FournisseurComponent,
         ProduitComponent,
-        DevisComponent,
+        BonCommandeComponent,
         FactureComponent,
         BonLivraisonComponent,
         BonCommandeFournisseurComponent,
@@ -331,7 +332,8 @@ FullCalendarModule.registerPlugins([
         RoleComponent,
         FournisseurAjoutProduitComponent,
         MagasinierComponent,
-        ProduitUpdateComponent  ],
+        ProduitUpdateComponent,
+        FactureFournisseurComponent  ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

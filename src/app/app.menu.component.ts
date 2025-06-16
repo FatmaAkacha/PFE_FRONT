@@ -88,7 +88,7 @@ export class AppMenuComponent implements OnInit {
             {
                 label: 'Achat', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
                 items: [
-                    { label: 'Bon de Commande Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-commande-fournisseur'] },
+                    { label: 'Bon de Commande Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-commande-fournisseur'],  command: () => this.navigateToBonCommandeFournisseur() },
                     { label: 'Produits Fournisseurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Produitfournisseur'] },
                     { label: 'Produits à modifier', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Updateproduit'] },
                     { label: 'Bon de Reception', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-reception'] },
@@ -153,6 +153,9 @@ export class AppMenuComponent implements OnInit {
 
     navigateToBonCommande() {
         sessionStorage.setItem('codeClasseDoc', 'BC');
+      }
+    navigateToBonCommandeFournisseur() {
+        sessionStorage.setItem('codeClasseDoc', 'BCF');
       }
       
 }

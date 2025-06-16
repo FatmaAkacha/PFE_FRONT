@@ -1,6 +1,7 @@
 import { DocumentClass } from "./documentClass";
 import { Client } from './client';
 import { Magasinier } from "./magasinier";
+import { Fournisseur } from "./fournisseur";
   
   export interface Document {
     id: number;
@@ -13,6 +14,7 @@ import { Magasinier } from "./magasinier";
     etat?: string;
     preparateur_id?: Magasinier;
     client_id?: Client;
+    fournisseur_id?: Fournisseur;
     devise?: string;
     tauxEchange?: number;
     dateLivraison?: string;

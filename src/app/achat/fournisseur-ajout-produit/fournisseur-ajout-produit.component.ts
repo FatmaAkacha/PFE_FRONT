@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DataService } from 'src/app/demo/service/data.service';
@@ -8,6 +8,8 @@ import { Produit } from 'src/app/demo/domain/produit';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CategorieService } from 'src/app/demo/service/categorie.service';
 import { BreadcrumbService } from 'src/app/breadcrumb.service';
+import { PanierService } from 'src/app/demo/service/panier.service';
+import { DevisProduit } from 'src/app/demo/domain/devis';
 
 @Component({
   selector: 'app-fournisseur-ajout-produit',
@@ -29,6 +31,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
     fournisseurs: any[] = [];
     previewUrl: SafeUrl | null = null;
     activeStep = 0;
+    devisProduits: DevisProduit[] = [];
   
     constructor(
       private produitService: DataService,
@@ -38,10 +41,17 @@ export class FournisseurAjoutProduitComponent implements OnInit {
       private breadcrumbService: BreadcrumbService,
       private cdRef: ChangeDetectorRef,
       private sanitizer: DomSanitizer,
-      private router: Router
+      private router: Router,
+      private panierService : PanierService
     ) {
       this.breadcrumbService.setItems([{ label: 'Produit', routerLink: ['/produit'] }]);
     }
+    @Output() produitCree = new EventEmitter<any>();
+    @Output() closeModal = new EventEmitter<void>();
+
+    ajouterAuBonDeCommande(produit: Produit) {
+      this.panierService.ajouterProduit(produit);
+      }
   
     ngOnInit() {
       this.refreshProduitList();
@@ -57,7 +67,6 @@ export class FournisseurAjoutProduitComponent implements OnInit {
         { field: 'prix_vente_ht', header: 'Prix Vente HT' },
         { field: 'prix_vente_ttc', header: 'Prix Vente TTC' },
         { field: 'remise_maximale', header: 'Remise (%)' },
-        { field: 'quantitystock', header: 'Stock' },
         { field: 'quantite', header: 'Quantité' },
         { field: 'seuil', header: 'Seuil' },
         { field: 'tva', header: 'tva' },
@@ -244,7 +253,6 @@ export class FournisseurAjoutProduitComponent implements OnInit {
       formData.append('nom', this.produit.nom);
       formData.append('description', this.produit.description ?? '');
       formData.append('prix', String(this.produit.prix ?? 0));
-      formData.append('quantitystock', String(this.produit.quantitystock ?? 0));
       formData.append('seuil', String(this.produit.seuil ?? 0));
       formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
       formData.append('prix_achat', String(this.produit.prix_achat ?? 0));
@@ -273,7 +281,8 @@ export class FournisseurAjoutProduitComponent implements OnInit {
               life: 3000,
             });
             this.refreshProduitList();
-            this.router.navigate(['/achat/Updateproduit', this.produit.id]);
+            this.router.navigate(['/achat/bon-commande-fournisseur'], {
+                state: { produits: this.devisProduits.map(d => d.produit)}});
           },
           error: () => {
             this.messageService.add({
@@ -294,81 +303,8 @@ export class FournisseurAjoutProduitComponent implements OnInit {
               life: 3000,
             });
             this.refreshProduitList();
-            this.router.navigate(['/achat/Updateproduit', newProduit.id]);
-          },
-          error: () => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Produit creation failed',
-              life: 3000,
-            });
-          }
-        });
-      }
-  
-      this.produitDialog = false;
-      this.produit = {} as Produit;
-      this.previewUrl = null;
-    }
-  
-    saveProduit() {
-      this.submitted = true;
-      const formData = new FormData();
-      formData.append('nom', this.produit.nom);
-      formData.append('description', this.produit.description ?? '');
-      formData.append('prix', String(this.produit.prix ?? 0));
-      formData.append('quantitystock', String(this.produit.quantitystock ?? 0));
-      formData.append('seuil', String(this.produit.seuil ?? 0));
-      formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
-      formData.append('prix_achat', String(this.produit.prix_achat ?? 0));
-      formData.append('prix_vente_ht', String(this.produit.prix_vente_ht ?? 0));
-      formData.append('prix_vente_ttc', String(this.produit.prix_vente_ttc ?? 0));
-      formData.append('remise_maximale', String(this.produit.remise_maximale ?? 0));
-      formData.append('quantite', String(this.produit.quantite ?? 0));
-      formData.append('tva', String(this.produit.tva ?? 0));
-      formData.append('inventoryStatus', this.produit.inventoryStatus ?? '');
-      formData.append('fournisseur_id', String(this.produit.fournisseur?.id ?? this.produit.fournisseur ?? ''));
-  
-  
-  
-  
-      if (this.produit.image_data instanceof File) {
-        formData.append('image_data', this.produit.image_data, this.produit.image_data.name);
-      }
-  
-      if (this.produit.id) {
-        this.produitService.updateProduitForm(this.produit.id, formData).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Produit Updated',
-              life: 3000,
-            });
-            this.refreshProduitList();
-            this.router.navigate(['/achat/bon-commande-fournisseur', this.produit.id]);
-          },
-          error: () => {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Produit update failed',
-              life: 3000,
-            });
-          }
-        });
-      } else {
-        this.produitService.insertProduitForm(formData).subscribe({
-          next: (newProduit: Produit) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Successful',
-              detail: 'Produit Created',
-              life: 3000,
-            });
-            this.refreshProduitList();
-            this.router.navigate(['/achat/bon-commande-fournisseur', newProduit.id]);
+            this.router.navigate(['/achat/bon-commande-fournisseur'], {
+                state: { produits: this.devisProduits.map(d => d.produit)}});
 
           },
           error: () => {
@@ -386,6 +322,97 @@ export class FournisseurAjoutProduitComponent implements OnInit {
       this.produit = {} as Produit;
       this.previewUrl = null;
     }
+  
+saveProduit() {
+  this.submitted = true;
+  const formData = new FormData();
+  formData.append('nom', this.produit.nom);
+  formData.append('description', this.produit.description ?? '');
+  formData.append('prix', String(this.produit.prix ?? 0));
+
+  formData.append('seuil', String(this.produit.seuil ?? 0));
+  formData.append('categorie_id', String(this.produit.categorie?.id ?? ''));
+  formData.append('prix_achat', String(this.produit.prix_achat ?? 0));
+  formData.append('prix_vente_ht', String(this.produit.prix_vente_ht ?? 0));
+  formData.append('prix_vente_ttc', String(this.produit.prix_vente_ttc ?? 0));
+  formData.append('remise_maximale', String(this.produit.remise_maximale ?? 0));
+  formData.append('quantite', String(this.produit.quantite ?? 0));
+  formData.append('quantitystock', String(this.produit.quantite ?? 0));
+
+  formData.append('tva', String(this.produit.tva ?? 0));
+  formData.append('inventoryStatus', this.produit.inventoryStatus ?? '');
+  formData.append('fournisseur_id', String(this.produit.fournisseur?.id ?? this.produit.fournisseur ?? ''));
+
+  if (this.produit.image_data instanceof File) {
+    formData.append('image_data', this.produit.image_data, this.produit.image_data.name);
+  }
+
+  if (this.produit.id) {
+    this.produitService.updateProduitForm(this.produit.id, formData).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Produit Updated',
+          life: 3000,
+        });
+        this.refreshProduitList();
+        this.router.navigate(['/achat/bon-commande-fournisseur'], {
+          state: { produits: this.devisProduits.map(d => d.produit) }
+        });
+        this.closeModal.emit(); // <-- Ajout ici
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Produit update failed',
+          life: 3000,
+        });
+      }
+    });
+  } else {
+    this.produitService.insertProduitForm(formData).subscribe({
+      next: (newProduit: Produit) => {
+        this.panierService.ajouterProduit(newProduit);
+        this.produitCree.emit(newProduit);
+        this.closeModal.emit();  
+        const devisProduit: DevisProduit = {
+          produit: newProduit,
+          quantite: newProduit.quantite || 1,
+          puht: newProduit.prix_achat || newProduit.prix || 0,
+          tva: newProduit.tva || 19,
+          prixTotal: (newProduit.quantite || 1) * (newProduit.prix_achat || newProduit.prix || 0) * (1 + (newProduit.tva || 19) / 100),
+        };
+        this.devisProduits.push(devisProduit);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Produit Created',
+          life: 3000,
+        });
+        this.refreshProduitList();
+        this.router.navigate(['/achat/bon-commande-fournisseur'], {
+          state: { produits: this.devisProduits.map(d => d.produit) }
+        });
+        this.closeModal.emit(); // <-- Ajout ici
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Produit creation failed',
+          life: 3000,
+        });
+      }
+    });
+  }
+
+  this.produitDialog = false;
+  this.produit = {} as Produit;
+  this.previewUrl = null;
+}
+
   
     refreshProduitList() {
       this.produitService.getProduits().subscribe(produits => {

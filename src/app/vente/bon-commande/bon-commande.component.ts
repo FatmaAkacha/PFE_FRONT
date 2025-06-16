@@ -16,12 +16,12 @@ import { Magasinier } from 'src/app/demo/domain/magasinier';
 import { MagasinierService } from 'src/app/demo/service/magasinier.service';
 
 @Component({
-  selector: 'app-devis',
-  templateUrl: './devis.component.html',
-  styleUrls: ['./devis.component.scss'],
+  selector: 'app-bon-commande',
+  templateUrl: './bon-commande.component.html',
+  styleUrls: ['./bon-commande.component.scss'],
   providers: [MessageService, ConfirmationService],
 })
-export class DevisComponent implements OnInit {
+export class BonCommandeComponent implements OnInit {
   num_seq: string = '00001';  
   formattedOrderNumber: string = '';
   devisDialog: boolean = false;

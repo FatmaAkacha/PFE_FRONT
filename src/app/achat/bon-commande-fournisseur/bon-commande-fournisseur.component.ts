@@ -3,15 +3,16 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DocumentService } from 'src/app/demo/service/document.service';
 import { PanierService } from 'src/app/demo/service/panier.service';
-import { UserService } from 'src/app/demo/service/user.service';
 import { Router } from '@angular/router';
 import { Produit } from 'src/app/demo/domain/produit';
 import { DocumentClass } from 'src/app/demo/domain/documentClass';
 import { Document } from 'src/app/demo/domain/document';
-import { User } from 'src/app/demo/domain/user';
 import { Fournisseur } from 'src/app/demo/domain/fournisseur';
 import { DataService } from 'src/app/demo/service/data.service';
 import { DevisProduit } from 'src/app/demo/domain/devis';
+import { MagasinierService } from 'src/app/demo/service/magasinier.service';
+import { Magasinier } from 'src/app/demo/domain/magasinier';
+import { CategorieService } from 'src/app/demo/service/categorie.service';
 
 @Component({
   selector: 'app-bon-commande-fournisseur',
@@ -20,36 +21,47 @@ import { DevisProduit } from 'src/app/demo/domain/devis';
   providers: [MessageService, ConfirmationService],
 })
 export class BonCommandeFournisseurComponent implements OnInit {
+  num_seq: string = '00001';
+  formattedOrderNumber: string = '';
+  bonCommandeDialog: boolean = false;
   bonCommandeForm: FormGroup;
   fournisseurs: Fournisseur[] = [];
-  selectedFournisseur: Fournisseur | null = null;
+  selectedFournisseur: Fournisseur = {} as Fournisseur;
+  magasiniers: Magasinier[] = [];
   produitsDansCommande: Produit[] = [];
-  documentClasses: DocumentClass[] = [];
+  produitsClient: Produit[] = [];
   devisProduits: DevisProduit[] = [];
-commande: any = {}; 
-  etatOptions = ['En attente', 'Validé', 'Rejeté']; 
-  deviseOptions = ['USD', 'EUR', 'TND']; 
-  commandeProduits: any[] = []; 
-  formattedOrderNumber = '00001';
-  bonDeCommandeFournisseurClassId = 0;
-
+  tva = 19;
   totalHT = 0;
   totalTTC = 0;
-
-  tvaParDefaut = 19;
-  currentDate = new Date();
-
-  users: User[] = [];
+  documentClasses: DocumentClass[] = [];
+  bonDeCommandeFournisseurClassId: number = 0;
+  tauxEchange: number = 1;
+  dateLivraison: Date = new Date();
+  currentDate: Date = new Date();
   savedDoc: Document;
+  categories: any[] = [];
+  afficherDialogProduit: boolean = false;
+displayAjoutProduitModal: boolean = false;
+
+
+  etatOptions: string[] = ['En attente', 'Validé', 'Rejeté'];
+  deviseOptions = [
+    { label: 'Dinar Tunisien (DT)', value: 'TND' },
+    { label: 'Euro (€)', value: 'EUR' },
+    { label: 'Dollar ($)', value: 'USD' },
+  ];
 
   constructor(
     private fb: FormBuilder,
     private dataService: DataService,
     private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private categorieService : CategorieService,
     private documentService: DocumentService,
     private panierService: PanierService,
     private router: Router,
-    private userService: UserService,
+    private magasinierService: MagasinierService,
     private cdRef: ChangeDetectorRef
   ) {
     this.bonCommandeForm = this.fb.group({
@@ -59,173 +71,285 @@ commande: any = {};
       devise: ['TND'],
       tauxEchange: [1],
       preparateur_id: [null],
-      etat: ['En cours'],
+      etat: ['En attente'],
     });
   }
 
   ngOnInit(): void {
     sessionStorage.setItem('codeClasseDoc', 'BCF');
-    this.loadFournisseurs();
     this.getDocumentClassesAndLoadNextCode();
-    this.loadUsers();
+    this.loadFournisseurs();
+    this.loadProduits();
+    this.loadMagasiniers();
     this.loadProduitsDuPanier();
+    this.getCategories();
   }
-voirProduitsCommandes() {
-    console.log("Produits commandés:", this.commandeProduits);
+
+    getCategories() {
+    this.categorieService.getCategories().subscribe((data) => {
+      this.categories = data;
+    });
   }
-  loadFournisseurs(): void {
-    this.dataService.getFournisseurs().subscribe(data => {
+
+
+  loadFournisseurs() {
+    this.dataService.getFournisseurs().subscribe((data) => {
       this.fournisseurs = data;
     });
   }
 
   loadProduits() {
-    this.dataService.getProduits().subscribe(data => {
+    this.dataService.getProduits().subscribe((data) => {
       this.produitsDansCommande = data;
+      this.produitsClient = data;
     });
   }
-  
-  validerEtPasserAReception(): void {
-  console.log('Commande validée et transférée vers la livraison.');
-}
-imprimerCommande(): void {
-  console.log('Commande imprimée');
-}
 
-
-  onFournisseurSelect(fournisseurId: number): void {
-    this.selectedFournisseur = this.fournisseurs.find(f => f.id === fournisseurId) || null;
+  loadMagasiniers() {
+    this.magasinierService.getMagasiniers().subscribe({
+      next: (data: Magasinier[]) => (this.magasiniers = data),
+      error: (err) => console.error('Erreur chargement magasiniers', err),
+    });
   }
 
-  getDocumentClassesAndLoadNextCode(): void {
+loadProduitsDuPanier() {
+  const produitsDuPanier = this.panierService.getProduitsCommandes();
+  this.devisProduits = produitsDuPanier.map((produit) => ({
+    produit,
+    quantite: produit.quantite || 1,
+    puht: produit.prix_achat || produit.prix || 0,
+    tva: produit.tva || this.tva,
+    prixTotal: (produit.quantite || 1) * (produit.prix_achat || produit.prix || 0) * (1 + (produit.tva || this.tva) / 100),
+  }));
+  this.calculerTotal();
+  this.cdRef.detectChanges(); // Forcer la mise à jour de la vue
+}
+
+  getDocumentClassesAndLoadNextCode() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {
         this.documentClasses = classes;
-        const docClass = classes.find(dc =>
+        const bonDeCommandeFournisseur = classes.find((dc) =>
           dc.prefix?.toLowerCase().includes('fournisseur')
         );
 
-        if (docClass) {
-          this.bonDeCommandeFournisseurClassId = docClass.id;
-          const codeClasse = sessionStorage.getItem('codeClasseDoc')!;
-          this.documentService.getDernierCodeDocumentParClasse(codeClasse).subscribe({
-            next: (dernierCode: string) => {
-              this.formattedOrderNumber = dernierCode || '00001';
-            },
-            error: () => {
-              this.formattedOrderNumber = '00001';
-            },
-          });
+        if (bonDeCommandeFournisseur) {
+          this.bonDeCommandeFournisseurClassId = bonDeCommandeFournisseur.id;
+          this.documentService
+            .getDernierCodeDocumentParClasse('BCF')
+            .subscribe({
+              next: (dernierCode: string) => {
+                this.formattedOrderNumber = dernierCode || '00001';
+              },
+              error: () => {
+                this.num_seq = '00001';
+                this.formattedOrderNumber = '00001';
+              },
+            });
+        } else {
+          console.error(
+            "Classe de document 'Bon de commande fournisseur' non trouvée."
+          );
         }
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des classes de document :', err);
       },
     });
   }
 
-  loadUsers(): void {
-    this.userService.getUsers().subscribe({
-      next: (data: User[]) => (this.users = data),
-      error: err => console.error('Erreur chargement users', err),
-    });
+  getDocumentClassIdByLabel(label: string): number | null {
+    const lowerLabel = label.toLowerCase().trim();
+    const docClass = this.documentClasses.find((dc) =>
+      dc.prefix?.toLowerCase().trim().includes(lowerLabel)
+    );
+    return docClass ? docClass.id : null;
   }
 
-  loadProduitsDuPanier(): void {
-    this.produitsDansCommande = this.panierService.getProduitsCommandes();
-    this.devisProduits = this.produitsDansCommande.map(p => ({
-      produit: p,
-      quantite: p.quantity || 1,
-      puht: p.prix || 0,
-      tva: p.tva ?? this.tvaParDefaut,
-      prixTotal: (p.quantity || 1) * (p.prix || 0) * (1 + (p.tva ?? this.tvaParDefaut) / 100),
-    }));
+  onFournisseurSelect(fournisseurId: number) {
+    const fournisseur = this.fournisseurs.find((f) => f.id === fournisseurId);
+    if (fournisseur) {
+      this.selectedFournisseur = fournisseur;
+      this.bonCommandeForm.patchValue({ fournisseur_id: fournisseur.id });
+    }
+  }
+
+  onMagasinierSelect(magasinierId: string) {
+    const magasinier = this.magasiniers.find((m) => m.id === magasinierId);
+    if (magasinier) {
+      this.bonCommandeForm.patchValue({ preparateur_id: magasinier.id });
+    }
+  }
+
+  ajouterProduit(produit: Produit, quantite: number) {
+    const produitExistant = this.devisProduits.find(
+      (p) => p.produit.id === produit.id
+    );
+
+    if (produitExistant) {
+      produitExistant.quantite += quantite;
+      produitExistant.prixTotal =
+        produitExistant.quantite *
+        produitExistant.puht *
+        (1 + produitExistant.tva / 100);
+    } else {
+      this.devisProduits.push({
+        produit,
+        quantite,
+        prixTotal: quantite * produit.prix * (1 + produit.tva / 100),
+        puht: produit.prix,
+        tva: produit.tva || this.tva,
+      });
+    }
 
     this.calculerTotal();
   }
 
-  mettreAJourProduit(produit: DevisProduit): void {
+  supprimerProduit(produit: DevisProduit) {
+    this.devisProduits = this.devisProduits.filter((p) => p !== produit);
+    this.calculerTotal();
+  }
+
+  calculerTotal() {
+    this.totalHT = this.devisProduits.reduce(
+      (sum, p) => sum + p.quantite * p.puht,
+      0
+    );
+    this.totalTTC = this.devisProduits.reduce((sum, p) => sum + p.prixTotal, 0);
+  }
+
+  modifierProduit(produit: DevisProduit) {
+    const quantite = prompt('Modifier la quantité', produit.quantite.toString());
+    if (quantite) {
+      const newQuantite = parseInt(quantite, 10);
+      produit.quantite = newQuantite;
+      produit.prixTotal =
+        produit.quantite * produit.puht * (1 + produit.tva / 100);
+      this.calculerTotal();
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Modification',
+        detail: 'Produit modifié',
+      });
+    }
+  }
+
+  mettreAJourProduit(produit: DevisProduit) {
     produit.prixTotal = produit.quantite * produit.puht * (1 + produit.tva / 100);
     this.calculerTotal();
   }
 
-  calculerTotal(): void {
-    this.totalHT = this.devisProduits.reduce((sum, p) => sum + (p.quantite * p.puht), 0);
-    this.totalTTC = this.devisProduits.reduce((sum, p) => sum + p.prixTotal, 0);
-  }
+saveBonDeCommandeAsDocument() {
+  const libelle = 'Bon de commande fournisseur';
+  const classId = this.getDocumentClassIdByLabel(libelle);
 
-  saveBonDeCommandeFournisseurAsDocument(): void {
-    const classId = this.bonDeCommandeFournisseurClassId;
-    const codeClasse = sessionStorage.getItem('codeClasseDoc');
-
-    if (!classId || !this.selectedFournisseur) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Données manquantes',
-        detail: `Veuillez sélectionner un fournisseur.`,
-      });
-      return;
-    }
-
-    const doc: Document = {
-      id: 0,
-      document_class_id: classId,
-      codeclassedocument: codeClasse!,
-      libelle: 'Bon de commande fournisseur',
-      code: '',
-      numero: '',
-      dateDocument: this.bonCommandeForm.value.dateDocument.toISOString(),
-      etat: this.bonCommandeForm.value.etat,
-      preparateur_id: this.bonCommandeForm.value.preparateur_id,
-      client_id: this.selectedFournisseur.id,
-      devise: this.bonCommandeForm.value.devise,
-      tauxEchange: this.bonCommandeForm.value.tauxEchange,
-      dateLivraison: this.bonCommandeForm.value.dateLivraison.toISOString(),
-      produitsCommandes: this.devisProduits.map(p => ({
-        produit_id: p.produit.id,
-        quantite: p.quantite,
-        puht: p.puht,
-        tva: p.tva,
-        prixTotal: p.prixTotal,
-      })),
-      documentClass: { id: classId } as DocumentClass,
-    };
-
-    this.documentService.saveDocument(doc).subscribe({
-      next: (saved: Document) => {
-        this.savedDoc = saved;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Succès',
-          detail: `Bon de commande fournisseur enregistré sous le code ${saved.code}`,
-        });
-        this.formattedOrderNumber = saved.code;
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erreur',
-          detail: `Échec de l'enregistrement du bon de commande fournisseur.`,
-        });
-      },
+  if (!classId || !this.selectedFournisseur) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Données manquantes',
+      detail: 'Veuillez sélectionner un fournisseur.',
     });
+    return;
   }
 
-  imprimerBonCommande(id: number): void {
-    if (!id && this.savedDoc) {
-      id = this.savedDoc.id;
-    }
-    if (id) {
-      window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
-    } else {
+  const document: Document = {
+    id: 0,
+    document_class_id: classId,
+    codeclassedocument: 'BCF',
+    libelle: libelle,
+    code: '',
+    numero: '',
+    dateDocument:
+      this.bonCommandeForm.value.dateDocument?.toISOString() ||
+      new Date().toISOString(),
+    etat: this.bonCommandeForm.value.etat || 'En attente',
+    preparateur_id: this.bonCommandeForm.value.preparateur_id,
+    fournisseur_id: this.selectedFournisseur.id,
+    client_id: null,
+    devise: this.bonCommandeForm.value.devise,
+    tauxEchange: this.bonCommandeForm.value.tauxEchange,
+    dateLivraison:
+      this.bonCommandeForm.value.dateLivraison?.toISOString() ||
+      new Date().toISOString(),
+    produitsCommandes: this.devisProduits.map((p) => ({
+      produit_id: p.produit.id,
+      quantite: p.quantite,
+      prixTotal: p.prixTotal,
+      puht: p.puht,
+      tva: p.tva,
+    })),
+    documentClass: { id: classId } as DocumentClass,
+  };
+
+  this.documentService.saveDocument(document).subscribe({
+    next: (response: any) => {
+      // Extraire la propriété 'data' manuellement
+      const savedDoc: Document = response.data;
+      this.savedDoc = savedDoc;
       this.messageService.add({
-        severity: 'warn',
-        summary: 'Aucun document',
-        detail: `Veuillez enregistrer le bon de commande avant impression.`,
+        severity: 'success',
+        summary: 'Succès',
+        detail: `Bon de commande fournisseur enregistré sous le code ${savedDoc.code}`,
       });
-    }
-  }
-
-  naviguerVersAjoutProduit(): void {
-  this.router.navigate(['/achat/Produitfournisseur'], {
-   state: { produits: this.devisProduits.map(d => d.produit) }
+      this.formattedOrderNumber = savedDoc.code;
+    },
+    error: () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: `Échec de l'enregistrement du bon de commande fournisseur.`,
+      });
+    },
   });
 }
+
+
+validerEtPasserAReception() {
+  this.saveBonDeCommandeAsDocument();
+  setTimeout(() => {
+    if (this.savedDoc?.id) {
+      this.router.navigate(['/achat/bon-reception', this.savedDoc.id]);
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Aucun ID de document disponible pour la navigation.',
+      });
+    }
+  }, 2000);
+}
+
+  imprimerBonCommande(id: number) {
+    if (id === 0) {
+      this.saveBonDeCommandeAsDocument();
+      return;
+    }
+    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  }
+
+  naviguerVersAjoutProduit() {
+  this.displayAjoutProduitModal = true;
+}
+
+ajouterProduitApresAjoutModal(produit: Produit) {
+  const produitAjoute: DevisProduit = {
+    produit: produit,
+    quantite: 1,
+    puht: produit.prix_achat || produit.prix || 0,
+    tva: produit.tva || this.tva,
+    prixTotal: (produit.prix_achat || produit.prix || 0) * (1 + (produit.tva || this.tva) / 100),
+  };
+
+  this.devisProduits.push(produitAjoute);
+  this.calculerTotal();
+
+  this.messageService.add({
+    severity: 'success',
+    summary: 'Produit ajouté',
+    detail: `Le produit "${produit.nom}" a été ajouté au bon de commande.`,
+  });
+}
+
+
+
 }
