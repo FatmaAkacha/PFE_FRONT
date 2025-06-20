@@ -9,6 +9,7 @@ import { Produit } from '../demo/domain/produit';
 import { Document } from '../demo/domain/document';
 import { Magasinier } from '../demo/domain/magasinier';
 import { Fournisseur } from '../demo/domain/fournisseur'; 
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-dashboard',
@@ -31,7 +32,8 @@ export class DashboardComponent implements OnInit {
     private dataService: DataService,
     private documentService: DocumentService,
     private ligneDocumentService: LigneDocumentService,
-    private magasinierService: MagasinierService
+    private magasinierService: MagasinierService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +49,7 @@ export class DashboardComponent implements OnInit {
     this.dataService.getProduits().subscribe(products => {
       this.products = products.map(product => ({
         ...product,
+        image: this.getImageUrl(product.image_data),
         inventoryStatus: product.quantitystock && product.seuil
           ? product.quantitystock > product.seuil ? 'INSTOCK' : 'LOWSTOCK'
           : 'OUTOFSTOCK'
@@ -68,6 +71,7 @@ export class DashboardComponent implements OnInit {
       this.fournisseurs = fournisseurs;
     });
   }
+  
 
   normalizeEtat(etat: string | undefined): string {
     if (!etat) return 'UNKNOWN';
@@ -81,6 +85,13 @@ export class DashboardComponent implements OnInit {
       default:
         return 'UNKNOWN';
     }
+  }
+    getImageUrl(imageData: string): SafeUrl {
+    if (imageData) {
+      const fullUrl = `http://localhost:8000/storage/${imageData}`;
+      return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
+    }
+    return 'https://via.placeholder.com/150';
   }
 
   setupChart(): void {
