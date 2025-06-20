@@ -48,6 +48,7 @@ import { RoleComponent } from './demo/component/role/role.component';
 import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-produit/fournisseur-ajout-produit.component';
 import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
 import { ProduitUpdateComponent } from './achat/produit-update/produit-update.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
     imports: [
@@ -56,6 +57,7 @@ import { ProduitUpdateComponent } from './achat/produit-update/produit-update.co
                 path: '', component: AppMainComponent,
                 children: [
                     {path: '', component: DashboardDemoComponent},
+                    {path: 'dashboard', component: DashboardComponent},
                     {path: 'uikit/formlayout', component: FormLayoutDemoComponent},
                     {path: 'uikit/floatlabel', component: FloatLabelDemoComponent},
                     {path: 'uikit/invalidstate', component: InvalidStateDemoComponent},

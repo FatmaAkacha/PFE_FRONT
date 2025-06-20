@@ -1,0 +1,309 @@
+<div class="grid layout-dashboard">
+  <!-- Overview Boxes -->
+  <div class="col-12 xl:col-3 md:col-6">
+    <div class="grid grid-nogutter widget-overview-box overview-box-1">
+      <div class="col-3 overview-box-icon">
+        <img src="assets/images/clients.png" alt="clients-icon" />
+      </div>
+      <div class="col-6 overview-box-text">
+        <h5>Clients</h5>
+        <span>{{ clients.length }} total</span>
+      </div>
+      <div class="col-3 overview-box-status">
+        {{ clients.length }}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 xl:col-3 md:col-6">
+    <div class="grid grid-nogutter widget-overview-box overview-box-2">
+      <div class="col-3 overview-box-icon">
+        <img src="assets/images/produits.png" alt="products-icon" />
+      </div>
+      <div class="col-6 overview-box-text">
+        <h5>Products</h5>
+        <span>{{ products.length }} in stock</span>
+      </div>
+      <div class="col-3 overview-box-status">
+        {{ products.length }}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 xl:col-3 md:col-6">
+    <div class="grid grid-nogutter widget-overview-box overview-box-3">
+      <div class="col-3 overview-box-icon">
+        <img src="assets/images/documents.png" alt="documents-icon" />
+      </div>
+      <div class="col-6 overview-box-text">
+        <h5>Documents</h5>
+        <span>{{ documents.length }} total</span>
+      </div>
+      <div class="col-3 overview-box-status">
+        {{ documents.length }}
+      </div>
+    </div>
+  </div>
+  <div class="col-12 xl:col-3 md:col-6">
+    <div class="grid grid-nogutter widget-overview-box overview-box-4">
+      <div class="col-3 overview-box-icon">
+        <img src="assets/images/fournisseurs.png" alt="fournisseurs-icon" />
+      </div>
+      <div class="col-6 overview-box-text">
+        <h5>Fournisseurs</h5>
+        <span>{{ fournisseurs.length }} total</span>
+      </div>
+      <div class="col-3 overview-box-status">
+        {{ fournisseurs.length }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Chart -->
+  <div class="col-12 lg:col-6">
+    <div class="card widget-statistics">
+      <div class="grid">
+        <div class="col-6 md:col-8">
+          <h5>Statistics</h5>
+        </div>
+        <div class="col-6 md:col-4 dropdown">
+          <p-dropdown [options]="[{label: '2025', value: 2025}, {label: '2024', value: 2024}]" [(ngModel)]="selectedYear"></p-dropdown>
+        </div>
+      </div>
+      <p-chart id="dashboard-chart" type="line" [data]="lineChartData" [options]="lineChartOptions"></p-chart>
+    </div>
+  </div>
+
+  <!-- Recent Documents -->
+  <div class="col-12 lg:col-6">
+    <div class="card widget-timeline">
+      <h5>Recent Documents</h5>
+      <div class="timeline-row" *ngFor="let doc of documents | slice:0:4">
+        <div class="grid grid-nogutter">
+          <div class="col-1">
+            <div class="timeline-icon document-icon">
+              <i class="pi pi-file"></i>
+            </div>
+          </div>
+          <div class="col-11">
+            <div class="grid grid-nogutter">
+              <div class="col-10 timeline-content">
+                <h6>{{ doc.libelle }}</h6>
+                <span>Code: {{ doc.code }} | Client: {{ doc.client_id?.nom || 'N/A' }}</span>
+              </div>
+              <div class="col-2 timeline-time">
+                <span>{{ doc.dateDocument | date:'short' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasks -->
+  <div class="col-12 lg:col-4 md:col-6">
+    <div class="card widget-tasks">
+      <div class="card-header">
+        <div class="title">
+          <h5>Tasks</h5>
+        </div>
+        <div class="task-info">
+          <span>You have</span><span class="highlighted"> {{ documents.length }} pending</span><span> documents</span>
+        </div>
+      </div>
+      <ul class="checkboxes">
+        <li class="checkbox-row" *ngFor="let doc of documents | slice:0:5">
+          <div class="grid">
+            <div class="col-6 checkbox">
+              <p-checkbox binary="true"></p-checkbox>
+              <p>{{ doc.libelle }}</p>
+            </div>
+            <div class="col-6 checkbox-row-info">
+              <span class="time">{{ doc.dateDocument | date:'shortDate' }}</span>
+              <i class="pi pi-tag"></i>
+              <i class="pi pi-calendar"></i>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Support Request -->
+  <div class="col-12 lg:col-4 md:col-6">
+    <div class="card widget-support-request">
+      <div class="grid grid-nogutter">
+        <div class="col-6 title">
+          <h5>Support Request</h5>
+        </div>
+        <div class="col-6 support-info">
+          <p>⏰ Estimated wait time</p>
+          <span class="highlighted">15 minutes</span>
+        </div>
+      </div>
+      <label for="support-username">Username</label>
+      <input pInputText type="text" id="support-username" placeholder="Type your username..." />
+      <label for="support-message">Message</label>
+      <textarea pInputTextarea id="support-message" [rows]="8" placeholder="Type your message..." [autoResize]="false"></textarea>
+      <div class="resolution-button-bar">
+        <button type="button" label="Send Request" icon="pi pi-star" pButton></button>
+        <button type="button" label="Save as Draft" pButton class="p-button-secondary p-button-text"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Members (Magasiniers) -->
+  <div class="col-12 lg:col-4">
+    <div class="card widget-team">
+      <h5>Team Members</h5>
+      <ul>
+        <li *ngFor="let magasinier of magasiniers | slice:0:5">
+          <div class="grid member">
+            <div class="col-7 team-box">
+              <div class="profile-image">
+                <img src="assets/images/avatar-placeholder.png" alt="avatar" />
+              </div>
+              <div>
+                <h6 class="team-member">{{ magasinier.nom }}</h6>
+                <span class="team-member-role">{{ magasinier.email }}</span>
+              </div>
+            </div>
+            <div class="col-5 icons">
+              <div class="icon icon-hastag">
+                <i class="pi pi-bookmark"></i>
+              </div>
+              <div class="icon icon-twitter">
+                <i class="pi pi-share-alt"></i>
+              </div>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="col-12 lg:col-8">
+    <div class="card orders-table">
+      <h5>Products Table</h5>
+      <p-table [value]="products" [paginator]="true" [rows]="5" styleClass="p-datatable-customers">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">ID
+              <p-sortIcon field="id"></p-sortIcon>
+            </th>
+            <th pSortableColumn="categorie.nom">Category
+              <p-sortIcon field="categorie.nom"></p-sortIcon>
+            </th>
+            <th pSortableColumn="prix_vente_ttc">Price
+              <p-sortIcon field="prix_vente_ttc"></p-sortIcon>
+            </th>
+            <th pSortableColumn="inventoryStatus">Status
+              <p-sortIcon field="inventoryStatus"></p-sortIcon>
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-product>
+          <tr>
+            <td style="width:70px;">
+              <span class="p-column-title">Id</span>
+              {{ product.id }}
+            </td>
+            <td style="width:200px;">
+              <span class="p-column-title">Category</span>
+              {{ product.categorie?.nom || 'N/A' }}
+            </td>
+            <td style="width:200px;">
+              <span class="p-column-title">Price</span>
+              {{ product.prix_vente_ttc | currency:'USD' }}
+            </td>
+            <td style="width:150px;">
+              <span class="p-column-title">Status</span>
+              <span [class]="'product-badge status-' + (product.inventoryStatus?.toLowerCase() || 'unknown')">{{ product.inventoryStatus || 'Unknown' }}</span>
+            </td>
+            <td style="width:100px;" class="text-center">
+              <button pButton type="button" icon="pi pi-search"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Store Items (Products Grid) -->
+  <div class="col-12 lg:col-8">
+    <div class="card widget-store-items">
+      <div class="grid grid-nogutter">
+        <div class="col-6 title">
+          <h5>Store Items</h5>
+        </div>
+        <div class="col-6 store-info">
+          <div class="info-item add"><i class="pi pi-plus"></i> Add Item</div>
+          <div class="info-item library">
+            <i class="pi pi-book"></i> Library
+          </div>
+        </div>
+      </div>
+      <div class="store-cards-container">
+        <div class="grid store-cards">
+          <div class="col-6 lg:col-3 md:col-4" *ngFor="let product of products | slice:0:8">
+            <div class="store-card">
+              <div class="store-card-icons">
+                <div class="grid grid-nogutter">
+                  <div class="col-4">
+                    <i class="pi pi-heart"></i>
+                  </div>
+                  <div class="col-4">
+                    <i class="pi pi-pencil"></i>
+                  </div>
+                  <div class="col-4">
+                    <i class="pi pi-trash"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="store-card-image">
+                <img [src]="dataService.getImageSrc(product) || 'assets/images/product-placeholder.png'" alt="product" />
+              </div>
+              <div class="store-card-content">
+                <h5>{{ product.nom }}</h5>
+                <span>{{ product.description || 'No description' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="list-effect"></div>
+    </div>
+  </div>
+
+  <!-- Documents Table -->
+  <div class="col-12 lg:col-8">
+    <div class="card orders-table">
+      <h5>Documents Table</h5>
+      <p-table [value]="documents" [paginator]="true" [rows]="5" styleClass="p-datatable-customers">
+        <ng-template pTemplate="header">
+          <tr>
+            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+            <th pSortableColumn="libelle">Libelle <p-sortIcon field="libelle"></p-sortIcon></th>
+            <th pSortableColumn="client_id.nom">Client <p-sortIcon field="client_id.nom"></p-sortIcon></th>
+            <th pSortableColumn="etat">Status <p-sortIcon field="etat"></p-sortIcon></th>
+            <th></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-doc>
+          <tr>
+            <td style="width:70px;">{{ doc.id }}</td>
+            <td style="width:200px;">{{ doc.libelle }}</td>
+            <td style="width:200px;">{{ doc.client_id?.nom || 'N/A' }}</td>
+            <td style="width:150px;">
+              <span [class]="'product-badge status-' + (doc.etat?.toLowerCase() || 'unknown')">{{ doc.etat || 'Unknown' }}</span>
+            </td>
+            <td style="width:100px;" class="text-center">
+              <button pButton type="button" icon="pi pi-search"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

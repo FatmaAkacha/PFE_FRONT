@@ -176,6 +176,7 @@ import { FournisseurAjoutProduitComponent } from './achat/fournisseur-ajout-prod
 import { MagasinierComponent } from './demo/component/magasinier/magasinier.component';
 import { ProduitUpdateComponent } from './achat/produit-update/produit-update.component';
 import { FactureFournisseurComponent } from './achat/facture-fournisseur/facture-fournisseur.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 FullCalendarModule.registerPlugins([
     dayGridPlugin,
@@ -333,7 +334,8 @@ FullCalendarModule.registerPlugins([
         FournisseurAjoutProduitComponent,
         MagasinierComponent,
         ProduitUpdateComponent,
-        FactureFournisseurComponent  ],
+        FactureFournisseurComponent,
+        DashboardComponent  ],
     providers: [
         {provide: LocationStrategy, useClass: HashLocationStrategy},
         KeycloakService,

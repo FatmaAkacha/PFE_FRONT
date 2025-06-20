@@ -5,34 +5,6 @@
     <p class="date">Date : <strong>{{ currentDate | date: 'EEEE, d MMMM y' }}</strong></p>
   </div>
 
-  <h3>Informations du Fournisseur</h3>
-  <div class="grid formgrid p-fluid">
-    <div class="col-12 md:col-4">
-      <label>Fournisseur</label>
-      <input pInputText [value]="selectedFournisseur?.name || ''" [disabled]="true">
-    </div>
-    <div class="col-12 md:col-4">
-      <label>Matricule fiscal</label>
-      <input pInputText [value]="selectedFournisseur?.matricule_fiscal || ''" [disabled]="true">
-    </div>
-    <div class="col-12 md:col-4">
-      <label>Adresse</label>
-      <input pInputText [value]="selectedFournisseur?.address || ''" [disabled]="true">
-    </div>
-  </div>
-
-  <div class="grid formgrid p-fluid">
-    <div class="col-12 md:col-4">
-      <label>Email</label>
-      <input pInputText [value]="selectedFournisseur?.email || ''" [disabled]="true">
-    </div>
-    <div class="col-12 md:col-4">
-      <label>Téléphone</label>
-      <input pInputText [value]="selectedFournisseur?.phone || ''" [disabled]="true">
-    </div>
-  </div>
-
-  <h3>Informations Générales</h3>
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Date document <span class="required-star">*</span></label>
@@ -58,6 +30,35 @@
         placeholder="Sélectionner un préparateur"
         [filter]="true"
       ></p-dropdown>
+    </div>
+  </div>
+
+  <div class="client-info">
+    <h3>Informations du Fournisseur</h3>
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Fournisseur</label>
+        <input pInputText [value]="selectedFournisseur?.name || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Matricule fiscal</label>
+        <input pInputText [value]="selectedFournisseur?.matricule_fiscal || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
+        <label>Email</label>
+        <input pInputText [value]="selectedFournisseur?.email || ''" [disabled]="true">
+      </div>
+    </div>
+
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Téléphone</label>
+        <input pInputText [value]="selectedFournisseur?.phone || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-8">
+        <label>Adresse</label>
+        <input pInputText [value]="selectedFournisseur?.address || ''" [disabled]="true">
+      </div>
     </div>
   </div>
 
@@ -91,48 +92,41 @@
     </div>
   </div>
 
-  <h3>Produits Reçus</h3>
+<h3>Produits Reçus</h3>
 <p-table [value]="bonReceptionProduits" responsiveLayout="scroll" class="commande-table">
-    <ng-template pTemplate="header">
-        <tr>
-            <th>Code</th>
-            <th>Désignation</th>
-            <th>Stock</th>
-            <th>Quantité</th>
-            <th>PUHT/U</th>
-            <th>Prix Vente HT</th>
-            <th>Prix Vente TTC</th>
-            <th>Remise Max (%)</th>
-            <th>TVA %</th>
-            <th>TTC</th>
-        </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-item let-i="index">
-        <tr>
-            <td>{{ item.produit.id }}</td>
-            <td>{{ item.produit.nom }}</td>
-            <td>{{ item.produit.quantitystock || 0 }}</td>
-            <td>
-                <input
-                    pInputText
-                    type="number"
-                    [(ngModel)]="item.produit.quantitystock"
-                    (ngModelChange)="updatePrixTotal(i)"
-                    min="1"
-                    required
-                />
-            </td>
-            <td>{{ item.puht | number: '1.2-2' }}</td>
-            <td>{{ item.produit.prix_vente_ht || 0 | number: '1.2-2' }}</td>
-            <td>{{ item.produit.prix_vente_ttc || 0 | number: '1.2-2' }}</td>
-            <td>{{ item.produit.remise_maximale || 0 }}%</td>
-            <td>{{ item.tva }}</td>
-            <td>{{ item.produit.prixTotal | number: '1.2-2' }}</td>
-        </tr>
-    </ng-template>
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Code</th>
+      <th>Désignation</th>
+      <th>Stock</th>
+      <th>Quantité</th>
+      <th>PUHT/U</th>
+      <th>Prix Vente HT</th>
+      <th>Prix Vente TTC</th>
+      <th>Remise Max (%)</th>
+      <th>TVA %</th>
+      <th>TTC</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-item let-i="index">
+    <tr>
+      <td>{{ item.produit.id }}</td>
+      <td>{{ item.produit.nom }}</td>
+      <td>{{ item.produit.quantitystock || 0 }}</td>
+      <td>{{ item.produit.quantitystock || 0 }}</td>
+      <td>{{ item.puht | number: '1.2-2' }}</td>
+      <td>{{ item.produit.prix_vente_ht || 0 | number: '1.2-2' }}</td>
+      <td>{{ item.produit.prix_vente_ttc || 0 | number: '1.2-2' }}</td>
+      <td>{{ item.produit.remise_maximale || 0 }}%</td>
+      <td>{{ item.tva }}</td>
+      <td>{{ item.produit.prixTotal | number: '1.2-2' }}</td>
+    </tr>
+  </ng-template>
 </p-table>
 
-  <div class="p-mt-4">
+
+  <br>
+  <div class="bon-reception-actions">
     <button
       pButton
       label="Enregistrer Bon de Réception"

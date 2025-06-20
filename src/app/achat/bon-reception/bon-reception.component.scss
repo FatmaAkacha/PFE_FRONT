@@ -1,0 +1,46 @@
+.bon-commande-container,
+.bon-reception-container {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.bon-commande-header,
+.bon-reception-header {
+  margin-bottom: 2rem;
+}
+
+.commande-table th,
+.commande-table td {
+  text-align: center;
+}
+.bon-commande-container {
+  padding: 2rem;
+  background-color: #fefefe;
+}
+
+.bon-commande-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.commande-table {
+  margin-top: 1rem;
+}
+
+.bon-reception-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.required-star {
+  color: red;
+}
