@@ -24,6 +24,8 @@ export class DashboardComponent implements OnInit {
   fournisseurs: Fournisseur[] = [];
   pieChartData: any;
   pieChartOptions: any;
+  categoryChartData: any;
+  categoryChartOptions: any;
   activeNews = 1;
   selectedYear: number = 2025;
 
@@ -38,7 +40,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
-    this.setupChart();
+    this.setupCharts();
   }
 
   loadData(): void {
@@ -54,6 +56,7 @@ export class DashboardComponent implements OnInit {
           ? product.quantitystock > product.seuil ? 'INSTOCK' : 'LOWSTOCK'
           : 'OUTOFSTOCK'
       }));
+      this.updateCategoryChartData();
     });
 
     this.documentService.getDocuments().subscribe(documents => {
@@ -95,7 +98,8 @@ export class DashboardComponent implements OnInit {
     return 'https://via.placeholder.com/150';
   }
 
-  setupChart(): void {
+  setupCharts(): void {
+    // Pie chart setup
     this.pieChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -109,7 +113,35 @@ export class DashboardComponent implements OnInit {
         }
       }
     };
+
+    // Bar chart setup for products by category
+    this.categoryChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 1
+          }
+        },
+        x: {
+          ticks: {
+            autoSkip: false,
+            maxRotation: 45,
+            minRotation: 45
+          }
+        }
+      }
+    };
+
     this.updateChartData();
+    this.updateCategoryChartData();
   }
 
   updateChartData(): void {
@@ -124,6 +156,28 @@ export class DashboardComponent implements OnInit {
         data: statusCounts,
         backgroundColor: ['#C8E6C9', '#FEEDAF', '#FFCDD2', '#9E9E9E'],
         hoverOffset: 20
+      }]
+    };
+  }
+
+  updateCategoryChartData(): void {
+    const categoryCounts = this.products.reduce((acc, product) => {
+      const categoryName = product.categorie?.nom || 'Uncategorized';
+      acc[categoryName] = (acc[categoryName] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    const labels = Object.keys(categoryCounts);
+    const data = Object.values(categoryCounts);
+
+    this.categoryChartData = {
+      labels: labels.length ? labels : ['No Categories'],
+      datasets: [{
+        label: 'Products by Category',
+        data: data.length ? data : [0],
+        backgroundColor: ['#65afc4', '#f2c260', '#8fb56f', '#a4719b', '#FFCDD2'],
+        borderColor: ['#65afc4', '#f2c260', '#8fb56f', '#a4719b', '#FFCDD2'],
+        borderWidth: 1
       }]
     };
   }

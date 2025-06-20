@@ -216,26 +216,11 @@
     </div>
   </div>
 
-  <!-- Support Request -->
+  <!-- Products by Category Chart -->
   <div class="col-12 xl:col-4">
-    <div class="card widget-support-request">
-      <div class="grid grid-nogutter">
-        <div class="col-6 title">
-          <h5>Support Request</h5>
-        </div>
-        <div class="col-6 support-info">
-          <p>⏰ Estimated wait time</p>
-          <span class="highlighted">15 minutes</span>
-        </div>
-      </div>
-      <label for="support-username">Username</label>
-      <input pInputText type="text" id="support-username" placeholder="Type your username..." />
-      <label for="support-message">Message</label>
-      <textarea pInputTextarea id="support-message" [rows]="8" placeholder="Type your message..." [autoResize]="false"></textarea>
-      <div class="resolution-button-bar">
-        <button type="button" label="Send Request" icon="pi pi-star" pButton></button>
-        <button type="button" label="Save as Draft" pButton class="p-button-secondary p-button-text"></button>
-      </div>
+    <div class="card widget-products-by-category">
+      <h5>Products by Category</h5>
+      <p-chart id="category-chart" type="bar" [data]="categoryChartData" [options]="categoryChartOptions"></p-chart>
     </div>
   </div>
 

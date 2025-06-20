@@ -14,15 +14,14 @@
 .overview-box-3 { background: #8fb56f; }
 .overview-box-4 { background: #a4719b; }
 
-
-.widget-statistics, .widget-recent-documents, .widget-tasks, .widget-support-request, .widget-team, .widget-store-items, .orders-table {
+.widget-statistics, .widget-recent-documents, .widget-tasks, .widget-products-by-category, .widget-team, .widget-store-items, .orders-table {
   padding: 20px;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.widget-statistics {
+.widget-statistics, .widget-products-by-category {
   min-height: 300px;
 }
 
@@ -92,19 +91,17 @@
   letter-spacing: 0.3px;
 }
 
-.status-encours {  background: #C8E6C9; color: #256029;}
+.status-encours { background: #C8E6C9; color: #256029; }
 .status-validé { background: #FEEDAF; color: #8A5340; }
 .status-annulé { background: #FFCDD2; color: #C63737; }
-
-.orders-table {
-  padding: 20px;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
 
 .status-instock { background: #C8E6C9; color: #256029; }
 .status-lowstock { background: #FEEDAF; color: #8A5340; }
 .status-outofstock { background: #FFCDD2; color: #C63737; }
 .status-unknown { background: #9e9e9e; color: white; }
+
+.widget-products-by-category {
+  h5 {
+    margin-bottom: 15px;
+  }
+}
