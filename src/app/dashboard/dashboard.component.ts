@@ -8,7 +8,7 @@ import { Client } from '../demo/domain/client';
 import { Produit } from '../demo/domain/produit';
 import { Document } from '../demo/domain/document';
 import { Magasinier } from '../demo/domain/magasinier';
-import { Fournisseur } from '../demo/domain/fournisseur'; 
+import { Fournisseur } from '../demo/domain/fournisseur';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
@@ -22,10 +22,10 @@ export class DashboardComponent implements OnInit {
   documents: Document[] = [];
   magasiniers: Magasinier[] = [];
   fournisseurs: Fournisseur[] = [];
-  lineChartData: any;
-  lineChartOptions: any;
-  activeNews = 1; 
-  selectedYear: any;
+  pieChartData: any;
+  pieChartOptions: any;
+  activeNews = 1;
+  selectedYear: number = 2025;
 
   constructor(
     private categorieService: CategorieService,
@@ -61,6 +61,7 @@ export class DashboardComponent implements OnInit {
         ...doc,
         etat: this.normalizeEtat(doc.etat)
       }));
+      this.updateChartData();
     });
 
     this.magasinierService.getMagasiniers().subscribe(magasiniers => {
@@ -71,7 +72,6 @@ export class DashboardComponent implements OnInit {
       this.fournisseurs = fournisseurs;
     });
   }
-  
 
   normalizeEtat(etat: string | undefined): string {
     if (!etat) return 'UNKNOWN';
@@ -86,7 +86,8 @@ export class DashboardComponent implements OnInit {
         return 'UNKNOWN';
     }
   }
-    getImageUrl(imageData: string): SafeUrl {
+
+  getImageUrl(imageData: string): SafeUrl {
     if (imageData) {
       const fullUrl = `http://localhost:8000/storage/${imageData}`;
       return this.sanitizer.bypassSecurityTrustUrl(fullUrl);
@@ -95,27 +96,35 @@ export class DashboardComponent implements OnInit {
   }
 
   setupChart(): void {
-    this.lineChartData = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-      datasets: [
-        {
-          label: 'Product Sales',
-          data: [65, 59, 80, 81, 56, 55],
-          fill: false,
-          borderColor: '#4bc0c0'
-        },
-        {
-          label: 'Documents Created',
-          data: [28, 48, 40, 19, 86, 27],
-          fill: false,
-          borderColor: '#565656'
-        }
-      ]
-    };
-
-    this.lineChartOptions = {
+    this.pieChartOptions = {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: {
+            usePointStyle: true,
+            padding: 20
+          }
+        }
+      }
+    };
+    this.updateChartData();
+  }
+
+  updateChartData(): void {
+    const statuses = ['EnCours', 'Validé', 'Annulé', 'UNKNOWN'];
+    const statusCounts = statuses.map(status => 
+      this.documents.filter(doc => doc.etat === status && new Date(doc.dateDocument).getFullYear() === this.selectedYear).length
+    );
+
+    this.pieChartData = {
+      labels: statuses,
+      datasets: [{
+        data: statusCounts,
+        backgroundColor: ['#C8E6C9', '#FEEDAF', '#FFCDD2', '#9E9E9E'],
+        hoverOffset: 20
+      }]
     };
   }
 }
