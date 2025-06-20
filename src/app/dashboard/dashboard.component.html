@@ -144,48 +144,147 @@
   <!-- Store Items (Products Grid) -->
   <div class="col-12 xl:col-4">
     <div class="card widget-store-items">
-      <div class="grid grid-nogutter">
-        <div class="col-6 title">
-          <h5>Store Items</h5>
+      <p-toast></p-toast>
+      <div class="store-header">
+        <h5>Store Items</h5>
+        <div class="store-actions">
+          <button pButton pRipple label="Add Item" icon="pi pi-plus" class="p-button-success p-button-sm" (click)="openNewProduct()"></button>
+          <button pButton pRipple label="Delete Selected" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
         </div>
-        <div class="col-6 store-info">
-          <div class="info-item add"><i class="pi pi-plus"></i> Add Item</div>
-          <div class="info-item library">
-            <i class="pi pi-book"></i> Library
+      </div>
+      <div class="store-grid">
+        <div class="product-card" *ngFor="let product of products | slice:0:8">
+          <p-checkbox class="product-checkbox" [value]="product" [(ngModel)]="selectedProducts"></p-checkbox>
+          <div class="product-image">
+            <img [src]="product.image" [alt]="product.nom" />
+          </div>
+          <div class="product-content">
+            <h6>{{ product.nom }}</h6>
+            <p>{{ product.description || 'No description' }}</p>
+          </div>
+          <div class="product-actions">
+            <button pButton icon="pi pi-pencil" class="p-button-text p-button-success" (click)="editProduct(product)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-text p-button-danger" (click)="deleteProduct(product)"></button>
           </div>
         </div>
       </div>
-      <div class="store-cards-container">
-        <div class="grid store-cards">
-          <div class="col-6 lg:col-3 md:col-4" *ngFor="let product of products | slice:0:8">
-            <div class="store-card">
-              <div class="store-card-icons">
-                <div class="grid grid-nogutter">
-                  <div class="col-4">
-                    <i class="pi pi-heart"></i>
-                  </div>
-                  <div class="col-4">
-                    <i class="pi pi-pencil"></i>
-                  </div>
-                  <div class="col-4">
-                    <i class="pi pi-trash"></i>
-                  </div>
-                </div>
-              </div>
-              <div class="store-card-image">
-                <img [src]="product.image" [alt]="product.nom" class="product-image shadow-2 my-3 mx-0" />
-              </div>
-              <div class="store-card-content">
-                <h5>{{ product.nom }}</h5>
-                <span>{{ product.description || 'No description' }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="list-effect"></div>
     </div>
   </div>
+
+  <!-- Product Dialog -->
+  <p-dialog [(visible)]="productDialog" [style]="{ width: '600px' }" header="Product Details" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+      <p-steps [model]="steps" [activeIndex]="activeStep" (activeIndexChange)="onStepChange($event)" [readonly]="true"></p-steps>
+      <div *ngIf="activeStep === 0">
+        <div class="field">
+          <label for="nom">Name <span class="required-star">*</span></label>
+          <input type="text" pInputText id="nom" [(ngModel)]="product.nom" required autofocus
+                 [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.nom }" />
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.nom">Name is required.</small>
+        </div>
+        <div class="field">
+          <label for="categorie">Category <span class="required-star">*</span></label>
+          <p-dropdown inputId="categorie" [options]="categories" optionLabel="nom" placeholder="Select a category"
+                      [(ngModel)]="product.categorie" [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.categorie }"></p-dropdown>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.categorie">Category is required.</small>
+        </div>
+        <div class="field">
+          <label for="fournisseur">Supplier <span class="required-star">*</span></label>
+          <p-dropdown inputId="fournisseur" [options]="fournisseurs" optionLabel="name" optionValue="id"
+                      placeholder="Select a supplier" [(ngModel)]="product.fournisseur"></p-dropdown>
+        </div>
+        <div class="field">
+          <label for="description">Description</label>
+          <textarea pInputTextarea id="description" rows="2" [(ngModel)]="product.description"></textarea>
+        </div>
+      </div>
+      <div *ngIf="activeStep === 1">
+        <div class="field">
+          <label for="prix">Price</label>
+          <input type="number" pInputText id="prix" [(ngModel)]="product.prix" />
+        </div>
+        <div class="field">
+          <label for="prix_achat">Purchase Price</label>
+          <input type="number" pInputText id="prix_achat" [(ngModel)]="product.prix_achat" />
+        </div>
+        <div class="field">
+          <label for="prix_vente_ht">Sale Price HT</label>
+          <input type="number" pInputText id="prix_vente_ht" [(ngModel)]="product.prix_vente_ht" />
+        </div>
+        <div class="field">
+          <label for="prix_vente_ttc">Sale Price TTC</label>
+          <input type="number" pInputText id="prix_vente_ttc" [(ngModel)]="product.prix_vente_ttc" />
+        </div>
+        <div class="field">
+          <label for="remise_maximale">Max Discount (%)</label>
+          <input type="number" pInputText id="remise_maximale" [(ngModel)]="product.remise_maximale" />
+        </div>
+      </div>
+      <div *ngIf="activeStep === 2">
+        <div class="field">
+          <label for="inventoryStatus">Stock Status</label>
+          <p-dropdown inputId="inventoryStatus" [options]="['INSTOCK', 'OUTOFSTOCK', 'LOWSTOCK']"
+                      [(ngModel)]="product.inventoryStatus" placeholder="Select status"></p-dropdown>
+        </div>
+        <div class="field">
+          <label for="quantitystock">Current Stock</label>
+          <input type="number" pInputText id="quantitystock" [(ngModel)]="product.quantitystock" />
+        </div>
+        <div class="field">
+          <label for="quantite">Order Quantity</label>
+          <input type="number" pInputText id="quantite" [(ngModel)]="product.quantite" />
+        </div>
+        <div class="field">
+          <label for="seuil">Alert Threshold</label>
+          <input type="number" pInputText id="seuil" [(ngModel)]="product.seuil" />
+        </div>
+      </div>
+      <div *ngIf="activeStep === 3">
+        <div class="field">
+          <label for="tva">TVA</label>
+          <input type="number" pInputText id="tva" [(ngModel)]="product.tva" />
+        </div>
+        <div class="field">
+          <label for="image_data">Image</label>
+          <p-fileUpload mode="basic" name="image_data" chooseLabel="Choose image" [auto]="false"
+                        [customUpload]="true" accept="image/*" (onSelect)="onFileUploadSelect($event)"></p-fileUpload>
+          <img *ngIf="previewUrl" [src]="previewUrl" alt="Image preview" style="width: 100px; height: 100px; object-fit: cover; margin-top: 10px;" />
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple label="Previous" icon="pi pi-arrow-left" class="p-button-text"
+              (click)="previousStep()" [disabled]="activeStep === 0"></button>
+      <button *ngIf="activeStep < steps.length - 1" pButton pRipple label="Next" icon="pi pi-arrow-right"
+              iconPos="right" class="p-button-text" (click)="nextStep()"></button>
+      <button *ngIf="activeStep === steps.length - 1" pButton pRipple label="Save" icon="pi pi-check"
+              class="p-button-text" (click)="saveProduct()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Delete Product Dialog -->
+  <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+      <span *ngIf="product">Are you sure you want to delete <b>{{ product.nom }}</b>?</span>
+    </div>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteProductDialog = false"></button>
+      <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDelete()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Delete Selected Products Dialog -->
+  <p-dialog [(visible)]="deleteProductsDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+      <span>Are you sure you want to delete the selected products?</span>
+    </div>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteProductsDialog = false"></button>
+      <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDeleteSelected()"></button>
+    </ng-template>
+  </p-dialog>
 
   <!-- Tasks -->
   <div class="col-12 xl:col-4">
@@ -263,17 +362,27 @@
           <tr>
             <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
             <th pSortableColumn="libelle">Libelle <p-sortIcon field="libelle"></p-sortIcon></th>
-            <th pSortableColumn="client_id.nom">Client <p-sortIcon field="client_id.nom"></p-sortIcon></th>
+            <th pSortableColumn="client.nom">Client <p-sortIcon field="client.nom"></p-sortIcon></th>
             <th pSortableColumn="etat">Status <p-sortIcon field="etat"></p-sortIcon></th>
             <th></th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-doc>
           <tr>
-            <td style="width:70px;">{{ doc.id }}</td>
-            <td style="width:200px;">{{ doc.libelle }}</td>
-            <td style="width:200px;">{{ doc.client_id?.nom || 'N/A' }}</td>
+            <td style="width:70px;">
+              <span class="p-column-title">ID</span>
+              {{ doc.id }}
+            </td>
+            <td style="width:200px;">
+              <span class="p-column-title">Libelle</span>
+              {{ doc.libelle }}
+            </td>
+            <td style="width:200px;">
+              <span class="p-column-title">Client</span>
+              {{ doc.client?.nom || 'N/A' }}
+            </td>
             <td style="width:150px;">
+              <span class="p-column-title">Status</span>
               <span [class]="'product-badge status-' + (doc.etat?.toLowerCase() || 'unknown')">{{ doc.etat || 'Unknown' }}</span>
             </td>
             <td style="width:100px;" class="text-center">

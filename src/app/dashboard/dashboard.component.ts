@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CategorieService } from '../demo/service/categorie.service';
 import { DataService } from '../demo/service/data.service';
 import { DocumentService } from '../demo/service/document.service';
@@ -10,11 +10,13 @@ import { Document } from '../demo/domain/document';
 import { Magasinier } from '../demo/domain/magasinier';
 import { Fournisseur } from '../demo/domain/fournisseur';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  providers: [MessageService, ConfirmationService]
 })
 export class DashboardComponent implements OnInit {
   clients: Client[] = [];
@@ -28,6 +30,22 @@ export class DashboardComponent implements OnInit {
   categoryChartOptions: any;
   activeNews = 1;
   selectedYear: number = 2025;
+  productDialog: boolean = false;
+  deleteProductDialog: boolean = false;
+  deleteProductsDialog: boolean = false;
+  product: Produit = {} as Produit;
+  selectedProducts: Produit[] = [];
+  submitted: boolean = false;
+  categories: any[] = [];
+  fournisseursList: any[] = [];
+  previewUrl: SafeUrl | null = null;
+  activeStep = 0;
+  steps = [
+    { label: 'Information' },
+    { label: 'Price' },
+    { label: 'Stock' },
+    { label: 'Image' }
+  ];
 
   constructor(
     private categorieService: CategorieService,
@@ -35,17 +53,33 @@ export class DashboardComponent implements OnInit {
     private documentService: DocumentService,
     private ligneDocumentService: LigneDocumentService,
     private magasinierService: MagasinierService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadData();
     this.setupCharts();
+    this.getCategories();
+    this.getFournisseurs();
   }
 
   loadData(): void {
+    // Fetch clients first
     this.dataService.getClients().subscribe(clients => {
       this.clients = clients;
+
+      // Fetch documents and map client data
+      this.documentService.getDocuments().subscribe(documents => {
+        this.documents = documents.map(doc => ({
+          ...doc,
+          etat: this.normalizeEtat(doc.etat),
+          client: this.clients.find(client => client.id === doc.client_id) || { nom: 'N/A' }
+        }));
+        this.updateChartData();
+      });
     });
 
     this.dataService.getProduits().subscribe(products => {
@@ -59,20 +93,13 @@ export class DashboardComponent implements OnInit {
       this.updateCategoryChartData();
     });
 
-    this.documentService.getDocuments().subscribe(documents => {
-      this.documents = documents.map(doc => ({
-        ...doc,
-        etat: this.normalizeEtat(doc.etat)
-      }));
-      this.updateChartData();
-    });
-
     this.magasinierService.getMagasiniers().subscribe(magasiniers => {
       this.magasiniers = magasiniers;
     });
 
     this.dataService.getFournisseurs().subscribe(fournisseurs => {
       this.fournisseurs = fournisseurs;
+      this.fournisseursList = fournisseurs; // Update fournisseursList for dropdown
     });
   }
 
@@ -99,7 +126,6 @@ export class DashboardComponent implements OnInit {
   }
 
   setupCharts(): void {
-    // Pie chart setup
     this.pieChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -114,7 +140,6 @@ export class DashboardComponent implements OnInit {
       }
     };
 
-    // Bar chart setup for products by category
     this.categoryChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -180,5 +205,200 @@ export class DashboardComponent implements OnInit {
         borderWidth: 1
       }]
     };
+  }
+
+  getCategories(): void {
+    this.categorieService.getCategories().subscribe(data => {
+      this.categories = data;
+    });
+  }
+
+  getFournisseurs(): void {
+    this.dataService.getFournisseurs().subscribe(data => {
+      this.fournisseursList = data;
+    });
+  }
+
+  openNewProduct(): void {
+    this.product = {} as Produit;
+    this.previewUrl = null;
+    this.submitted = false;
+    this.activeStep = 0;
+    this.productDialog = true;
+  }
+
+  editProduct(product: Produit): void {
+    this.product = { ...product };
+    this.previewUrl = null;
+    this.submitted = false;
+    this.activeStep = 0;
+    this.productDialog = true;
+  }
+
+  deleteProduct(produit: Produit): void {
+    this.product = { ...produit };
+    this.deleteProductDialog = true;
+  }
+
+  deleteSelectedProducts(): void {
+    if (this.selectedProducts?.length) {
+      this.deleteProductsDialog = true;
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No Selection',
+        detail: 'Please select products to delete.',
+        life: 3000
+      });
+    }
+  }
+
+  confirmDelete(): void {
+    this.deleteProductDialog = false;
+    this.dataService.deleteProduit(this.product.id).subscribe({
+      next: () => {
+        this.products = this.products.filter(val => val.id !== this.product.id);
+        this.updateCategoryChartData();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Successful',
+          detail: 'Product deleted',
+          life: 3000
+        });
+        this.product = {} as Produit;
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err.error.message || 'Failed to delete product',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  confirmDeleteSelected(): void {
+    this.deleteProductsDialog = false;
+    if (this.selectedProducts?.length) {
+      this.selectedProducts.forEach(product => {
+        this.dataService.deleteProduit(product.id).subscribe({
+          next: () => {
+            this.products = this.products.filter(val => val.id !== product.id);
+          },
+          error: () => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: `Failed to delete product ${product.nom}`,
+              life: 3000
+            });
+          }
+        });
+      });
+      this.updateCategoryChartData();
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Successful',
+        detail: 'Selected products deleted',
+        life: 3000
+      });
+      this.selectedProducts = [];
+    }
+  }
+
+  saveProduct(): void {
+    this.submitted = true;
+    if (!this.product.nom || !this.product.categorie) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('nom', this.product.nom);
+    formData.append('description', this.product.description ?? '');
+    formData.append('prix', String(this.product.prix ?? 0));
+    formData.append('quantitystock', String(this.product.quantitystock ?? 0));
+    formData.append('seuil', String(this.product.seuil ?? 0));
+    formData.append('categorie_id', String(this.product.categorie?.id ?? ''));
+    formData.append('prix_achat', String(this.product.prix_achat ?? 0));
+    formData.append('prix_vente_ht', String(this.product.prix_vente_ht ?? 0));
+    formData.append('prix_vente_ttc', String(this.product.prix_vente_ttc ?? 0));
+    formData.append('remise_maximale', String(this.product.remise_maximale ?? 0));
+    formData.append('quantite', String(this.product.quantite ?? 0));
+    formData.append('tva', String(this.product.tva ?? 0));
+    formData.append('inventoryStatus', this.product.inventoryStatus ?? '');
+    formData.append('fournisseur_id', String(this.product.fournisseur ?? ''));
+
+    if (this.product.image_data instanceof File) {
+      formData.append('image_data', this.product.image_data, this.product.image_data.name);
+    }
+
+    if (this.product.id) {
+      this.dataService.updateProduitForm(this.product.id, formData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Product updated',
+            life: 3000
+          });
+          this.loadData();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to update product',
+            life: 3000
+          });
+        }
+      });
+    } else {
+      this.dataService.insertProduitForm(formData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Successful',
+            detail: 'Product created',
+            life: 3000
+          });
+          this.loadData();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Failed to create product',
+            life: 3000
+          });
+        }
+      });
+    }
+
+    this.productDialog = false;
+    this.product = {} as Produit;
+    this.previewUrl = null;
+  }
+
+  onFileUploadSelect(event: any): void {
+    const file = event.files[0];
+    if (file) {
+      this.product.image_data = file;
+      const objectUrl = URL.createObjectURL(file);
+      this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      this.cdRef.detectChanges();
+    }
+  }
+
+  nextStep(): void {
+    if (this.activeStep < this.steps.length - 1) this.activeStep++;
+  }
+
+  previousStep(): void {
+    if (this.activeStep > 0) this.activeStep--;
+  }
+
+  onStepChange(event: number): void {
+    this.activeStep = event;
   }
 }
