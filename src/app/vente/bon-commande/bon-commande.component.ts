@@ -446,15 +446,26 @@ export class BonCommandeComponent implements OnInit {
     });
   }
    
-  validerEtPasserALivraison() {
-    this.saveBonDeCommandeAsDocument();
-          setTimeout(() => {
-
-    console.log(this.savedDoc['data'].id)
-    this.router.navigate(['vente/bon-livraison/', this.savedDoc['data'].id]);
-          }, 2000); // délai en millisecondes
- 
-  }
+validerEtPasserALivraison() {
+  this.saveBonDeCommandeAsDocument();
+  setTimeout(() => {
+    this.confirmationService.confirm({
+      message: 'Voulez-vous transformer ce bon de commande en bon de livraison ?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.router.navigate(['vente/bon-livraison/', this.savedDoc['data'].id]);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Annulé',
+          detail: 'Transformation annulée'
+        });
+      }
+    });
+  }, 2000); 
+}
 
   sauvegarderBonCommande() {
     console.log('Bon de commande validé et sauvegardé');
@@ -483,12 +494,8 @@ produit.prixTotal = produit.quantite * produit.produit.prix * (1 + produit.tva /
   }
   
 
-  imprimerDevis(id: number) {
-    if (id === 0) {
-      this.saveBonDeCommandeAsDocument();
-      return;
-    }
-    console.log("ID à imprimer :", id);
-    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
   }
 }

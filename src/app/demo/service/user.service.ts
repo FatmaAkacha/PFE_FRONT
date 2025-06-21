@@ -10,6 +10,8 @@ import { Role } from '../domain/role';
 export class UserService {
   private apiUrlUser = 'http://127.0.0.1:8000/api/users';
   private apiUrlRole = 'http://127.0.0.1:8000/api/roles'; 
+  private apiUrl = 'http://localhost:8000/api/user'; // adapte l'URL si besoin
+
 
   constructor(private httpClient: HttpClient) {}
 
@@ -98,4 +100,13 @@ export class UserService {
       headers: this.getHeaders()
     });
   }
+
+    getUser(): Observable<any> {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
+    });
+    return this.httpClient.get(this.apiUrl, { headers });
+  }
+
 }

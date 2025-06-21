@@ -35,3 +35,12 @@ export function initializeKeycloak(keycloak: KeycloakService) {
         console.error('Erreur lors de l\'initialisation de Keycloak ❌', error);
       });
 }
+
+export function logout(keycloak: KeycloakService) {
+  keycloak.logout().then(() => {
+    localStorage.removeItem('access_token');
+    console.log('Déconnexion réussie et token supprimé du localStorage ✅');
+  }).catch((error) => {
+    console.error('Erreur lors de la déconnexion Keycloak ❌', error);
+  });
+}

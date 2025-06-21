@@ -1,5 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {AppMainComponent} from './app.main.component';
+import { logout } from './app-init';
+import { KeycloakService } from 'keycloak-angular';
+import { UserService } from './demo/service/user.service';
 
 @Component({
     selector: 'app-topbar',
@@ -246,8 +249,8 @@ import {AppMainComponent} from './app.main.component';
                                 <img src="assets/layout/images/topbar/avatar-eklund.png" alt="mirage-layout" />
                             </span>
 								<span class="profile-info-wrapper">
-                                <h3>Olivia Eklund</h3>
-                                <span>Design</span>
+                                <h3>{{ user?.username }}</h3>
+                                <span>{{ user?.role.name }}</span>
                             </span>
 							</a>
 							<ul class="profile-item-submenu fadeInDown">
@@ -288,7 +291,7 @@ import {AppMainComponent} from './app.main.component';
 									<i class="pi pi-angle-right"></i>
 								</li>
 								<li class="layout-submenu-footer">
-									<button class="signout-button">Sign Out</button>
+									<button class="signout-button" (click)="onLogout()">Sign Out</button>
 									<button class="buy-mirage-button">Buy Mirage</button>
 								</li>
 							</ul>
@@ -307,7 +310,7 @@ import {AppMainComponent} from './app.main.component';
                                 <img src="assets/layout/images/topbar/avatar-eklund.png" alt="mirage-layout" />
                             </span>
 								<span class="profile-info-wrapper">
-                                <h3>Olivia Eklund</h3>
+                                <h3>{{ user?.username }}</h3>
                                 <span>Design</span>
                             </span>
 							</a>
@@ -319,8 +322,8 @@ import {AppMainComponent} from './app.main.component';
 									</div>
 									<div class="profile">
 										<img src="assets/layout/images/topbar/avatar-eklund.png" alt="mirage-layout" width="45" />
-										<h1>Olivia Eklund</h1>
-										<span>Design</span>
+										<h1>{{ user?.username }}</h1>
+										<span>{{ user?.role.name }}</span>
 									</div>
 								</li>
 								<li>
@@ -348,7 +351,7 @@ import {AppMainComponent} from './app.main.component';
 									<i class="pi pi-angle-right"></i>
 								</li>
 								<li class="layout-submenu-footer">
-									<button class="signout-button">Sign Out</button>
+									<button class="signout-button" (click)="onLogout()">Sign Out</button>
 									<button class="buy-mirage-button">Buy Mirage</button>
 								</li>
 							</ul>
@@ -359,15 +362,35 @@ import {AppMainComponent} from './app.main.component';
         </div>
     `
 })
-export class AppTopBarComponent {
+export class AppTopBarComponent implements OnInit {
 
     activeItem: number;
+	  user: any;
+  roles: any;
 
-    constructor(public appMain: AppMainComponent) {}
+
+    constructor(public appMain: AppMainComponent, private keycloak: KeycloakService, private userService: UserService) {}
 
     mobileMegaMenuItemClick(index) {
         this.appMain.megaMenuMobileClick = true;
         this.activeItem = this.activeItem === index ? null : index;
     }
+
+		    onLogout() {
+        logout(this.keycloak);
+    }
+
+	  ngOnInit() {
+    this.userService.getUser().subscribe({
+      next: (data) => {
+		console.log('Utilisateur récupéré', data);
+		       this.user = data.user;
+      },
+      error: (err) => {
+        console.error('Erreur récupération utilisateur', err);
+      }
+    });
+  }
+
 
 }
