@@ -40,7 +40,7 @@ export class UserComponent implements OnInit {
     });
   }
   getRoleName(roleId: number): string {
-    return this.roles.find(r => r.id === roleId)?.name || 'Unknown';
+    return this.roles.find(r => r.id === roleId)?.name || 'Inconnue';
   }
   
 

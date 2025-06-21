@@ -7,7 +7,7 @@
       </div>
       <div class="col-6 overview-box-text">
         <h5>Clients</h5>
-        <span>{{ clients.length }} total</span>
+        <span>{{ clients.length }} totales</span>
       </div>
       <div class="col-3 overview-box-status">
         {{ clients.length }}
@@ -20,8 +20,8 @@
         <img src="assets/images/produits.png" alt="products-icon" />
       </div>
       <div class="col-6 overview-box-text">
-        <h5>Products</h5>
-        <span>{{ products.length }} in stock</span>
+        <h5>Produits</h5>
+        <span>{{ products.length }} en stock</span>
       </div>
       <div class="col-3 overview-box-status">
         {{ products.length }}
@@ -35,7 +35,7 @@
       </div>
       <div class="col-6 overview-box-text">
         <h5>Documents</h5>
-        <span>{{ documents.length }} total</span>
+        <span>{{ documents.length }} totales</span>
       </div>
       <div class="col-3 overview-box-status">
         {{ documents.length }}
@@ -49,7 +49,7 @@
       </div>
       <div class="col-6 overview-box-text">
         <h5>Fournisseurs</h5>
-        <span>{{ fournisseurs.length }} total</span>
+        <span>{{ fournisseurs.length }} totales</span>
       </div>
       <div class="col-3 overview-box-status">
         {{ fournisseurs.length }}
@@ -62,7 +62,7 @@
     <div class="card widget-statistics">
       <div class="grid">
         <div class="col-6 md:col-8">
-          <h5>Document Status Distribution</h5>
+          <h5>Distribution du statut des documents</h5>
         </div>
         <div class="col-6 md:col-4 dropdown">
           <p-dropdown [options]="[{label: '2025', value: 2025}, {label: '2024', value: 2024}]" [(ngModel)]="selectedYear" (onChange)="updateChartData()"></p-dropdown>
@@ -75,7 +75,7 @@
   <!-- Recent Documents -->
   <div class="col-12 xl:col-6">
     <div class="card widget-recent-documents">
-      <h5>Recent Documents</h5>
+      <h5>Documents récents</h5>
       <div class="recent-document-card" *ngFor="let doc of documents | slice:0:4">
         <div class="grid grid-nogutter align-items-center">
           <div class="col-2 text-center">
@@ -95,20 +95,17 @@
   <!-- Products Table -->
   <div class="col-12 xl:col-8">
     <div class="card orders-table">
-      <h5>Products Table</h5>
+      <h5>Table des Produits</h5>
       <p-table [value]="products" [paginator]="true" [rows]="5" styleClass="p-datatable-customers">
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id">ID
-              <p-sortIcon field="id"></p-sortIcon>
-            </th>
-            <th pSortableColumn="categorie.nom">Category
+            <th pSortableColumn="categorie.nom">Categorie
               <p-sortIcon field="categorie.nom"></p-sortIcon>
             </th>
-            <th pSortableColumn="prix_vente_ttc">Price
+            <th pSortableColumn="prix_vente_ttc">Prix
               <p-sortIcon field="prix_vente_ttc"></p-sortIcon>
             </th>
-            <th pSortableColumn="inventoryStatus">Status
+            <th pSortableColumn="inventoryStatus">Statut
               <p-sortIcon field="inventoryStatus"></p-sortIcon>
             </th>
             <th></th>
@@ -116,21 +113,17 @@
         </ng-template>
         <ng-template pTemplate="body" let-product>
           <tr>
-            <td style="width:70px;">
-              <span class="p-column-title">Id</span>
-              {{ product.id }}
-            </td>
             <td style="width:200px;">
-              <span class="p-column-title">Category</span>
+              <span class="p-column-title">Categorie</span>
               {{ product.categorie?.nom || 'N/A' }}
             </td>
             <td style="width:200px;">
-              <span class="p-column-title">Price</span>
+              <span class="p-column-title">Prix</span>
               {{ product.prix_vente_ttc | currency:'USD' }}
             </td>
             <td style="width:150px;">
-              <span class="p-column-title">Status</span>
-              <span [class]="'product-badge status-' + (product.inventoryStatus?.toLowerCase() || 'unknown')">{{ product.inventoryStatus || 'Unknown' }}</span>
+              <span class="p-column-title">Statut</span>
+              <span [class]="'product-badge status-' + (product.inventoryStatus?.toLowerCase() || 'inconnue')">{{ product.inventoryStatus || 'Inconnue' }}</span>
             </td>
             <td style="width:100px;" class="text-center">
               <button pButton type="button" icon="pi pi-search"></button>
@@ -146,10 +139,10 @@
     <div class="card widget-store-items">
       <p-toast></p-toast>
       <div class="store-header">
-        <h5>Store Items</h5>
+        <h5>Articles du magasin</h5>
         <div class="store-actions">
-          <button pButton pRipple label="Add Item" icon="pi pi-plus" class="p-button-success p-button-sm" (click)="openNewProduct()"></button>
-          <button pButton pRipple label="Delete Selected" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
+          <button pButton pRipple label="Ajouter articles" icon="pi pi-plus" class="p-button-success p-button-sm" (click)="openNewProduct()"></button>
+          <button pButton pRipple label="Supprimer l'article séléctionné" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
         </div>
       </div>
       <div class="store-grid">
@@ -177,19 +170,19 @@
       <p-steps [model]="steps" [activeIndex]="activeStep" (activeIndexChange)="onStepChange($event)" [readonly]="true"></p-steps>
       <div *ngIf="activeStep === 0">
         <div class="field">
-          <label for="nom">Name <span class="required-star">*</span></label>
+          <label for="nom">Nom <span class="required-star">*</span></label>
           <input type="text" pInputText id="nom" [(ngModel)]="product.nom" required autofocus
                  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.nom }" />
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.nom">Name is required.</small>
         </div>
         <div class="field">
-          <label for="categorie">Category <span class="required-star">*</span></label>
+          <label for="categorie">Categorie <span class="required-star">*</span></label>
           <p-dropdown inputId="categorie" [options]="categories" optionLabel="nom" placeholder="Select a category"
                       [(ngModel)]="product.categorie" [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.categorie }"></p-dropdown>
           <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.categorie">Category is required.</small>
         </div>
         <div class="field">
-          <label for="fournisseur">Supplier <span class="required-star">*</span></label>
+          <label for="fournisseur">Fournisseurs <span class="required-star">*</span></label>
           <p-dropdown inputId="fournisseur" [options]="fournisseurs" optionLabel="name" optionValue="id"
                       placeholder="Select a supplier" [(ngModel)]="product.fournisseur"></p-dropdown>
         </div>
@@ -200,42 +193,42 @@
       </div>
       <div *ngIf="activeStep === 1">
         <div class="field">
-          <label for="prix">Price</label>
+          <label for="prix">Prix</label>
           <input type="number" pInputText id="prix" [(ngModel)]="product.prix" />
         </div>
         <div class="field">
-          <label for="prix_achat">Purchase Price</label>
+          <label for="prix_achat">Prix ​​d'achat</label>
           <input type="number" pInputText id="prix_achat" [(ngModel)]="product.prix_achat" />
         </div>
         <div class="field">
-          <label for="prix_vente_ht">Sale Price HT</label>
+          <label for="prix_vente_ht">Prix ​​de vente HT</label>
           <input type="number" pInputText id="prix_vente_ht" [(ngModel)]="product.prix_vente_ht" />
         </div>
         <div class="field">
-          <label for="prix_vente_ttc">Sale Price TTC</label>
+          <label for="prix_vente_ttc">Prix ​​de vente TTC</label>
           <input type="number" pInputText id="prix_vente_ttc" [(ngModel)]="product.prix_vente_ttc" />
         </div>
         <div class="field">
-          <label for="remise_maximale">Max Discount (%)</label>
+          <label for="remise_maximale">Remise maximale (%)</label>
           <input type="number" pInputText id="remise_maximale" [(ngModel)]="product.remise_maximale" />
         </div>
       </div>
       <div *ngIf="activeStep === 2">
         <div class="field">
-          <label for="inventoryStatus">Stock Status</label>
+          <label for="inventoryStatus">État des stocks</label>
           <p-dropdown inputId="inventoryStatus" [options]="['INSTOCK', 'OUTOFSTOCK', 'LOWSTOCK']"
                       [(ngModel)]="product.inventoryStatus" placeholder="Select status"></p-dropdown>
         </div>
         <div class="field">
-          <label for="quantitystock">Current Stock</label>
+          <label for="quantitystock">Stock actuel</label>
           <input type="number" pInputText id="quantitystock" [(ngModel)]="product.quantitystock" />
         </div>
         <div class="field">
-          <label for="quantite">Order Quantity</label>
+          <label for="quantite">Quantité commandée</label>
           <input type="number" pInputText id="quantite" [(ngModel)]="product.quantite" />
         </div>
         <div class="field">
-          <label for="seuil">Alert Threshold</label>
+          <label for="seuil">Seuil d'alerte</label>
           <input type="number" pInputText id="seuil" [(ngModel)]="product.seuil" />
         </div>
       </div>
@@ -266,7 +259,7 @@
   <p-dialog [(visible)]="deleteProductDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
     <div class="flex align-items-center justify-content-center">
       <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-      <span *ngIf="product">Are you sure you want to delete <b>{{ product.nom }}</b>?</span>
+      <span *ngIf="product">Êtes-vous sûr de vouloir supprimer <b>{{ product.nom }}</b>?</span>
     </div>
     <ng-template pTemplate="footer">
       <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteProductDialog = false"></button>
@@ -278,11 +271,58 @@
   <p-dialog [(visible)]="deleteProductsDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
     <div class="flex align-items-center justify-content-center">
       <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
-      <span>Are you sure you want to delete the selected products?</span>
+      <span>Êtes-vous sûr de vouloir supprimer les produits sélectionnés ?</span>
     </div>
     <ng-template pTemplate="footer">
       <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteProductsDialog = false"></button>
       <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDeleteSelected()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Document Dialog -->
+  <p-dialog [(visible)]="documentDialog" [style]="{ width: '600px' }" header="Détails du document" [modal]="true" class="p-fluid">
+    <ng-template pTemplate="content">
+      <div class="field">
+        <label for="libelle">Libellé <span class="required-star">*</span></label>
+        <input type="text" pInputText id="libelle" [(ngModel)]="document.libelle" required autofocus
+               [ngClass]="{ 'ng-invalid ng-dirty': submitted && !document.libelle }" />
+        <small class="ng-dirty ng-invalid" *ngIf="submitted && !document.libelle">Le libellé est requis.</small>
+      </div>
+      <div class="field">
+        <label for="client">Client</label>
+        <p-dropdown inputId="client" [options]="clients" optionLabel="nom" optionValue="id"
+                    placeholder="Sélectionner un client" [(ngModel)]="document.client_id"></p-dropdown>
+      </div>
+       <div class="field">
+      <label for="preparateur">Préparateur <span class="required-star">*</span></label>
+      <p-dropdown inputId="preparateur" [options]="magasiniers" optionLabel="nom" optionValue="id"
+                  placeholder="Sélectionner un préparateur" [(ngModel)]="document.preparateur_id"></p-dropdown>    
+        </div>
+      <div class="field">
+        <label for="etat">Statut</label>
+        <p-dropdown inputId="etat" [options]="['EnCours', 'Validé', 'Annulé']" placeholder="Sélectionner un statut"
+                    [(ngModel)]="document.etat"></p-dropdown>
+      </div>
+      <div class="field">
+        <label for="dateDocument">Date du document</label>
+        <input type="date" pInputText id="dateDocument" [(ngModel)]="document.dateDocument" />
+      </div>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="documentDialog = false"></button>
+      <button pButton pRipple label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocument()"></button>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Delete Document Dialog -->
+  <p-dialog [(visible)]="deleteDocumentDialog" header="Confirmer" [modal]="true" [style]="{ width: '450px' }">
+    <div class="flex align-items-center justify-content-center">
+      <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+      <span *ngIf="document">Êtes-vous sûr de vouloir supprimer <b>{{ document.libelle }}</b> ?</span>
+    </div>
+    <ng-template pTemplate="footer">
+      <button pButton pRipple icon="pi pi-times" class="p-button-text" (click)="deleteDocumentDialog = false"></button>
+      <button pButton pRipple icon="pi pi-check" class="p-button-text" (click)="confirmDeleteDocument()"></button>
     </ng-template>
   </p-dialog>
 
@@ -291,10 +331,10 @@
     <div class="card widget-tasks">
       <div class="card-header">
         <div class="title">
-          <h5>Tasks</h5>
+          <h5>Tâches</h5>
         </div>
         <div class="task-info">
-          <span>You have</span><span class="highlighted"> {{ documents.length }} pending</span><span> documents</span>
+          <span>Tu as</span><span class="highlighted"> {{ documents.length }} documents</span><span> en attente</span>
         </div>
       </div>
       <ul class="checkboxes">
@@ -318,7 +358,7 @@
   <!-- Products by Category Chart -->
   <div class="col-12 xl:col-4">
     <div class="card widget-products-by-category">
-      <h5>Products by Category</h5>
+      <h5>Produits par catégorie</h5>
       <p-chart id="category-chart" type="bar" [data]="categoryChartData" [options]="categoryChartOptions"></p-chart>
     </div>
   </div>
@@ -326,7 +366,7 @@
   <!-- Team Members (Magasiniers) -->
   <div class="col-12 xl:col-4">
     <div class="card widget-team">
-      <h5>Team Members</h5>
+      <h5>Membres de l'équipe</h5>
       <ul>
         <li *ngFor="let magasinier of magasiniers | slice:0:5">
           <div class="grid member">
@@ -356,23 +396,18 @@
   <!-- Documents Table -->
   <div class="col-12 xl:col-12">
     <div class="card orders-table">
-      <h5>Documents Table</h5>
+      <h5>Tableau des documents</h5>
       <p-table [value]="documents" [paginator]="true" [rows]="5" styleClass="p-datatable-customers">
         <ng-template pTemplate="header">
           <tr>
-            <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
             <th pSortableColumn="libelle">Libelle <p-sortIcon field="libelle"></p-sortIcon></th>
             <th pSortableColumn="client.nom">Client <p-sortIcon field="client.nom"></p-sortIcon></th>
-            <th pSortableColumn="etat">Status <p-sortIcon field="etat"></p-sortIcon></th>
-            <th></th>
+            <th pSortableColumn="etat">Statut <p-sortIcon field="etat"></p-sortIcon></th>
+            <th>Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-doc>
           <tr>
-            <td style="width:70px;">
-              <span class="p-column-title">ID</span>
-              {{ doc.id }}
-            </td>
             <td style="width:200px;">
               <span class="p-column-title">Libelle</span>
               {{ doc.libelle }}
@@ -382,11 +417,12 @@
               {{ doc.client?.nom || 'N/A' }}
             </td>
             <td style="width:150px;">
-              <span class="p-column-title">Status</span>
-              <span [class]="'product-badge status-' + (doc.etat?.toLowerCase() || 'unknown')">{{ doc.etat || 'Unknown' }}</span>
+              <span class="p-column-title">Statut</span>
+              <span [class]="'product-badge status-' + (doc.etat?.toLowerCase() || 'Inconnue')">{{ doc.etat || 'Inconnue' }}</span>
             </td>
-            <td style="width:100px;" class="text-center">
-              <button pButton type="button" icon="pi pi-search"></button>
+            <td style="width:150px;" class="text-center">
+              <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-success" (click)="editDocument(doc)"></button>
+              <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger" (click)="deleteDocument(doc)"></button>
             </td>
           </tr>
         </ng-template>

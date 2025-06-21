@@ -46,6 +46,9 @@ export class DashboardComponent implements OnInit {
     { label: 'Stock' },
     { label: 'Image' }
   ];
+  documentDialog: boolean = false;
+  deleteDocumentDialog: boolean = false;
+  document: Document = {} as Document;
 
   constructor(
     private categorieService: CategorieService,
@@ -67,11 +70,8 @@ export class DashboardComponent implements OnInit {
   }
 
   loadData(): void {
-    // Fetch clients first
     this.dataService.getClients().subscribe(clients => {
       this.clients = clients;
-
-      // Fetch documents and map client data
       this.documentService.getDocuments().subscribe(documents => {
         this.documents = documents.map(doc => ({
           ...doc,
@@ -99,12 +99,12 @@ export class DashboardComponent implements OnInit {
 
     this.dataService.getFournisseurs().subscribe(fournisseurs => {
       this.fournisseurs = fournisseurs;
-      this.fournisseursList = fournisseurs; // Update fournisseursList for dropdown
+      this.fournisseursList = fournisseurs;
     });
   }
 
   normalizeEtat(etat: string | undefined): string {
-    if (!etat) return 'UNKNOWN';
+    if (!etat) return 'Inconnue';
     switch (etat.toLowerCase()) {
       case 'en cours':
         return 'EnCours';
@@ -113,7 +113,7 @@ export class DashboardComponent implements OnInit {
       case 'annulé':
         return 'Annulé';
       default:
-        return 'UNKNOWN';
+        return 'Inconnue';
     }
   }
 
@@ -170,7 +170,7 @@ export class DashboardComponent implements OnInit {
   }
 
   updateChartData(): void {
-    const statuses = ['EnCours', 'Validé', 'Annulé', 'UNKNOWN'];
+    const statuses = ['EnCours', 'Validé', 'Annulé', 'Inconnue'];
     const statusCounts = statuses.map(status => 
       this.documents.filter(doc => doc.etat === status && new Date(doc.dateDocument).getFullYear() === this.selectedYear).length
     );
@@ -400,5 +400,98 @@ export class DashboardComponent implements OnInit {
 
   onStepChange(event: number): void {
     this.activeStep = event;
+  }
+
+  editDocument(doc: Document): void {
+    this.document = { ...doc, dateDocument: doc.dateDocument ? new Date(doc.dateDocument).toISOString().split('T')[0] : '' };
+    this.documentDialog = true;
+  }
+
+  deleteDocument(doc: Document): void {
+    this.document = { ...doc };
+    this.deleteDocumentDialog = true;
+  }
+
+  confirmDeleteDocument(): void {
+    this.deleteDocumentDialog = false;
+    this.documentService.deleteDocument(this.document.id).subscribe({
+      next: () => {
+        this.documents = this.documents.filter(val => val.id !== this.document.id);
+        this.updateChartData();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Succès',
+          detail: 'Document supprimé',
+          life: 3000
+        });
+        this.document = {} as Document;
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erreur',
+          detail: err.error.message || 'Échec de la suppression du document',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  saveDocument(): void {
+    this.submitted = true;
+    if (!this.document.libelle) {
+      return;
+    }
+
+    const documentData = { ...this.document };
+    if (typeof documentData.dateDocument === 'string') {
+      documentData.dateDocument = new Date(documentData.dateDocument).toISOString();
+    }
+
+    if (this.document.id) {
+      this.documentService.updateDocument(this.document.id, documentData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Document mis à jour',
+            life: 3000
+          });
+          this.loadData();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Échec de la mise à jour du document',
+            life: 3000
+          });
+        }
+      });
+    } else {
+      this.documentService.saveDocument(documentData).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Document créé',
+            life: 3000
+          });
+          this.loadData();
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Échec de la création du document',
+            life: 3000
+          });
+        }
+      });
+    }
+
+    this.documentDialog = false;
+    this.document = {} as Document;
+    this.submitted = false;
   }
 }
