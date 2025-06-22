@@ -246,7 +246,7 @@ import { UserService } from './demo/service/user.service';
 						<li #profile class="topbar-item profile-item" [ngClass]="{'active-topmenuitem': appMain.activeTopbarItem === profile}">
 							<a href="#" (click)="appMain.onTopbarItemClick($event,profile)">
                             <span class="profile-image-wrapper">
-                                <img src="assets/layout/images/topbar/avatar-eklund.png" alt="mirage-layout" />
+								<img src="assets/images/user.png" alt="users-icon" />
                             </span>
 								<span class="profile-info-wrapper">
                                 <h3>{{ user?.username }}</h3>

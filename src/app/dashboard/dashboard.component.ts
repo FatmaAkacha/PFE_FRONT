@@ -158,8 +158,8 @@ export class DashboardComponent implements OnInit {
         x: {
           ticks: {
             autoSkip: false,
-            maxRotation: 45,
-            minRotation: 45
+            maxRotation: 30,
+            minRotation: 30
           }
         }
       }
@@ -196,7 +196,7 @@ export class DashboardComponent implements OnInit {
     const data = Object.values(categoryCounts);
 
     this.categoryChartData = {
-      labels: labels.length ? labels : ['No Categories'],
+      labels: labels.length ? labels : ['Aucune catégorie'],
       datasets: [{
         label: 'Products by Category',
         data: data.length ? data : [0],
