@@ -10,7 +10,7 @@ import { Document } from './demo/domain/document';
     <div class="layout-rightpanel" (click)="appMain.onRightPanelClick($event)">
       <div class="right-panel-header">
         <div class="title">
-          <span>Today</span>
+          <span>Aujourd'hui</span>
           <h1>{{ currentDate | date:'EEEE, d MMM' }}</h1>
         </div>
         <a href="#" class="rightpanel-exit-button" (click)="appMain.onRightPanelClose($event)">
@@ -22,10 +22,10 @@ import { Document } from './demo/domain/document';
           <div class="tasks">
             <div class="tasks-header">
               <div class="title">
-                <h1>Tasks</h1>
+                <h1>Tâches</h1>
               </div>
               <div class="tasks-info">
-                <span>You have</span><span class="highlighted"> {{ documents.length }} tasks</span><span> today</span>
+                <span>Tu as</span><span class="highlighted"> {{ documents.length }} tâches</span><span> today</span>
               </div>
             </div>
             <ul class="tasks-list">
@@ -41,20 +41,20 @@ import { Document } from './demo/domain/document';
                 </div>
               </li>
               <li *ngIf="!documents.length" class="tasks-list-item">
-                <p>No tasks available</p>
+                <p>Aucune tâche disponible</p>
               </li>
             </ul>
           </div>
         </div>
         <div class="right-panel-content-row">
           <div class="calendar">
-            <h1>Calendar</h1>
+            <h1>Calendrier</h1>
             <p-calendar [inline]="true"></p-calendar>
           </div>
         </div>
         <div class="right-panel-content-row">
 					<div class="weather">
-						<h1>Weather</h1>
+						<h1>Météo</h1>
 						<ul class="weather-list">
 							<li class="weather-list-item">
 								<div class="time-location">

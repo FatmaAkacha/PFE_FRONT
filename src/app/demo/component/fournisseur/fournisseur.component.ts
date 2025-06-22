@@ -153,13 +153,13 @@ export class FournisseurComponent implements OnInit {
   
       if (this.fournisseur.id) {
         this.fournisseurService.updateFournisseurForm(this.fournisseur.id, formData).subscribe(() => {
-          this.messageService.add({ severity: 'succéss', summary: 'Successful', detail: 'Fournisseur mis à jour', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur mis à jour', life: 3000 });
           this.refreshFournisseurList();
         });
       } else {
         this.fournisseurService.insertFournisseurForm(formData).subscribe((newFournisseur: Fournisseur) => {
           this.fournisseurs.push(newFournisseur);
-          this.messageService.add({ severity: 'succéss', summary: 'Successful', detail: 'Fournisseur ajouté', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur ajouté', life: 3000 });
           this.refreshFournisseurList();
         });
       }

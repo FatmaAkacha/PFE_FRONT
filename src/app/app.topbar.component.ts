@@ -12,7 +12,7 @@ import { UserService } from './demo/service/user.service';
                 <div class="layout-topbar-left">
 					<div class="layout-topbar-logo-wrapper">
 						<a href="#" class="layout-topbar-logo">
-							<img src="assets/layout/images/logo-mirage@2x.png" alt="mirage-layout" />
+							<img src="assets/images/asm.png" alt="mirage-layout" />
 							<span class="app-name">Application</span>
 						</a>
 					</div>
@@ -29,80 +29,6 @@ import { UserService } from './demo/service/user.service';
 						<i class="pi pi-ellipsis-v"></i>
 					</a>
 
-					<div class="layout-megamenu-wrapper">
-						<a class="layout-megamenu-button" href="#" (click)="appMain.onMegaMenuButtonClick($event)">
-							<i class="pi pi-comment"></i>
-							Mega Menu
-						</a>
-						<ul class="layout-megamenu" [ngClass]="{'layout-megamenu-active fadeInDown': appMain.megaMenuActive}"
-                            (click)="appMain.onMegaMenuClick($event)">
-							<li [ngClass]="{'active-topmenuitem': activeItem === 1}" (click)="mobileMegaMenuItemClick(1)">
-								<a href="#">JavaServer Faces <i class="pi pi-angle-down"></i></a>
-								<ul>
-									<li class="active-row ">
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>PrimeFaces</h5>
-                                        <span>UI Components for JSF</span>
-                                    </span>
-									</li>
-									<li>
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>Premium Templates</h5>
-                                        <span>UI Components for JSF</span>
-                                    </span>
-									</li>
-									<li>
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>Extensions</h5>
-                                        <span>UI Components for JSF</span>
-                                    </span>
-									</li>
-								</ul>
-							</li>
-							<li [ngClass]="{'active-topmenuitem': activeItem === 2}" (click)="mobileMegaMenuItemClick(2)">
-								<a href="#">Angular <i class="pi pi-angle-down"></i></a>
-								<ul>
-									<li>
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>PrimeNG</h5>
-                                        <span>UI Components for Angular</span>
-                                    </span>
-
-									</li>
-									<li>
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>Premium Templates</h5>
-                                        <span>UI Components for Angular</span>
-                                    </span>
-									</li>
-								</ul>
-							</li>
-							<li [ngClass]="{'active-topmenuitem': activeItem === 3}" (click)="mobileMegaMenuItemClick(3)">
-								<a href="#">React <i class="pi pi-angle-down"></i></a>
-								<ul>
-									<li>
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>PrimeReact</h5>
-                                        <span>UI Components for React</span>
-                                    </span>
-									</li>
-									<li class="active-row">
-										<i class="pi pi-circle-on"></i>
-										<span>
-                                        <h5>Premium Templates</h5>
-                                        <span>UI Components for React</span>
-                                    </span>
-									</li>
-								</ul>
-							</li>
-						</ul>
-					</div>
                 </div>
                 <div class="layout-topbar-right fadeInDown">
 					<ul class="layout-topbar-actions">
@@ -113,7 +39,7 @@ import { UserService } from './demo/service/user.service';
 							<ul class="search-item-submenu fadeInDown" (click)="appMain.topbarItemClick = true">
 								<li>
                                     <span class="md-inputfield search-input-wrapper">
-                                        <input pInputText placeholder="Search..."/>
+                                        <input pInputText placeholder="Recherche..."/>
                                         <i class="pi pi-search"></i>
                                     </span>
                                 </li>
@@ -133,114 +59,11 @@ import { UserService } from './demo/service/user.service';
 							</ul>
 						</li>
 
-						<li #message class="topbar-item" [ngClass]="{'active-topmenuitem': appMain.activeTopbarItem === message}">
-							<a href="#" (click)="appMain.onTopbarItemClick($event,message)">
-								<i class="topbar-icon pi pi-inbox"></i>
-							</a>
-							<ul class="fadeInDown">
-								<li class="layout-submenu-header">
-									<h1>Messages</h1>
-									<span>Today, you have new 4 messages</span>
-								</li>
-								<li class="layout-submenu-item">
-									<img src="assets/layout/images/topbar/avatar-cayla.png" alt="mirage-layout" width="35" />
-									<div class="menu-text">
-										<p>Override the digital divide</p>
-										<span>Cayla Brister</span>
-									</div>
-									<i class="pi pi-angle-right"></i>
-								</li>
-								<li class="layout-submenu-item">
-									<img src="assets/layout/images/topbar/avatar-gabie.png" alt="mirage-layout" width="35" />
-									<div class="menu-text">
-										<p>Nanotechnology immersion</p>
-										<span>Gabie Sheber</span>
-									</div>
-									<i class="pi pi-angle-right"></i>
-								</li>
-								<li class="layout-submenu-item">
-									<img src="assets/layout/images/topbar/avatar-gaspar.png" alt="mirage-layout" width="35" />
-									<div class="menu-text">
-										<p>User generated content</p>
-										<span>Gaspar Antunes</span>
-									</div>
-									<i class="pi pi-angle-right"></i>
-								</li>
-								<li class="layout-submenu-item">
-									<img src="assets/layout/images/topbar/avatar-tatiana.png" alt="mirage-layout" width="35" />
-									<div class="menu-text">
-										<p>The holistic world view</p>
-										<span>Tatiana Gagelman</span>
-									</div>
-									<i class="pi pi-angle-right"></i>
-								</li>
-							</ul>
-						</li>
-
 						<li #gift class="topbar-item" [ngClass]="{'active-topmenuitem': appMain.activeTopbarItem === gift}">
-							<a href="#" (click)="appMain.onTopbarItemClick($event,gift)">
+							<a routerLink="/pages/email" (click)="appMain.onTopbarItemClick($event, gift)">
 								<i class="topbar-icon pi pi-envelope"></i>
 							</a>
-							<ul class="fadeInDown">
-								<li class="layout-submenu-header">
-									<h1>Deals</h1>
-								</li>
-
-								<li class="deals">
-									<ul>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-sapphire.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Sapphire</p>
-												<span>Angular</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-roma.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Roma</p>
-												<span>Minimalism</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-babylon.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Babylon</p>
-												<span>Powerful</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-									</ul>
-									<ul>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-harmony.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Harmony</p>
-												<span>USWDS</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-prestige.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Prestige</p>
-												<span>Elegancy</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-										<li>
-											<img src="assets/layout/images/topbar/deal-icon-ultima.png" alt="mirage-layout" width="35" />
-											<div class="menu-text">
-												<p>Ultima</p>
-												<span>Material</span>
-											</div>
-											<i class="pi pi-angle-right"></i>
-										</li>
-									</ul>
-								</li>
-							</ul>
+							<!-- Le reste du code reste inchangé -->
 						</li>
 
 						<li #profile class="topbar-item profile-item" [ngClass]="{'active-topmenuitem': appMain.activeTopbarItem === profile}">
@@ -262,8 +85,8 @@ import { UserService } from './demo/service/user.service';
 									<div class="profile">
 										<img src="assets/layout/images/topbar/avatar-eklund.png" alt="mirage-layout"
 														width="40" />
-										<h1>Olivia Eklund</h1>
-										<span>Design</span>
+										<h1>{{ user?.username }}</h1>
+										<span>{{ user?.role.name }}</span>
 									</div>
 								</li>
 								<li class="layout-submenu-item">
