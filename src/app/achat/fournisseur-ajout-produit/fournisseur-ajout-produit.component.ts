@@ -204,7 +204,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
         });
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
+          summary: 'Réussie',
           detail: 'Produits supprimés',
           life: 3000,
         });
@@ -226,7 +226,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
           this.produits = this.produits.filter(val => val.id !== this.produit.id);
           this.messageService.add({
             severity: 'success',
-            summary: 'Successful',
+            summary: 'Réussie',
             detail: 'Produit supprimé',
             life: 3000,
           });
@@ -276,7 +276,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
           next: () => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Successful',
+              summary: 'Réussie',
               detail: 'Produit Updated',
               life: 3000,
             });
@@ -298,7 +298,7 @@ export class FournisseurAjoutProduitComponent implements OnInit {
           next: (newProduit: Produit) => {
             this.messageService.add({
               severity: 'success',
-              summary: 'Successful',
+              summary: 'Réussie',
               detail: 'Produit Created',
               life: 3000,
             });
@@ -352,7 +352,7 @@ saveProduit() {
       next: () => {
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
+          summary: 'Réussie',
           detail: 'Produit Updated',
           life: 3000,
         });
@@ -387,7 +387,7 @@ saveProduit() {
         this.devisProduits.push(devisProduit);
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
+          summary: 'Réussie',
           detail: 'Produit Created',
           life: 3000,
         });

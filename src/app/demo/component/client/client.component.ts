@@ -109,7 +109,7 @@ export class ClientComponent implements OnInit {
         this.clients = this.clients.filter(val => val.id !== c.id);
       });
     });
-    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Clients supprimés', life: 3000 });
+    this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Clients supprimés', life: 3000 });
     this.selectedClients = [];
   }
 
@@ -117,7 +117,7 @@ export class ClientComponent implements OnInit {
     this.deleteClientDialog = false;
     this.clientService.deleteClient(this.client.id).subscribe(() => {
       this.clients = this.clients.filter(val => val.id !== this.client.id);
-      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Client supprimé', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Client supprimé', life: 3000 });
       this.client = {} as Client;
     });
   }

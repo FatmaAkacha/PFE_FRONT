@@ -118,7 +118,7 @@ export class FournisseurComponent implements OnInit {
         this.fournisseurs = this.fournisseurs.filter(val => val.id !== selectedFournisseur.id);
       });
     });
-    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseurs Deleted', life: 3000 });
+    this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Fournisseurs Deleted', life: 3000 });
     this.selectedFournisseurs = null;
   }
 
@@ -126,7 +126,7 @@ export class FournisseurComponent implements OnInit {
     this.deleteFournisseurDialog = false;
     this.fournisseurService.deleteFournisseur(this.fournisseur.id).subscribe(() => {
       this.fournisseurs = this.fournisseurs.filter(val => val.id !== this.fournisseur.id);
-      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur Deleted', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Fournisseur Deleted', life: 3000 });
       this.fournisseur = {} as Fournisseur;
     });
   }
@@ -153,13 +153,13 @@ export class FournisseurComponent implements OnInit {
   
       if (this.fournisseur.id) {
         this.fournisseurService.updateFournisseurForm(this.fournisseur.id, formData).subscribe(() => {
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur mis à jour', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Fournisseur mis à jour', life: 3000 });
           this.refreshFournisseurList();
         });
       } else {
         this.fournisseurService.insertFournisseurForm(formData).subscribe((newFournisseur: Fournisseur) => {
           this.fournisseurs.push(newFournisseur);
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Fournisseur ajouté', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Fournisseur ajouté', life: 3000 });
           this.refreshFournisseurList();
         });
       }

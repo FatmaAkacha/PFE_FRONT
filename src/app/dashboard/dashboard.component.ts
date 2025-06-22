@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
   activeStep = 0;
   steps = [
     { label: 'Information' },
-    { label: 'Price' },
+    { label: 'Prix' },
     { label: 'Stock' },
     { label: 'Image' }
   ];
@@ -261,8 +261,8 @@ export class DashboardComponent implements OnInit {
         this.updateCategoryChartData();
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
-          detail: 'Product deleted',
+          summary: 'Réussie',
+          detail: 'Produit supprimé',
           life: 3000
         });
         this.product = {} as Produit;
@@ -271,7 +271,7 @@ export class DashboardComponent implements OnInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Error',
-          detail: err.error.message || 'Failed to delete product',
+          detail: err.error.message || 'Échec de la suppression du produit',
           life: 3000
         });
       }
@@ -290,7 +290,7 @@ export class DashboardComponent implements OnInit {
             this.messageService.add({
               severity: 'error',
               summary: 'Error',
-              detail: `Failed to delete product ${product.nom}`,
+              detail: `Échec de la suppression du produit${product.nom}`,
               life: 3000
             });
           }
@@ -299,8 +299,8 @@ export class DashboardComponent implements OnInit {
       this.updateCategoryChartData();
       this.messageService.add({
         severity: 'success',
-        summary: 'Successful',
-        detail: 'Selected products deleted',
+        summary: 'Réussie',
+        detail: 'Produits sélectionnés supprimés',
         life: 3000
       });
       this.selectedProducts = [];
@@ -338,8 +338,8 @@ export class DashboardComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Successful',
-            detail: 'Product updated',
+            summary: 'Réussie',
+            detail: 'Produit mis à jour',
             life: 3000
           });
           this.loadData();
@@ -348,7 +348,7 @@ export class DashboardComponent implements OnInit {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Failed to update product',
+            detail: 'Échec de la mise à jour du produit',
             life: 3000
           });
         }
@@ -358,7 +358,7 @@ export class DashboardComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Successful',
+            summary: 'Réussie',
             detail: 'Product created',
             life: 3000
           });

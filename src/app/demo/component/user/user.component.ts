@@ -83,7 +83,7 @@ editUser(user: User) {
       this.users = this.users.filter(u => u.id !== this.user.id);
       this.deleteUserDialog = false;
       this.user = this.initUser();
-      this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Deleted', life: 3000 });
+      this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Utilisateur supprimé', life: 3000 });
     });
   }
 
@@ -101,7 +101,7 @@ editUser(user: User) {
 
     this.deleteUsersDialog = false;
     this.selectedUsers = [];
-    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Users Deleted', life: 3000 });
+    this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Utilisateurs supprimés', life: 3000 });
   }
 
   hideDialog() {
@@ -117,12 +117,12 @@ editUser(user: User) {
     if (!this.user.id) {
       this.userService.insertUser(this.user).subscribe((newUser) => {
         this.users.push(newUser);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Created', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Utilisateur Créé', life: 3000 });
       });
     } else {
       this.userService.updateUser(this.user.id.toString(), this.user).subscribe((updatedUser) => {
         this.users[this.users.findIndex(u => u.id === updatedUser.id)] = updatedUser;
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Mise à jour par Utilisateur', life: 3000 });
       });
     }
 

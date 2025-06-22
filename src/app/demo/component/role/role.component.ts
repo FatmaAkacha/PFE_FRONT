@@ -71,7 +71,7 @@ export class RoleComponent implements OnInit {
         });
       }
     });
-    this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Roles Deleted', life: 3000 });
+    this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Rôles supprimés', life: 3000 });
     this.selectedRoles = [];
   }
 
@@ -79,7 +79,7 @@ export class RoleComponent implements OnInit {
     if (this.role.id) {
       this.userService.deleteRole(this.role.id).subscribe(() => {
         this.roles = this.roles.filter(r => r.id !== this.role.id);
-        this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Role Deleted', life: 3000 });
+        this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Rôles supprimés', life: 3000 });
         this.role = {} as Role;
       });
     }
@@ -97,13 +97,13 @@ export class RoleComponent implements OnInit {
     if (this.role.name && this.role.name.trim()) {
       if (this.role.id) {
         this.userService.updateRole(this.role.id, this.role).subscribe(() => {
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Role Updated', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Rôle mis à jour', life: 3000 });
           this.refreshRoles();
         });
       } else {
         this.userService.insertRole(this.role).subscribe((newRole: Role) => {
           this.roles.push(newRole);
-          this.messageService.add({ severity: 'success', summary: 'Successful', detail: 'Role Created', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Réussie', detail: 'Rôle créé', life: 3000 });
           this.refreshRoles();
         });
       }

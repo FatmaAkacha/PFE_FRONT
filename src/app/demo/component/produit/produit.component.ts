@@ -192,7 +192,7 @@ export class ProduitComponent implements OnInit {
       });
       this.messageService.add({
         severity: 'success',
-        summary: 'Successful',
+        summary: 'Réussie',
         detail: 'Produits supprimés',
         life: 3000,
       });
@@ -214,7 +214,7 @@ export class ProduitComponent implements OnInit {
         this.produits = this.produits.filter(val => val.id !== this.produit.id);
         this.messageService.add({
           severity: 'success',
-          summary: 'Successful',
+          summary: 'Réussie',
           detail: 'Produit supprimé',
           life: 3000,
         });
@@ -266,7 +266,7 @@ export class ProduitComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Successful',
+            summary: 'Réussie',
             detail: 'Produit mis à jour',
             life: 3000,
           });
@@ -286,7 +286,7 @@ export class ProduitComponent implements OnInit {
         next: () => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Successful',
+            summary: 'Réussie',
             detail: 'Produit Ajouté',
             life: 3000,
           });

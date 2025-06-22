@@ -164,7 +164,7 @@
   </div>
 
   <!-- Product Dialog -->
-  <p-dialog [(visible)]="productDialog" [style]="{ width: '600px' }" header="Product Details" [modal]="true" class="p-fluid">
+  <p-dialog [(visible)]="productDialog" [style]="{ width: '600px' }" header="Les détails de produit" [modal]="true" class="p-fluid">
     <ng-template pTemplate="content">
       <p-steps [model]="steps" [activeIndex]="activeStep" (activeIndexChange)="onStepChange($event)" [readonly]="true"></p-steps>
       <div *ngIf="activeStep === 0">
@@ -183,7 +183,7 @@
         <div class="field">
           <label for="fournisseur">Fournisseurs <span class="required-star">*</span></label>
           <p-dropdown inputId="fournisseur" [options]="fournisseurs" optionLabel="name" optionValue="id"
-                      placeholder="Select a supplier" [(ngModel)]="product.fournisseur"></p-dropdown>
+                      placeholder="Séléctionner un fournisseur" [(ngModel)]="product.fournisseur"></p-dropdown>
         </div>
         <div class="field">
           <label for="description">Description</label>
@@ -292,7 +292,14 @@
         <p-dropdown inputId="client" [options]="clients" optionLabel="nom" optionValue="id"
                     placeholder="Sélectionner un client" [(ngModel)]="document.client_id"></p-dropdown>
       </div>
-       <div class="field">
+      
+      <div class="field">
+        <label for="fournisseur">Fournisseur</label>
+        <p-dropdown inputId="fournisseur" [options]="fournisseurs" optionLabel="name" optionValue="id"
+                    placeholder="Sélectionner un fournisseur" [(ngModel)]="document.fournisseur_id"></p-dropdown>
+      </div>
+
+      <div class="field">
       <label for="preparateur">Préparateur <span class="required-star">*</span></label>
       <p-dropdown inputId="preparateur" [options]="magasiniers" optionLabel="nom" optionValue="id"
                   placeholder="Sélectionner un préparateur" [(ngModel)]="document.preparateur_id"></p-dropdown>    
@@ -401,6 +408,7 @@
           <tr>
             <th pSortableColumn="libelle">Libelle <p-sortIcon field="libelle"></p-sortIcon></th>
             <th pSortableColumn="client.nom">Client <p-sortIcon field="client.nom"></p-sortIcon></th>
+            <th pSortableColumn="fournisseur.name">Fournisseur <p-sortIcon field="fournisseur.name"></p-sortIcon></th>
             <th pSortableColumn="etat">Statut <p-sortIcon field="etat"></p-sortIcon></th>
             <th>Actions</th>
           </tr>
@@ -414,6 +422,10 @@
             <td style="width:200px;">
               <span class="p-column-title">Client</span>
               {{ doc.client?.nom || 'N/A' }}
+            </td>
+            <td style="width:200px;">
+              <span class="p-column-title">Fournisseur</span>
+              {{ doc.fournisseur?.name || 'N/A' }}
             </td>
             <td style="width:150px;">
               <span class="p-column-title">Statut</span>
