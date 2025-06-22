@@ -450,13 +450,9 @@ getDocumentClassesAndLoadNextCode() {
   }
   
 
-  imprimerDevis(id: number) {
-    if (id === 0) {
-      this.saveBonDeLivraisonAsDocument();
-      return;
-    }
-    console.log("ID à imprimer :", id);
-    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
   }
 
   loadDoc() {
@@ -503,8 +499,6 @@ validerEtPasserALivraison() {
     });
   }, 2000); 
 }
-imprimerBonLivraison(id: number | string) {
-      window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
-}
+
 
 }

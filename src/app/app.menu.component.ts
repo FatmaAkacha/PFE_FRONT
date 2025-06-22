@@ -58,17 +58,20 @@ export class AppMenuComponent implements OnInit {
                // ]
             //},
             {
-                label: 'Pages', icon: 'pi pi-fw pi-copy', routerLink: ['/pages'],
-                items: [
-                    { label: 'Clients', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/client'] },
-                    { label: 'Catégories', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/categorie'] },
-                    { label: 'Fournisseurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/fournisseur'] },
-                    { label: 'Magasiniers', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/magasinier'] },
-                    { label: 'Produits', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/produit'] },
-                    { label: 'Utilisateurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/user'] },
-                    { label: 'Rôles', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/role'] },
-                    { label: 'Email', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/email'] },
-                    { label: 'Documents', icon: 'pi pi-fw pi-id-card', routerLink: ['/pages/document'] },
+                 label: 'Pages',
+                    icon: 'pi pi-fw pi-folder-open',
+                    routerLink: ['/pages'],
+                    items: [
+                        { label: 'Clients', icon: 'pi pi-fw pi-users', routerLink: ['/pages/client'] },
+                        { label: 'Catégories', icon: 'pi pi-fw pi-tags', routerLink: ['/pages/categorie'] },
+                        { label: 'Fournisseurs', icon: 'pi pi-fw pi-briefcase', routerLink: ['/pages/fournisseur'] },
+                        { label: 'Magasiniers', icon: 'pi pi-fw pi-building', routerLink: ['/pages/magasinier'] },
+                        { label: 'Produits', icon: 'pi pi-fw pi-box', routerLink: ['/pages/produit'] },
+                        { label: 'Utilisateurs', icon: 'pi pi-fw pi-user', routerLink: ['/pages/user'] },
+                        { label: 'Rôles', icon: 'pi pi-fw pi-lock', routerLink: ['/pages/role'] },
+                        { label: 'Email', icon: 'pi pi-fw pi-envelope', routerLink: ['/pages/email'] },
+                        { label: 'Documents', icon: 'pi pi-fw pi-file', routerLink: ['/pages/document'] }
+  
 
 
 
@@ -84,27 +87,61 @@ export class AppMenuComponent implements OnInit {
             },
 
             {
-                label: 'Vente', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
-            items: [
-                ...(this.role.includes('isAdmin') ? [
-                    { label: 'Bon de Commande', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bon-commande'], command: () => this.navigateToBonCommande() }
-                ] : []),
-             { label: 'Bon de Livraison', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/bondeLivraison'] },
-                    { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
-                    { label: 'Produits Commandés', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/produits-commandes'] },
-
-                ]
-            },
+    label: 'Vente', icon: 'pi pi-fw pi-shopping-cart', routerLink: ['/vente'],
+    items: [
+        ...(this.role.includes('isAdmin') ? [
             {
-                label: 'Achat', icon: 'pi pi-fw pi-copy', routerLink: ['/vente'],
-                items: [
-                    { label: 'Bon de Commande Fournisseur', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-commande-fournisseur'],  command: () => this.navigateToBonCommandeFournisseur() },
-                    { label: 'Produits Fournisseurs', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Produitfournisseur'] },
-                    //{ label: 'Produits à modifier', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/Updateproduit'] },
-                    { label: 'Bon de Reception', icon: 'pi pi-fw pi-id-card', routerLink: ['/achat/bon-reception'] },
-                    { label: 'Facture', icon: 'pi pi-fw pi-id-card', routerLink: ['/vente/facture'] },
-                ]
-            },
+                label: 'Bon de Commande',
+                icon: 'pi pi-fw pi-pencil',                
+                routerLink: ['/vente/bon-commande'],
+                command: () => this.navigateToBonCommande()
+            }
+        ] : []),
+                {
+            label: 'Produits Commandés',
+            icon: 'pi pi-fw pi-tags',
+            routerLink: ['/vente/produits-commandes']
+        },
+        {
+            label: 'Bon de Livraison',
+            icon: 'pi pi-fw pi-send',
+            routerLink: ['/vente/bondeLivraison']
+        },
+        {
+            label: 'Facture',
+            icon: 'pi pi-fw pi-file',
+            routerLink: ['/vente/facture']
+        }
+
+    ]
+},
+{
+    label: 'Achat', icon: 'pi pi-fw pi-briefcase', routerLink: ['/achat'],
+    items: [
+        {
+            label: 'Bon de Commande Fournisseur',
+            icon: 'pi pi-fw pi-pencil',
+            routerLink: ['/achat/bon-commande-fournisseur'],
+            command: () => this.navigateToBonCommandeFournisseur()
+        },
+        {
+            label: 'Produits Fournisseurs',
+            icon: 'pi pi-fw pi-shopping-cart',
+            routerLink: ['/achat/Produitfournisseur']
+        },
+        {
+            label: 'Bon de Réception',
+            icon: 'pi pi-fw pi-download',
+            routerLink: ['/achat/bon-reception']
+        },
+        {
+            label: 'Facture',
+            icon: 'pi pi-fw pi-file',
+            routerLink: ['/vente/facture']
+        }
+    ]
+},
+
 
            // {
              //   label: 'Hierarchy', icon: 'pi pi-fw pi-sitemap',

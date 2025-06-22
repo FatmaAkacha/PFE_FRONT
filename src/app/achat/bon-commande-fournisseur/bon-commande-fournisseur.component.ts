@@ -319,12 +319,9 @@ validerEtPasserAReception() {
   }, 2000);
 }
 
-  imprimerBonCommande(id: number) {
-    if (id === 0) {
-      this.saveBonDeCommandeAsDocument();
-      return;
-    }
-    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
   }
 
   naviguerVersAjoutProduit() {

@@ -312,11 +312,8 @@ export class BonReceptionComponent implements OnInit {
     this.router.navigate(['/achat/facture', this.savedDoc.id]);
   }
 
-  imprimerBonReception(id: number | string) {
-    if (!id) {
-      this.saveBonDeReceptionAsDocument();
-      return;
-    }
-    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
   }
 }

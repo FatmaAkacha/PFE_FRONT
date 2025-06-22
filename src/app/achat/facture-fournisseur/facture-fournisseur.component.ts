@@ -286,11 +286,8 @@ export class FactureFournisseurComponent implements OnInit {
     }
   
   
-    imprimerFacture(id: number | string) {
-      if (!id) {
-        this.saveFactureAsDocument();
-        return;
-      }
-      window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
-    }
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
+  }
   }

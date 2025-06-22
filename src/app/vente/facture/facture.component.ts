@@ -449,13 +449,9 @@ getDocumentClassesAndLoadNextCode() {
   }
   
 
-  imprimerDevis(id: number) {
-    if (id === 0) {
-      this.saveFactureAsDocument();
-      return;
-    }
-    console.log("ID à imprimer :", id);
-    window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
+  imprimerDevis() {
+    
+    window.open(`http://localhost:8000/api/document/${this.savedDoc['data'].id}/facture-pdf`, '_blank');
   }
 
   loadDoc() {
@@ -466,8 +462,5 @@ getDocumentClassesAndLoadNextCode() {
 
       }})
   }
-imprimerfacture(id: number | string) {
-      window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
-}
 
 }
