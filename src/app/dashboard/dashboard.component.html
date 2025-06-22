@@ -142,7 +142,6 @@
         <h5>Articles du magasin</h5>
         <div class="store-actions">
           <button pButton pRipple label="Ajouter articles" icon="pi pi-plus" class="p-button-success p-button-sm" (click)="openNewProduct()"></button>
-          <button pButton pRipple label="Supprimer l'article séléctionné" icon="pi pi-trash" class="p-button-danger p-button-sm" (click)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length"></button>
         </div>
       </div>
       <div class="store-grid">
@@ -173,13 +172,13 @@
           <label for="nom">Nom <span class="required-star">*</span></label>
           <input type="text" pInputText id="nom" [(ngModel)]="product.nom" required autofocus
                  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.nom }" />
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.nom">Name is required.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.nom">Le nom est obligatoire.</small>
         </div>
         <div class="field">
-          <label for="categorie">Categorie <span class="required-star">*</span></label>
+          <label for="categorie">Catégorie <span class="required-star">*</span></label>
           <p-dropdown inputId="categorie" [options]="categories" optionLabel="nom" placeholder="Select a category"
                       [(ngModel)]="product.categorie" [ngClass]="{ 'ng-invalid ng-dirty': submitted && !product.categorie }"></p-dropdown>
-          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.categorie">Category is required.</small>
+          <small class="ng-dirty ng-invalid" *ngIf="submitted && !product.categorie">La catégorie est obligatoire.</small>
         </div>
         <div class="field">
           <label for="fournisseur">Fournisseurs <span class="required-star">*</span></label>
@@ -216,7 +215,7 @@
       <div *ngIf="activeStep === 2">
         <div class="field">
           <label for="inventoryStatus">État des stocks</label>
-          <p-dropdown inputId="inventoryStatus" [options]="['INSTOCK', 'OUTOFSTOCK', 'LOWSTOCK']"
+          <p-dropdown inputId="inventoryStatus" [options]="['EnStock', 'StockFaible', 'Rupture']"
                       [(ngModel)]="product.inventoryStatus" placeholder="Select status"></p-dropdown>
         </div>
         <div class="field">
@@ -342,7 +341,7 @@
           <div class="grid">
             <div class="col-6 checkbox">
               <p-checkbox binary="true"></p-checkbox>
-              <p>{{ doc.libelle }}</p>
+              <p>{{ doc.libelle }} {{ doc.num_seq }}</p>
             </div>
             <div class="col-6 checkbox-row-info">
               <span class="time">{{ doc.dateDocument | date:'shortDate' }}</span>
@@ -420,7 +419,7 @@
               <span class="p-column-title">Statut</span>
               <span [class]="'product-badge status-' + (doc.etat?.toLowerCase() || 'Inconnue')">{{ doc.etat || 'Inconnue' }}</span>
             </td>
-            <td style="width:150px;" class="text-center">
+            <td style="width:150px;" >
               <button pButton type="button" icon="pi pi-pencil" class="p-button-text p-button-success" (click)="editDocument(doc)"></button>
               <button pButton type="button" icon="pi pi-trash" class="p-button-text p-button-danger" (click)="deleteDocument(doc)"></button>
             </td>

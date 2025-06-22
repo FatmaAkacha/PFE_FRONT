@@ -49,11 +49,11 @@ export class ProduitsCommandesComponent implements OnInit {
           const quantity = p.quantity ?? 0;
           const quantitystock = p.quantitystock ?? 0;
           if (quantitystock === 0) {
-            return 'OUTOFSTOCK';
+            return 'Rupture';
           } else if (Math.abs(quantity - quantitystock) <= 1) {
-            return 'LOWSTOCK';
+            return 'StockFaible';
           } else {
-            return 'INSTOCK';
+            return 'EnStock';
           }
         })()
         

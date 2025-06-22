@@ -220,9 +220,9 @@
 .status-validé { background: #FEEDAF; color: #8A5340; }
 .status-annulé { background: #FFCDD2; color: #C63737; }
 
-.status-instock { background: #C8E6C9; color: #256029; }
-.status-lowstock { background: #FEEDAF; color: #8A5340; }
-.status-outofstock { background: #FFCDD2; color: #C63737; }
+.status-enstock { background: #C8E6C9; color: #256029; }
+.status-stockfaible{ background: #FEEDAF; color: #8A5340; }
+.status-rupture { background: #FFCDD2; color: #C63737; }
 .status-inconnue { background: #9e9e9e; color: white; }
 
 .widget-products-by-category {

@@ -87,8 +87,8 @@ export class DashboardComponent implements OnInit {
         ...product,
         image: this.getImageUrl(product.image_data),
         inventoryStatus: product.quantitystock && product.seuil
-          ? product.quantitystock > product.seuil ? 'INSTOCK' : 'LOWSTOCK'
-          : 'OUTOFSTOCK'
+          ? product.quantitystock > product.seuil ? 'EnStock' : 'Stock faible'
+          : 'Rupture'
       }));
       this.updateCategoryChartData();
     });
@@ -187,7 +187,7 @@ export class DashboardComponent implements OnInit {
 
   updateCategoryChartData(): void {
     const categoryCounts = this.products.reduce((acc, product) => {
-      const categoryName = product.categorie?.nom || 'Uncategorized';
+      const categoryName = product.categorie?.nom || 'Non classé';
       acc[categoryName] = (acc[categoryName] || 0) + 1;
       return acc;
     }, {} as { [key: string]: number });

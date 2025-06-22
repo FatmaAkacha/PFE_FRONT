@@ -89,9 +89,9 @@
           <label for="status">Statut du stock<span class="required-star">*</span></label>
           <p-dropdown
             [options]="[
-              { label: 'En stock', value: 'INSTOCK' },
-              { label: 'Stock faible', value: 'LOWSTOCK' },
-              { label: 'Rupture', value: 'OUTOFSTOCK' }
+              { label: 'EnStock', value: 'EnStock' },
+              { label: 'StockFaible', value: 'StockFaible' },
+              { label: 'Rupture', value: 'Rupture' }
             ]"
             [(ngModel)]="produit.inventoryStatus"
             placeholder="Choisir un statut"

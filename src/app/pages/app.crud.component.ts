@@ -50,9 +50,9 @@ export class AppCrudComponent implements OnInit {
         ];
 
         this.statuses = [
-            {label: 'INSTOCK', value: 'instock'},
-            {label: 'LOWSTOCK', value: 'lowstock'},
-            {label: 'OUTOFSTOCK', value: 'outofstock'}
+            {label: 'EnStock', value: 'EnStock'},
+            {label: 'StockFaible', value: 'StockFaible'},
+            {label: 'Rupture', value: 'Rupture'}
         ];
     }
 
@@ -109,7 +109,7 @@ export class AppCrudComponent implements OnInit {
                 this.product.code = this.createId();
                 this.product.image = 'product-placeholder.svg';
                 // @ts-ignore
-                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'INSTOCK';
+                this.product.inventoryStatus = this.product.inventoryStatus ? this.product.inventoryStatus.value : 'EnStock';
                 this.products.push(this.product);
                 this.messageService.add({severity: 'success', summary: 'Successful', detail: 'Product Created', life: 3000});
             }

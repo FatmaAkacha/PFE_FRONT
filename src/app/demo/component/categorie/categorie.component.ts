@@ -87,7 +87,7 @@ export class CategorieComponent implements OnInit {
   confirmDelete() {
     this.categorieService.deleteCategorie(this.categorie.id!).subscribe({
       next: () => {
-        this.messageService.add({ severity: 'warn', summary: 'Supprimée', detail: `Catégorie "${this.categorie.nom}" supprimée` });
+        this.messageService.add({ severity: 'error', summary: 'Supprimée', detail: `Catégorie "${this.categorie.nom}" supprimée` });
         this.loadCategories();
         this.deleteCategorieDialog = false;
       },

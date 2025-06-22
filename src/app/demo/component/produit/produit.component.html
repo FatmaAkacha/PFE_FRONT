@@ -5,16 +5,16 @@
       <p-toolbar styleClass="mb-4">
         <ng-template pTemplate="left">
           <div class="my-2">
-            <button pButton pRipple label="New" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
-            <button pButton pRipple label="Delete" icon="pi pi-trash" class="p-button-danger" 
+            <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew()"></button>
+            <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" 
                     (click)="deleteSelectedProduits()" 
                     [disabled]="!selectedProduits || !selectedProduits.length">
             </button>
           </div>
         </ng-template>
         <ng-template pTemplate="right">
-          <button pButton pRipple label="Import" icon="pi pi-upload" class="p-button-help mr-2"></button>
-          <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
+          <button pButton pRipple label="Importer" icon="pi pi-upload" class="p-button-help mr-2"></button>
+          <button pButton pRipple label="Exporter" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button>
         </ng-template>
       </p-toolbar>
 
@@ -173,7 +173,7 @@
             <label for="inventoryStatus">Statut du Stock<span class="required-star">*</span></label>
             <p-dropdown
               inputId="inventoryStatus"
-              [options]="['INSTOCK', 'OUTOFSTOCK', 'LOWSTOCK']"
+              [options]="['En Stock', 'Stock Faible', 'Rupture']"
               [(ngModel)]="produit.inventoryStatus"
               placeholder="Sélectionner un statut"
             ></p-dropdown>

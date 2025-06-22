@@ -113,12 +113,12 @@ export class FournisseurAjoutProduitComponent implements OnInit {
     }
     getRowClass(produit: Produit): string {
       switch (produit.inventoryStatus) {
-        case 'INSTOCK':
-          return 'row-instock';
-        case 'LOWSTOCK':
-          return 'row-lowstock';
-        case 'OUTOFSTOCK':
-          return 'row-outofstock';
+        case 'EnStock':
+          return 'row-EnStock';
+        case 'StockFaible':
+          return 'row-StockFaible';
+        case 'Rupture':
+          return 'row-Rupture';
         default:
           return '';
       }

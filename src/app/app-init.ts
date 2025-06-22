@@ -23,6 +23,7 @@ export function initializeKeycloak(keycloak: KeycloakService) {
                         const keycloakInstance = keycloak.getKeycloakInstance();
 
             const realmRoles = keycloakInstance.realmAccess?.roles || [];
+            localStorage.setItem('realm_roles', JSON.stringify(realmRoles));
             console.log(realmRoles)
 
             console.log('Token Keycloak stocké dans le localStorage ✅');
