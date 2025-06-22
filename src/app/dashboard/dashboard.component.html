@@ -115,7 +115,7 @@
           <tr>
             <td style="width:200px;">
               <span class="p-column-title">Categorie</span>
-              {{ product.categorie?.nom || 'N/A' }}
+              {{ product.categorie?.nom || '-' }}
             </td>
             <td style="width:200px;">
               <span class="p-column-title">Prix</span>
@@ -421,11 +421,11 @@
             </td>
             <td style="width:200px;">
               <span class="p-column-title">Client</span>
-              {{ doc.client?.nom || 'N/A' }}
+              {{ doc.client?.nom || '-' }}
             </td>
             <td style="width:200px;">
               <span class="p-column-title">Fournisseur</span>
-              {{ doc.fournisseur?.name || 'N/A' }}
+              {{ doc.fournisseur?.name || '-' }}
             </td>
             <td style="width:150px;">
               <span class="p-column-title">Statut</span>

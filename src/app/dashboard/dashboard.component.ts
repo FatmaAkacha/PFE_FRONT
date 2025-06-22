@@ -69,16 +69,26 @@ export class DashboardComponent implements OnInit {
     this.getFournisseurs();
   }
 
-  loadData(): void {
-    this.dataService.getClients().subscribe(clients => {
-      this.clients = clients;
-      this.documentService.getDocuments().subscribe(documents => {
-        this.documents = documents.map(doc => ({
-          ...doc,
-          etat: this.normalizeEtat(doc.etat),
-          client: this.clients.find(client => client.id === doc.client_id) || { nom: 'N/A' }
-        }));
-        this.updateChartData();
+loadData(): void {
+    // Load fournisseurs first
+    this.dataService.getFournisseurs().subscribe(fournisseurs => {
+      this.fournisseurs = fournisseurs;
+      this.fournisseursList = fournisseurs;
+
+      // Load clients
+      this.dataService.getClients().subscribe(clients => {
+        this.clients = clients;
+
+        // Load documents and map both client and fournisseur
+        this.documentService.getDocuments().subscribe(documents => {
+          this.documents = documents.map(doc => ({
+            ...doc,
+            etat: this.normalizeEtat(doc.etat),
+            client: this.clients.find(client => client.id === doc.client_id) || { nom: '-' },
+            fournisseur: this.fournisseurs.find(fournisseur => fournisseur.id === doc.fournisseur_id) || { name: '-' }
+          }));
+          this.updateChartData();
+        });
       });
     });
 
@@ -95,11 +105,6 @@ export class DashboardComponent implements OnInit {
 
     this.magasinierService.getMagasiniers().subscribe(magasiniers => {
       this.magasiniers = magasiniers;
-    });
-
-    this.dataService.getFournisseurs().subscribe(fournisseurs => {
-      this.fournisseurs = fournisseurs;
-      this.fournisseursList = fournisseurs;
     });
   }
 
