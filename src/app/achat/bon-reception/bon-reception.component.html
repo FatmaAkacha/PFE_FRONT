@@ -1,8 +1,8 @@
-<div class="bon-reception-container">
+<div class="bon-commande-container">
   <p-toast></p-toast>
-  <div class="bon-reception-header">
+  <div class="bon-commande-header">
     <h2>Bon de Réception N°{{ formattedOrderNumber }}</h2>
-    <p class="date">Date : <strong>{{ currentDate | date: 'EEEE, d MMMM y' }}</strong></p>
+    <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
 
   <div class="grid formgrid p-fluid">
@@ -12,24 +12,24 @@
     </div>
     <div class="col-12 md:col-4">
       <label>État Document <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="etatOptions"
-        [(ngModel)]="bonReceptionForm.value.etat"
+      <p-dropdown 
+        [options]="etatOptions" 
+        [(ngModel)]="bonReceptionForm.value.etat" 
         placeholder="Sélectionner un état"
-        [filter]="true"
-      ></p-dropdown>
+        [filter]="true">
+      </p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Préparé par <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="magasiniers"
-        optionLabel="nom"
+      <p-dropdown 
+        [options]="magasiniers" 
+        optionLabel="nom" 
         optionValue="id"
-        [(ngModel)]="bonReceptionForm.value.preparateur_id"
+        [(ngModel)]="bonReceptionForm.value.preparateur_id" 
         (onChange)="onMagasinierSelect($event.value)"
         placeholder="Sélectionner un préparateur"
-        [filter]="true"
-      ></p-dropdown>
+        [filter]="true">
+      </p-dropdown>
     </div>
   </div>
 
@@ -65,95 +65,83 @@
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Devise <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="deviseOptions"
-        [(ngModel)]="bonReceptionForm.value.devise"
+      <p-dropdown 
+        [options]="deviseOptions" 
+        [(ngModel)]="bonReceptionForm.value.devise" 
         placeholder="Sélectionner une devise"
-        appendTo="body"
-        filter="true"
-        filterBy="label"
-      ></p-dropdown>
+        appendTo="body" 
+        filter="true" 
+        filterBy="label">
+      </p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Taux d'échange</label>
-      <input
-        pInputText
-        [(ngModel)]="bonReceptionForm.value.tauxEchange"
-        type="number"
-        placeholder="Taux d'échange"
-      />
+      <input pInputText [(ngModel)]="bonReceptionForm.value.tauxEchange" type="number" placeholder="Taux d'échange">
     </div>
     <div class="col-12 md:col-4">
       <label>Date de réception</label>
-      <p-calendar
-        [(ngModel)]="bonReceptionForm.value.dateLivraison"
-        showTime
-      ></p-calendar>
+      <p-calendar [(ngModel)]="bonReceptionForm.value.dateLivraison" showTime appendTo="body"></p-calendar>
     </div>
   </div>
 
-<h3>Produits Reçus</h3>
-<p-table [value]="bonReceptionProduits" responsiveLayout="scroll" class="commande-table">
-  <ng-template pTemplate="header">
-    <tr>
-      <th>Code</th>
-      <th>Désignation</th>
-      <th>Stock</th>
-      <th>Quantité</th>
-      <th>PUHT/U</th>
-      <th>Prix Vente HT</th>
-      <th>Prix Vente TTC</th>
-      <th>Remise Max (%)</th>
-      <th>TVA %</th>
-      <th>TTC</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-item let-i="index">
-    <tr>
-      <td>{{ item.produit.id }}</td>
-      <td>{{ item.produit.nom }}</td>
-      <td>{{ item.produit.quantitystock || 0 }}</td>
-      <td>{{ item.produit.quantitystock || 0 }}</td>
-      <td>{{ item.puht | number: '1.2-2' }}</td>
-      <td>{{ item.produit.prix_vente_ht || 0 | number: '1.2-2' }}</td>
-      <td>{{ item.produit.prix_vente_ttc || 0 | number: '1.2-2' }}</td>
-      <td>{{ item.produit.remise_maximale || 0 }}%</td>
-      <td>{{ item.tva }}</td>
-      <td>{{ item.produit.prixTotal | number: '1.2-2' }}</td>
-    </tr>
-  </ng-template>
-</p-table>
-
-
-  <br>
-  <div class="bon-reception-actions">
-    <button
-      pButton
-      label="Enregistrer Bon de Réception"
-      icon="pi pi-check"
-      class="p-button-success"
-      (click)="saveBonDeReceptionAsDocument()"
-    ></button>
-    <button
-      pButton
-      label="Valider et Passer à Facture"
-      icon="pi pi-arrow-right"
-      class="p-button-info"
-      (click)="validerEtPasserAFacture()"
-    ></button>
-    <button
-      pButton
-      label="Imprimer"
-      icon="pi pi-print"
-      class="p-button-secondary"
-      (click)="imprimerBonReception(savedDoc?.id)"
-    ></button>
+  <h3>Produits Reçus</h3>
+  <p-table [value]="bonReceptionProduits" responsiveLayout="scroll" class="commande-table">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Code</th>
+        <th>Désignation</th>
+        <th>Quantité</th>
+        <th>PUHT/U</th>
+        <th>Prix Vente HT</th>
+        <th>Prix Vente TTC</th>
+        <th>Remise Max (%)</th>
+        <th>TVA %</th>
+        <th>TTC</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td>{{ item.produit.id }}</td>
+        <td>{{ item.produit.nom }}</td>
+        <td>{{ item.quantite }}</td>
+        <td>{{ item.puht | number:'1.2-2' }}</td>
+        <td>{{ item.produit.prix_vente_ht | number:'1.2-2' }}</td>
+        <td>{{ item.produit.prix_vente_ttc | number:'1.2-2' }}</td>
+        <td>{{ item.produit.remise_maximale }}%</td>
+        <td>{{ item.tva }}%</td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+<br>
+  <div class="bon-commande-actions">
+    <button 
+      pButton 
+      label="Enregistrer Bon de Réception" 
+      icon="pi pi-check" 
+      class="p-button-success" 
+      (click)="saveBonDeReceptionAsDocument()">
+    </button>
+    <button 
+      pButton 
+      label="Valider et Passer à Facture" 
+      icon="pi pi-arrow-right" 
+      class="p-button-info" 
+      (click)="validerEtPasserAFacture()">
+    </button>
+    <button 
+      pButton 
+      label="Imprimer" 
+      icon="pi pi-print" 
+      class="p-button-secondary" 
+      (click)="imprimerBonReception(savedDoc?.id)">
+    </button>
   </div>
 
-  <p-confirmDialog
-    header="Confirmation"
-    icon="pi pi-exclamation-triangle"
-    acceptLabel="Oui"
-    rejectLabel="Non"
-  ></p-confirmDialog>
+  <p-confirmDialog 
+    header="Confirmation" 
+    icon="pi pi-exclamation-triangle" 
+    acceptLabel="Oui" 
+    rejectLabel="Non">
+  </p-confirmDialog>
 </div>

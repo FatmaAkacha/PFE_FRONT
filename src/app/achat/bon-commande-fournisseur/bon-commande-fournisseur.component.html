@@ -2,22 +2,20 @@
   <p-toast></p-toast>
   <div class="bon-commande-header">
     <h2>Bon de Commande Fournisseur N°{{ formattedOrderNumber }}</h2>
-    <p class="date">
-      Date : <strong>{{ currentDate | date: 'EEEE, d MMMM y' }}</strong>
-    </p>
+    <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
 
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Date document <span class="required-star">*</span></label>
-      <p-calendar [(ngModel)]="bonCommandeForm.value.dateDocument" showTime></p-calendar>
+      <p-calendar [(ngModel)]="bonCommandeForm.value.dateDocument" showTime appendTo="body"></p-calendar>
     </div>
     <div class="col-12 md:col-4">
       <label>État Document <span class="required-star">*</span></label>
       <p-dropdown 
         [options]="etatOptions" 
         [(ngModel)]="bonCommandeForm.value.etat" 
-        placeholder="Sélectionner un état" 
+        placeholder="Sélectionner un état"
         [filter]="true">
       </p-dropdown>
     </div>
@@ -26,10 +24,10 @@
       <p-dropdown 
         [options]="magasiniers" 
         optionLabel="nom" 
-        optionValue="id" 
+        optionValue="id"
         [(ngModel)]="bonCommandeForm.value.preparateur_id" 
-        (onChange)="onMagasinierSelect($event.value)" 
-        placeholder="Sélectionner un préparateur" 
+        (onChange)="onMagasinierSelect($event.value)"
+        placeholder="Sélectionner un préparateur"
         [filter]="true">
       </p-dropdown>
     </div>
@@ -43,10 +41,10 @@
         <p-dropdown 
           [options]="fournisseurs" 
           optionLabel="name" 
-          optionValue="id" 
+          optionValue="id"
           [(ngModel)]="bonCommandeForm.value.fournisseur_id" 
-          (onChange)="onFournisseurSelect($event.value)" 
-          placeholder="Sélectionner un fournisseur" 
+          (onChange)="onFournisseurSelect($event.value)"
+          placeholder="Sélectionner un fournisseur"
           [filter]="true">
         </p-dropdown>
       </div>
@@ -78,7 +76,7 @@
       <p-dropdown 
         [options]="deviseOptions" 
         [(ngModel)]="bonCommandeForm.value.devise" 
-        placeholder="Sélectionner une devise" 
+        placeholder="Sélectionner une devise"
         appendTo="body" 
         filter="true" 
         filterBy="label">
@@ -90,11 +88,11 @@
     </div>
     <div class="col-12 md:col-4">
       <label>Date de livraison <span class="required-star">*</span></label>
-      <p-calendar [(ngModel)]="bonCommandeForm.value.dateLivraison" showTime></p-calendar>
+      <p-calendar [(ngModel)]="bonCommandeForm.value.dateLivraison" showTime appendTo="body"></p-calendar>
     </div>
   </div>
 
-  <h3>Produits à ajouter</h3>
+  <h3>Produits Commandés</h3>
   <p-table [value]="devisProduits" responsiveLayout="scroll" class="commande-table">
     <ng-template pTemplate="header">
       <tr>
@@ -132,15 +130,14 @@
         <td>
           <input type="number" [(ngModel)]="item.tva" (ngModelChange)="mettreAJourProduit(item)" min="0" max="100" class="p-inputtext p-component" />
         </td>
-        <td>{{ item.prixTotal | number: '1.2-2' }}</td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
         <td class="icon-spacing">
           <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="supprimerProduit(item)"></button>
         </td>
       </tr>
     </ng-template>
   </p-table>
-
-  <br>
+<br>
   <div class="bon-commande-actions">
     <button 
       pButton 
@@ -149,9 +146,6 @@
       class="p-button-info" 
       (click)="naviguerVersAjoutProduit()">
     </button>
-
-    <br><br>
-
     <button 
       pButton 
       label="Valider et Passer au Bon de Réception" 
@@ -159,7 +153,6 @@
       class="p-button-success" 
       (click)="validerEtPasserAReception()">
     </button>
-
     <button 
       pButton 
       label="Imprimer" 

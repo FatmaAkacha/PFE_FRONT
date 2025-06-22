@@ -1,8 +1,8 @@
-<div class="facture-fournisseur-container">
+<div class="bon-commande-container">
   <p-toast></p-toast>
-  <div class="bon-reception-header">
+  <div class="bon-commande-header">
     <h2>Facture Fournisseur N°{{ formattedOrderNumber }}</h2>
-    <p class="date">Date : <strong>{{ currentDate | date: 'EEEE, d MMMM y' }}</strong></p>
+    <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
   </div>
 
   <div class="grid formgrid p-fluid">
@@ -12,24 +12,24 @@
     </div>
     <div class="col-12 md:col-4">
       <label>État Document <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="etatOptions"
-        [(ngModel)]="FactureForm.value.etat"
+      <p-dropdown 
+        [options]="etatOptions" 
+        [(ngModel)]="FactureForm.value.etat" 
         placeholder="Sélectionner un état"
-        [filter]="true"
-      ></p-dropdown>
+        [filter]="true">
+      </p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Préparé par <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="magasiniers"
-        optionLabel="nom"
+      <p-dropdown 
+        [options]="magasiniers" 
+        optionLabel="nom" 
         optionValue="id"
-        [(ngModel)]="FactureForm.value.preparateur_id"
+        [(ngModel)]="FactureForm.value.preparateur_id" 
         (onChange)="onMagasinierSelect($event.value)"
         placeholder="Sélectionner un préparateur"
-        [filter]="true"
-      ></p-dropdown>
+        [filter]="true">
+      </p-dropdown>
     </div>
   </div>
 
@@ -65,30 +65,22 @@
   <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Devise <span class="required-star">*</span></label>
-      <p-dropdown
-        [options]="deviseOptions"
-        [(ngModel)]="FactureForm.value.devise"
+      <p-dropdown 
+        [options]="deviseOptions" 
+        [(ngModel)]="FactureForm.value.devise" 
         placeholder="Sélectionner une devise"
-        appendTo="body"
-        filter="true"
-        filterBy="label"
-      ></p-dropdown>
+        appendTo="body" 
+        filter="true" 
+        filterBy="label">
+      </p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Taux d'échange</label>
-      <input
-        pInputText
-        [(ngModel)]="FactureForm.value.tauxEchange"
-        type="number"
-        placeholder="Taux d'échange"
-      />
+      <input pInputText [(ngModel)]="FactureForm.value.tauxEchange" type="number" placeholder="Taux d'échange">
     </div>
     <div class="col-12 md:col-4">
       <label>Date de réception</label>
-      <p-calendar
-        [(ngModel)]="FactureForm.value.dateLivraison"
-        showTime
-      ></p-calendar>
+      <p-calendar [(ngModel)]="FactureForm.value.dateLivraison" showTime appendTo="body"></p-calendar>
     </div>
   </div>
 
@@ -102,7 +94,6 @@
         <th>PUHT/U</th>
         <th>TVA %</th>
         <th>TTC</th>
-        <th>Actions</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
@@ -110,49 +101,34 @@
         <td>{{ item.produit.id }}</td>
         <td>{{ item.produit.nom }}</td>
         <td>{{ item.quantite }}</td>
-        <td>{{ item.puht | number: '1.2-2' }}</td>
+        <td>{{ item.puht | number:'1.2-2' }}</td>
         <td>{{ item.tva }}%</td>
-        <td>{{ item.prixTotal | number: '1.2-2' }}</td>
-        <td>
-          <button
-            pButton
-            icon="pi pi-pencil"
-            class="p-button-rounded p-button-warning p-mr-2"
-            (click)="modifierProduit(item)"
-          ></button>
-          <button
-            pButton
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-danger"
-            (click)="supprimerProduit(item)"
-          ></button>
-        </td>
+        <td>{{ item.prixTotal | number:'1.2-2' }}</td>
       </tr>
     </ng-template>
   </p-table>
 
-  <br>
-  <div class="bon-reception-actions">
-    <button
-      pButton
-      label="Enregistrer Facture Fournisseur"
-      icon="pi pi-check"
-      class="p-button-success"
-      (click)="saveFactureAsDocument()"
-    ></button>
-    <button
-      pButton
-      label="Imprimer"
-      icon="pi pi-print"
-      class="p-button-secondary"
-      (click)="imprimerFacture(savedDoc?.id)"
-    ></button>
+  <div class="bon-commande-actions">
+    <button 
+      pButton 
+      label="Enregistrer Facture Fournisseur" 
+      icon="pi pi-check" 
+      class="p-button-success" 
+      (click)="saveFactureAsDocument()">
+    </button>
+    <button 
+      pButton 
+      label="Imprimer" 
+      icon="pi pi-print" 
+      class="p-button-secondary" 
+      (click)="imprimerFacture(savedDoc?.id)">
+    </button>
   </div>
 
-  <p-confirmDialog
-    header="Confirmation"
-    icon="pi pi-exclamation-triangle"
-    acceptLabel="Oui"
-    rejectLabel="Non"
-  ></p-confirmDialog>
+  <p-confirmDialog 
+    header="Confirmation" 
+    icon="pi pi-exclamation-triangle" 
+    acceptLabel="Oui" 
+    rejectLabel="Non">
+  </p-confirmDialog>
 </div>

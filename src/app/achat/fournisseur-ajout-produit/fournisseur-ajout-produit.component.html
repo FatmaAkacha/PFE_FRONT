@@ -11,13 +11,7 @@
           <label for="nom">Nom du produit<span class="required-star">*</span></label>
           <input id="nom" type="text" pInputText [(ngModel)]="produit.nom" required />
         </div>
-
-        <div class="field col-12 md:col-6">
-          <label for="description">Description<span class="required-star">*</span></label>
-          <textarea id="description" rows="3" pInputTextarea [(ngModel)]="produit.description"></textarea>
-        </div>
-
-        <div class="field col-12 md:col-6">
+          <div class="field col-12 md:col-6">
           <label for="categorie">Catégorie<span class="required-star">*</span></label>
           <p-dropdown
             [options]="categories"
@@ -29,6 +23,13 @@
             filterBy="nom"
           ></p-dropdown>
         </div>
+
+        <div class="field col-12 md:col-6">
+          <label for="description">Description<span class="required-star">*</span></label>
+          <textarea id="description" rows="3" pInputTextarea [(ngModel)]="produit.description"></textarea>
+        </div>
+
+
 
         <div class="field col-12 md:col-6">
           <label for="fournisseur">Fournisseur<span class="required-star">*</span></label>
