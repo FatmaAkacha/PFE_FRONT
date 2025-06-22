@@ -1,64 +1,18 @@
-<div class="bon-livraison-container">
+<div class="bon-commande-container">
   <p-toast></p-toast>
-  <div class="bon-livraison-header">
+  <div class="bon-commande-header">
     <h2>Bon de Livraison Client N°{{ formattedDeliveryNumber }}</h2>
     <p class="date">Date : <strong>{{ currentDate | date:'EEEE, d MMMM y' }}</strong></p>
-
   </div>
 
-  <h3>Informations du Client</h3>
-  <div class="grid formgrid p-fluid">
-    <div class="col-12 md:col-4">
-      <label>Client</label>
-      <input pInputText [value]="selectedClient?.nom" [disabled]="true">
-    </div>
-    <div class="col-12 md:col-4">
-      <label>Code client</label>
-      <input pInputText [value]="selectedClient?.code" [disabled]="true">
-    </div>
-    <div class="col-12 md:col-4">
-      <label>Adresse</label>
-      <input pInputText [value]="selectedClient?.adresse" [disabled]="true">
-    </div>
-  </div>
-
-<h3>Informations Générales</h3>
-<div class="grid formgrid p-fluid">
-  <!-- Date Document -->
-  <div class="col-12 md:col-4">
-    <label>Date document <span class="required-star">*</span></label>
-    <p-calendar [(ngModel)]="devis.dateDocument" showTime appendTo="body"></p-calendar>
-  </div>
-
-  <!-- État Document -->
-  <div class="col-12 md:col-4">
-    <label>État Document <span class="required-star">*</span></label>
-    <p-dropdown 
-      [options]="etatOptions" 
-      [(ngModel)]="devis.etat" 
-      placeholder="Sélectionner un état"
-      [filter]="true">
-    </p-dropdown>    
-  </div>
-
-  <!-- Préparé par -->
-  <div class="col-12 md:col-4">
-    <label>Préparé par <span class="required-star">*</span></label>
-    <p-dropdown 
-        [options]="magasiniers" 
-        optionLabel="nom" 
-        optionValue="id"
-        [(ngModel)]="devis.preparateur_id" 
-        (onChange)="onMagasinierSelect($event.value)"
-        placeholder="Sélectionner un preparateur"
-        [filter]="true">
-      </p-dropdown>    
-  </div>
-</div>
-
-
-<div class="grid formgrid p-fluid">
-   <div class="col-12 md:col-4">
+  <div class="client-info">
+    <h3>Informations du Client</h3>
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-4">
+        <label>Client</label>
+        <input pInputText [value]="selectedClient?.nom || ''" [disabled]="true">
+      </div>
+      <div class="col-12 md:col-4">
         <label>Code client</label>
         <input pInputText [value]="selectedClient?.code || ''" [disabled]="true">
       </div>
@@ -66,33 +20,71 @@
         <label>Raison sociale</label>
         <input pInputText [value]="selectedClient?.raison_sociale || ''" [disabled]="true">
       </div>
-    
+    </div>
+
+    <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
         <label>Contact</label>
         <input pInputText [value]="selectedClient?.contact || ''" [disabled]="true">
       </div>
-      </div>
-
-      <div class="grid formgrid p-fluid">
       <div class="col-12 md:col-4">
         <label>Email</label>
         <input pInputText [value]="selectedClient?.email || ''" [disabled]="true">
       </div>
-
       <div class="col-12 md:col-4">
         <label>Téléphone</label>
         <input pInputText [value]="selectedClient?.numero_telephone || ''" [disabled]="true">
       </div>
-  
-      <div class="col-12 md:col-4">
+    </div>
+
+    <div class="grid formgrid p-fluid">
+      <div class="col-12 md:col-12">
         <label>Adresse</label>
         <input pInputText [value]="selectedClient?.adresse || ''" [disabled]="true">
       </div>
-</div>
-    <div class="grid formgrid p-fluid">
+    </div>
+  </div>
+
+  <h3>Informations Générales</h3>
+  <div class="grid formgrid p-fluid">
+    <div class="col-12 md:col-4">
+      <label>Date document <span class="required-star">*</span></label>
+      <p-calendar [(ngModel)]="devis.dateDocument" showTime appendTo="body"></p-calendar>
+    </div>
+    <div class="col-12 md:col-4">
+      <label>État Document <span class="required-star">*</span></label>
+      <p-dropdown 
+        [options]="etatOptions" 
+        [(ngModel)]="devis.etat" 
+        placeholder="Sélectionner un état"
+        [filter]="true">
+      </p-dropdown>    
+    </div>
+    <div class="col-12 md:col-4">
+      <label>Préparé par <span class="required-star">*</span></label>
+      <p-dropdown 
+        [options]="magasiniers" 
+        optionLabel="nom" 
+        optionValue="id"
+        [(ngModel)]="devis.preparateur_id" 
+        (onChange)="onMagasinierSelect($event.value)"
+        placeholder="Sélectionner un préparateur"
+        [filter]="true">
+      </p-dropdown>    
+    </div>
+  </div>
+<br>
+  <div class="grid formgrid p-fluid">
     <div class="col-12 md:col-4">
       <label>Devise <span class="required-star">*</span></label>
-      <p-dropdown [options]="deviseOptions" [(ngModel)]="devis.devise" placeholder="Sélectionner une devise" appendTo="body" filter="true" filterBy="label"></p-dropdown>
+      <p-dropdown 
+        [options]="deviseOptions" 
+        [(ngModel)]="devis.devise" 
+        placeholder="Sélectionner une devise" 
+        appendTo="body" 
+        filter="true" 
+        filterBy="label">
+      </p-dropdown>
     </div>
     <div class="col-12 md:col-4">
       <label>Taux d'échange</label>
@@ -102,8 +94,7 @@
       <label>Date de livraison</label>
       <p-calendar [(ngModel)]="devis.dateLivraison" showTime></p-calendar>
     </div>
-    </div>
-
+  </div>
 
   <h3>Produits Livrés</h3>
   <p-table [value]="bonLivraisonProduits" responsiveLayout="scroll" class="commande-table">
@@ -128,34 +119,28 @@
       </tr>
     </ng-template>
   </p-table>
-
-  <div class="p-mt-4">
+<br><br>
+  <div class="bon-commande-actions">
     <button 
       pButton 
       label="Enregistrer Bon de Livraison" 
       icon="pi pi-check" 
       class="p-button-success" 
-      (click)="saveBonDeLivraisonAsDocument()"
-      [ngStyle]="{'margin-top': '10px'}">
+      (click)="saveBonDeLivraisonAsDocument()">
     </button>
-
-
-    <button pButton type="button" 
-    label="Générer Facture" 
-    icon="pi pi-arrow-right"
-    class="p-button-info" 
-    (click)="redirigerVersFacture()"
-    [ngStyle]="{'margin-left': '10px'}">
+    <button 
+      pButton 
+      label="Générer Facture" 
+      icon="pi pi-arrow-right"
+      class="p-button-info" 
+      (click)="redirigerVersFacture()">
     </button>
-
-<button 
-  pButton 
-  label="Imprimer" 
-  icon="pi pi-print" 
-  class="p-button-secondary" 
-  (click)="imprimerBonLivraison(doc?.id)"
-  [ngStyle]="{'margin-left': '10px'}">
-</button>
+    <button 
+      pButton 
+      label="Imprimer" 
+      icon="pi pi-print" 
+      class="p-button-secondary" 
+      (click)="imprimerBonLivraison(doc?.id)">
+    </button>
+  </div>
 </div>
-</div>
-

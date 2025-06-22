@@ -9,7 +9,7 @@
           <button pButton label="Supprimer" icon="pi pi-trash" class="p-button-danger"
                   (click)="deleteSelectedDocuments()"
                   [disabled]="!selectedDocuments || !selectedDocuments.length"></button>
-          <button pButton label="Classes de Documents" icon="pi pi-list" class="p-button-info" (click)="showDocumentClassesDialog()"[ngStyle]="{'margin-left': '7px'}"></button>
+          <button pButton label="Classes de Documents" icon="pi pi-list" class="p-button-info" (click)="showDocumentClassesDialog()" [ngStyle]="{'margin-left': '7px'}"></button>
         </ng-template>
 
         <ng-template pTemplate="right">
@@ -21,7 +21,6 @@
       <p-table #dt [value]="documents" [(selection)]="selectedDocuments" selectionMode="multiple" dataKey="id"
                [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]"
                [globalFilterFields]="['libelle', 'code', 'documentClass.libelle']">
-
         <ng-template pTemplate="caption">
           <div class="flex justify-content-between">
             <h5>Liste des Documents</h5>
@@ -37,7 +36,7 @@
             <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
             <th>Libellé</th>
             <th>Code Classe</th>
-            <th>Num Séquence</th>
+            <th>Numéro</th>
             <th>Date Document</th>
             <th>État</th>
             <th>Préparateur</th>
@@ -53,15 +52,15 @@
           <tr>
             <td><p-tableCheckbox [value]="doc"></p-tableCheckbox></td>
             <td>{{ doc.libelle }}</td>
-            <td>{{ doc.codeClasseDoc }}</td>
-            <td>{{ doc.numero }}</td>
-            <td>{{ doc.dateDocument }}</td>
-            <td>{{ doc.etat }}</td>
+            <td>{{ doc.codeClasseDoc || '-' }}</td>
+            <td>{{ doc.numero || '-' }}</td>
+            <td>{{ doc.dateDocument || '-' }}</td>
+            <td>{{ doc.etat || '-' }}</td>
             <td>{{ doc.preparateurNom || '-' }}</td>
             <td>{{ doc.clientNom || '-' }}</td>
-            <td>{{ doc.devise }}</td>
-            <td>{{ doc.tauxEchange }}</td>
-            <td>{{ doc.dateLivraison }}</td>
+            <td>{{ doc.devise || '-' }}</td>
+            <td>{{ doc.tauxEchange || 0 | number:'1.2-2' }}</td>
+            <td>{{ doc.dateLivraison || '-' }}</td>
             <td>
               <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocument(doc)"></button>
               <button pButton icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deleteDocument(doc)"></button>
@@ -105,11 +104,9 @@
         <td><p-tag [value]="classe.isachat ? 'Oui' : 'Non'" [severity]="classe.isachat ? 'warning' : 'danger'"></p-tag></td>
         <td><p-tag [value]="classe.actif ? 'Actif' : 'Inactif'" [severity]="classe.actif ? 'warning' : 'danger'"></p-tag></td>
         <td>
-            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocumentClass(classe)"></button>
-            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteDocumentClass(classe)"></button>
-
+          <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" (click)="editDocumentClass(classe)"></button>
+          <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="confirmDeleteDocumentClass(classe)"></button>
         </td>
-
       </tr>
     </ng-template>
   </p-table>
@@ -144,71 +141,158 @@
       </div>
 
       <div class="mt-3" style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 3% !important;">
-        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" style=" border: 1px solid #ccc; padding: 10px; border-radius: 5px;" (click)="showClassForm = false"></button>
-        <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" style=" border: 1px solid #5E81AC; padding: 10px; border-radius: 5px;"(click)="saveDocumentClass()"></button>
+        <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" style="border: 1px solid #ccc; padding: 10px; border-radius: 5px;" (click)="showClassForm = false"></button>
+        <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" style="border: 1px solid #5E81AC; padding: 10px; border-radius: 5px;" (click)="saveDocumentClass()"></button>
       </div>
-      
     </div>
   </div>
 </p-dialog>
 
-
 <!-- DIALOGUE DOCUMENT -->
-
 <p-dialog [(visible)]="documentDialog" [modal]="true" [style]="{width: '500px'}" header="Document" class="p-fluid">
-  <div class="field">
-    <label>Libellé</label>
-    <input pInputText [(ngModel)]="document.libelle" required autofocus />
-  </div>
+    <div class="field">
+      <label for="libelle">Libellé <span class="required-star">*</span></label>
+      <input id="libelle" name="libelle" pInputText [(ngModel)]="document.libelle" required #libelle="ngModel" />
+      <small class="p-error" *ngIf="libelle.invalid && libelle.touched">Le libellé est requis.</small>
+    </div>
 
-  <div class="field">
-    <label>Classe de Document</label>
-    <p-dropdown [options]="documentClasses" optionLabel="libelle" optionValue="id" [(ngModel)]="document.document_class_id" placeholder="Choisir une classe"></p-dropdown>
-  </div>
+    <div class="field">
+      <label for="document_class_id">Classe de Document <span class="required-star">*</span></label>
+      <p-dropdown
+        id="document_class_id"
+        name="document_class_id"
+        [options]="documentClasses"
+        optionLabel="libelle"
+        optionValue="id"
+        [(ngModel)]="document.document_class_id"
+        required
+        #documentClass="ngModel"
+        placeholder="Sélectionner une classe"
+        [filter]="true"
+        filterBy="libelle"
+        appendTo="body"
+      >
+      </p-dropdown>
+      <small class="p-error" *ngIf="documentClass.invalid && documentClass.touched">Classe requise.</small>
+    </div>
 
-  <div class="field">
-    <label>Numéro Séquence</label>
-    <input pInputText [(ngModel)]="document.numero" />
-  </div>
+    <div class="field">
+      <label for="preparateur">Préparateur <span class="required-star">*</span></label>
+      <p-dropdown
+        id="preparateur"
+        name="preparateur"
+        [options]="magasiniers"
+        optionLabel="nom"
+        optionValue="id"
+        [(ngModel)]="document.preparateur_id"
+        required
+        #preparateur="ngModel"
+        placeholder="Sélectionner un préparateur"
+        [filter]="true"
+        filterBy="nom"
+        appendTo="body"
+        (onChange)="onMagasinierSelect($event.value)"
+      >
+      </p-dropdown>
+      <small class="p-error" *ngIf="preparateur.invalid && preparateur.touched">Préparateur requis.</small>
+    </div>
 
-  <div class="field">
-    <label>Date Document</label>
-    <input type="date" pInputText [(ngModel)]="document.dateDocument" />
-  </div>
+    <div class="field">
+      <label for="fournisseur_id">Fournisseur</label>
+      <p-dropdown
+        id="fournisseur_id"
+        name="fournisseur_id"
+        [options]="fournsisseurs"
+        optionLabel="name"
+        optionValue="id"
+        [(ngModel)]="document.fournisseur_id"
+        placeholder="Sélectionner un fournisseur"
+        [filter]="true"
+        filterBy="name"
+        appendTo="body"
+        (onChange)="onFournisseurSelect($event.value)"
+        [disabled]="isClientSelected()"
+      >
+      </p-dropdown>
+    </div>
 
-  <div class="field">
-    <label>État</label>
-    <input pInputText [(ngModel)]="document.etat" />
-  </div>
+    <div class="field">
+      <label for="client_id">Client</label>
+      <p-dropdown
+        id="client_id"
+        name="client_id"
+        [options]="clients"
+        optionLabel="nom"
+        optionValue="id"
+        [(ngModel)]="document.client_id"
+        placeholder="Sélectionner un client"
+        [filter]="true"
+        filterBy="nom"
+        appendTo="body"
+        (onChange)="onClientSelect($event.value)"
+        [disabled]="isFournisseurSelected()"
+      >
+      </p-dropdown>
+    </div>
 
-  <div class="field">
-    <label>Préparateur</label>
-    <p-dropdown [options]="utilisateurs" optionLabel="username" optionValue="id" [(ngModel)]="document.preparateur_id"></p-dropdown>
-  </div>
+    <div class="field">
+      <label for="numero">Numéro</label>
+      <input id="numero" name="numero" pInputText [(ngModel)]="document.numero" />
+    </div>
 
-  <div class="field">
-    <label>Client</label>
-    <p-dropdown [options]="clients" optionLabel="nom" optionValue="id" [(ngModel)]="document.client_id"></p-dropdown>
-  </div>
+    <div class="field">
+      <label for="dateDocument">Date Document</label>
+      <p-calendar [(ngModel)]="document.dateDocument" showTime></p-calendar>
+    </div>
 
-  <div class="field">
-    <label>Devise</label>
-    <input pInputText [(ngModel)]="document.devise" />
-  </div>
+    <div class="field">
+      <label for="etat">État</label>
+      <p-dropdown
+        id="etat"
+        name="etat"
+        [options]="etatOptions"
+        [(ngModel)]="document.etat"
+        placeholder="Sélectionner un état"
+        [filter]="true"
+        appendTo="body"
+      >
+      </p-dropdown>
+    </div>
 
-  <div class="field">
-    <label>Taux d'Échange</label>
-    <input type="number" pInputText [(ngModel)]="document.tauxEchange" />
-  </div>
+    <div class="field">
+      <label for="num_seq">Numéro Séquence</label>
+      <input id="num_seq" name="num_seq" pInputText [(ngModel)]="document.num_seq" />
+    </div>
 
-  <div class="field">
-    <label>Date Livraison</label>
-    <input type="date" pInputText [(ngModel)]="document.dateLivraison" />
-  </div>
+    <div class="field">
+      <label for="devise">Devise</label>
+      <p-dropdown
+        id="devise"
+        name="devise"
+        [options]="deviseOptions"
+        optionLabel="label"
+        optionValue="value"
+        [(ngModel)]="document.devise"
+        placeholder="Sélectionner une devise"
+        [filter]="true"
+        filterBy="label"
+        appendTo="body"
+      >
+      </p-dropdown>
+    </div>
 
-  <ng-template pTemplate="footer">
-    <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
-    <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocument()"></button>
-  </ng-template>
+    <div class="field">
+      <label for="tauxEchange">Taux d'Échange</label>
+      <input id="tauxEchange" name="tauxEchange" type="number" pInputText [(ngModel)]="document.tauxEchange" />
+    </div>
 
+    <div class="field">
+      <label for="dateLivraison">Date Livraison</label>
+      <p-calendar [(ngModel)]="document.dateLivraison" showTime></p-calendar>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button pButton label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+      <button pButton label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="saveDocument()"></button>
+    </ng-template>
 </p-dialog>

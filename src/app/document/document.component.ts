@@ -8,10 +8,14 @@ import { User } from '../demo/domain/user';
 import { UserService } from '../demo/service/user.service';
 import { DataService } from '../demo/service/data.service';
 import { Magasinier } from '../demo/domain/magasinier';
+import { MagasinierService } from '../demo/service/magasinier.service';
+import { Fournisseur } from '../demo/domain/fournisseur';
+import { NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
+  styleUrls: ['./document.component.scss'],
   providers: [MessageService]
 })
 export class DocumentComponent implements OnInit {
@@ -19,6 +23,8 @@ export class DocumentComponent implements OnInit {
   documentClasses: DocumentClass[] = [];
   clients: Client[] = [];
   utilisateurs: User[] = [];
+  magasiniers: Magasinier[] = [];
+  fournsisseurs: Fournisseur[] = [];
 
   selectedDocuments: Document[] = [];
   document: Document = this.getEmptyDocument();
@@ -29,20 +35,54 @@ export class DocumentComponent implements OnInit {
   submitted = false;
   showClassForm = false;
 
+  etatOptions: string[] = ['En attente', 'Validé', 'Rejeté'];
+  deviseOptions = [
+    { label: 'Dinar Tunisien (DT)', value: 'TND' },
+    { label: 'Euro (€)', value: 'EUR' },
+    { label: 'Dollar ($)', value: 'USD' },
+  ];
+
   constructor(
     private documentService: DocumentService,
     private messageService: MessageService,
     private userService: UserService,
-    private clientService: DataService
+    private clientService: DataService,
+    private magasinierService: MagasinierService,
+    private fournisseurService: DataService
   ) {}
 
   ngOnInit(): void {
     this.loadDocumentClasses();
-    this.userService.getUsers().subscribe(u => this.utilisateurs = u);
+    this.magasinierService.getMagasiniers().subscribe(m => this.magasiniers = m);
     this.clientService.getClients().subscribe(c => {
       this.clients = c;
       this.loadDocuments();
+      this.loadMagasiniers();
+      this.loadFournisseurs();
     });
+  }
+
+  onMagasinierSelect(magasinierId: string) {
+    const magasinier = this.magasiniers.find((m) => m.id === magasinierId);
+    if (magasinier) {
+      this.document.preparateur_id = magasinier;
+    }
+  }
+
+  onFournisseurSelect(fournisseurId: number) {
+    const fournisseur = this.fournsisseurs.find(f => f.id === fournisseurId);
+    if (fournisseur) {
+      this.document.fournisseur_id = fournisseur.id;
+      this.onFournisseurChange();
+    }
+  }
+
+  onClientSelect(clientId: number) {
+    const client = this.clients.find(c => c.id === clientId);
+    if (client) {
+      this.document.client_id = client.id;
+      this.onClientChange();
+    }
   }
 
   getEmptyDocument(): Document {
@@ -51,18 +91,34 @@ export class DocumentComponent implements OnInit {
       document_class_id: 0,
       codeclassedocument: '',
       numero: '',
+      num_seq: '',
       libelle: '',
       code: '',
       dateDocument: '',
       etat: '',
-      preparateur_id: {} as Magasinier,
+      preparateur_id: null,
       client_id: null,
+      fournisseur_id: null,
       devise: '',
       tauxEchange: 0,
       dateLivraison: '',
       produitsCommandes: [],
-      documentClass: null,
+      documentClass: null
     };
+  }
+
+  loadMagasiniers() {
+    this.magasinierService.getMagasiniers().subscribe({
+      next: (data: Magasinier[]) => (this.magasiniers = data),
+      error: (err) => console.error('Erreur chargement magasiniers', err),
+    });
+  }
+
+  loadFournisseurs() {
+    this.fournisseurService.getFournisseurs().subscribe({
+      next: (data: Fournisseur[]) => (this.fournsisseurs = data),
+      error: (err) => console.error('Erreur chargement fournisseur', err),
+    });
   }
 
   getEmptyDocumentClass(): DocumentClass {
@@ -82,7 +138,8 @@ export class DocumentComponent implements OnInit {
         this.documents = data.map(doc => ({
           ...doc,
           clientNom: this.clients.find(c => c.id === doc.client_id)?.nom || null,
-          preparateurNom: this.utilisateurs.find(u => u.id === doc.preparateur_id)?.username || null
+          preparateurNom: this.magasiniers.find(m => m.id === (typeof doc.preparateur_id === 'object' && doc.preparateur_id !== null ? doc.preparateur_id.id : doc.preparateur_id))?.nom || null,
+          fournisseurNom: this.fournsisseurs.find(f => f.id === doc.fournisseur_id)?.name || null
         }));
       },
       error: (err) => console.error('Erreur chargement documents', err)
@@ -108,16 +165,12 @@ export class DocumentComponent implements OnInit {
   }
 
   deleteDocument(doc: Document): void {
-    this.documentService.deleteDocument(doc.id).subscribe(() => {
-      this.documents = this.documents.filter(d => d.id !== doc.id);
-      this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document supprimé' });
-    });
-  }
-
-    deleteDocumentClasse(classe: Document): void {
-    this.documentService.deleteDocument(classe.id).subscribe(() => {
-      this.documents = this.documents.filter(d => d.id !== classe.id);
-      this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document supprimé' });
+    this.documentService.deleteDocument(doc.id).subscribe({
+      next: () => {
+        this.documents = this.documents.filter(d => d.id !== doc.id);
+        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document supprimé' });
+      },
+      error: (err) => console.error('Erreur suppression document', err)
     });
   }
 
@@ -129,8 +182,8 @@ export class DocumentComponent implements OnInit {
   saveDocument(): void {
     this.submitted = true;
 
-    if (!this.document.libelle || !this.document.code) {
-      this.messageService.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et Code sont obligatoires' });
+    if (!this.document.libelle || !this.document.document_class_id) {
+      this.messageService.add({ severity: 'warn', summary: 'Champs requis', detail: 'Libellé et classe de document sont obligatoires' });
       return;
     }
 
@@ -144,16 +197,17 @@ export class DocumentComponent implements OnInit {
         const enrichedDoc = {
           ...savedDoc,
           clientNom: this.clients.find(c => c.id === savedDoc.client_id)?.nom || null,
-          preparateurNom: this.utilisateurs.find(u => u.id === savedDoc.preparateur_id)?.username || null
+          preparateurNom: this.magasiniers.find(m => m.id === (typeof savedDoc.preparateur_id === 'object' && savedDoc.preparateur_id !== null ? savedDoc.preparateur_id.id : savedDoc.preparateur_id))?.nom || null,
+          fournisseurNom: this.fournsisseurs.find(f => f.id === savedDoc.fournisseur_id)?.name || null
         };
 
         if (isNew) {
           this.documents.push(enrichedDoc);
-          this.messageService.add({ severity: 'success', summary: 'Ajouté', detail: 'Document ajouté' });
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document ajouté' });
         } else {
           const index = this.documents.findIndex(d => d.id === savedDoc.id);
           if (index !== -1) this.documents[index] = enrichedDoc;
-          this.messageService.add({ severity: 'success', summary: 'Mis à jour', detail: 'Document mis à jour' });
+          this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Document mis à jour' });
         }
 
         this.documentDialog = false;
@@ -166,16 +220,36 @@ export class DocumentComponent implements OnInit {
     });
   }
 
+  isClientSelected(): boolean {
+    return !!this.document.client_id;
+  }
+
+  isFournisseurSelected(): boolean {
+    return !!this.document.fournisseur_id;
+  }
+
+  onClientChange(): void {
+    if (this.document.client_id) {
+      this.document.fournisseur_id = null;
+    }
+  }
+
+  onFournisseurChange(): void {
+    if (this.document.fournisseur_id) {
+      this.document.client_id = null;
+    }
+  }
+
   hideDialog(): void {
     this.documentDialog = false;
     this.submitted = false;
   }
 
-showDocumentClassesDialog(): void {
-  this.documentClass = this.getEmptyDocumentClass();
-  this.documentClassesDialog = true;
-  this.showClassForm = false; // Ne pas afficher le formulaire directement
-}
+  showDocumentClassesDialog(): void {
+    this.documentClass = this.getEmptyDocumentClass();
+    this.documentClassesDialog = true;
+    this.showClassForm = false;
+  }
 
   closeDocumentClassesDialog(): void {
     this.documentClassesDialog = false;
@@ -221,29 +295,38 @@ showDocumentClassesDialog(): void {
     });
   }
 
-editDocumentClass(classe: DocumentClass): void {
-  this.documentClass = { ...classe };
-  this.showClassForm = true; // Affiche le formulaire lors de l'édition
-}
+  editDocumentClass(classe: DocumentClass): void {
+    this.documentClass = { ...classe };
+    this.showClassForm = true;
+  }
 
   confirmDeleteDocumentClass(classe: DocumentClass): void {
     if (!classe.id) return;
 
     this.documentService.deleteDocumentClass(classe.id).subscribe({
       next: () => {
-        this.documentClasses = this.documentClasses.filter(c => c.id !== classe.id);
-        this.messageService.add({ severity: 'success', summary: 'Supprimée', detail: 'Classe de document supprimée' });
+        this.documentClasses = this.documentClasses.filter(d => d.id !== classe.id);
+        this.messageService.add({ severity: 'success', summary: 'Succès', detail: 'Classe de document supprimée' });
       },
-      error: err => {
+      error: (err) => {
         console.error('Erreur suppression classe', err);
         this.messageService.add({ severity: 'error', summary: 'Erreur', detail: 'Échec de la suppression' });
       }
     });
   }
 
-resetDocumentClassForm(): void {
-  this.documentClass = this.getEmptyDocumentClass();
-  this.submitted = false;
-  this.showClassForm = true; // Affiche le formulaire quand on clique sur "Ajouter une Classe"
-}
+  resetDocumentClassForm(): void {
+    this.documentClass = this.getEmptyDocumentClass();
+    this.submitted = false;
+    this.showClassForm = true;
+  }
+
+  submitForm(docForm: NgForm): void {
+    if (docForm.valid) {
+      this.saveDocument();
+    } else {
+      this.submitted = true;
+      this.messageService.add({ severity: 'warn', summary: 'Erreur', detail: 'Veuillez remplir tous les champs requis.' });
+    }
+  }
 }

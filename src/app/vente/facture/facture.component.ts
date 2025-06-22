@@ -162,6 +162,15 @@ savedDoc: Document;
       }
     });
   }
+
+      onMagasinierSelect(magasinierId: string) {
+    const magasinier = this.magasiniers.find(c => c.id === magasinierId);
+    if (magasinier) {
+      this.selectedMagasinier= magasinier;
+      this.devis.preparateur_id = magasinier.id;
+    }
+  }
+  
   getDocumentClasses() {
     this.documentService.getDocumentClasses().subscribe({
       next: (classes: DocumentClass[]) => {

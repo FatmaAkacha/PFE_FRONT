@@ -483,15 +483,26 @@ getDocumentClassesAndLoadNextCode() {
 
 
 
-  validerEtPasserALivraison() {
-    this.saveBonDeLivraisonAsDocument();
-          setTimeout(() => {
-
-    console.log(this.savedDoc['data'].id)
-    this.router.navigate(['/vente/facture/', this.savedDoc['data'].id]);
-          }, 2000); // délai en millisecondes
- 
-  }
+validerEtPasserALivraison() {
+  this.saveBonDeLivraisonAsDocument();
+  setTimeout(() => {
+    this.confirmationService.confirm({
+      message: 'Voulez-vous transformer ce bon de livraison en facture ?',
+      header: 'Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => {
+        this.router.navigate(['vente/facture/', this.savedDoc['data'].id]);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Annulé',
+          detail: 'Transformation annulée'
+        });
+      }
+    });
+  }, 2000); 
+}
 imprimerBonLivraison(id: number | string) {
       window.open(`http://localhost:8000/api/documents/${id}/print`, '_blank');
 }

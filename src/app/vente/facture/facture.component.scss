@@ -1,5 +1,5 @@
-.facture-container {
-    max-width: 800px;
+.bon-commande-container {
+    max-width: 88%;;
     margin: auto;
     background: #fff;
     padding: 20px;
@@ -8,7 +8,7 @@
     font-family: Arial, sans-serif;
   }
   
-  .facture-header {
+  .bon-commande-header {
     text-align: center;
     margin-bottom: 20px;
   }
@@ -29,25 +29,20 @@
     margin-top: 0;
   }
   
-  .facture-table {
+  .produit-table, .commande-table {
     margin-top: 20px;
   }
   
-  .totaux {
-    text-align: right;
-    margin-top: 20px;
-    font-size: 16px;
+  .btn-pdf {
+    float: right;
+    margin-bottom: 15px;
   }
   
-  .totaux p {
-    margin: 5px 0;
-  }
-  
-  .btn-download {
+  .btn-valider {
     display: block;
     width: 100%;
     margin-top: 20px;
-    background-color: #007bff;
+    background-color: #28a745;
     color: white;
     font-size: 16px;
     padding: 10px;
@@ -55,16 +50,47 @@
     text-align: center;
   }
   
-  .btn-download:hover {
-    background-color: #0056b3;
+  .btn-valider:hover {
+    background-color: #218838;
   }
-  .required-star {
+  .bon-commande-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px; 
+  }
+  
+  .bon-commande-actions button {
+    margin-left: 10px; 
+  }
+  .icon-spacing {
+    margin-right: 8px; 
+    font-size: 1.2em; 
+    display: flex;
+    justify-content: space-evenly;
+  }
+  th:last-child,
+  td.icon-spacing {
+    width: 95px;
+    gap: 8px;
+}
+.bon-commande-container label {
+  display: block;
+  margin-bottom: 0.5rem; /* espace entre label et input */
+  font-weight: 500;
+  color: #333;
+}
+
+.bon-commande-container .p-inputtext,
+.bon-commande-container .p-dropdown,
+.bon-commande-container .p-calendar {
+  width: 100%;
+  margin-bottom: 1.25rem; /* espace sous chaque champ */
+}
+.required-star {
     color: red;
     margin-left: 2px;
   }
+  
 
-  small.ng-invalid {
-    color: red;
-  }
   
   

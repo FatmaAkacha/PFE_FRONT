@@ -19,6 +19,7 @@ export class UserComponent implements OnInit {
   deleteUsersDialog: boolean = false;
 
   user: User = this.initUser();
+  newPassword = '';
   selectedUsers: User[] = [];
   submitted: boolean = false;
 
@@ -66,10 +67,11 @@ export class UserComponent implements OnInit {
     this.userDialog = true;
   }
 
-  editUser(user: User) {
-    this.user = { ...user };
+editUser(user: User) {
+    this.user = { ...user, password: '' }; // Réinitialiser le mot de passe
+    this.newPassword = '';
     this.userDialog = true;
-  }
+}
 
   deleteUser(user: User) {
     this.user = { ...user };
